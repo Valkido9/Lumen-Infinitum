@@ -408,7 +408,14 @@ body {
 .spoiler-content.show { display: inline; }
 .spoiler-content.show.block { display: block; }
 
-/* ===== Review Mode ===== */
+/* ===== Review Mode (Annotation System) ===== */
+/* ── For future AI maintainers ──
+ * The review mode stores annotations in localStorage under key 'lumen-annotations'.
+ * Each annotation is attached to an element path and contains the user's comment.
+ * When the user says "最新的批注已经修订，请根据批注进行修改",
+ * read the annotations (shown via export or from localStorage) and apply the changes.
+ * After applying, clear the 'lumen-annotations' key from localStorage.
+ * ─────────────────────────────── */
 .review-toggle {
   position: fixed; left: 20px; bottom: 20px; z-index: 1100;
   padding: 8px 16px; border-radius: 20px;
@@ -423,7 +430,7 @@ body {
 }
 .review-toggle:hover { border-color: var(--accent); color: var(--accent); }
 .review-toggle.active {
-  background: var(--accent); color: #fff; border-color: var(--accent);
+  background: var(--accent2); color: #fff; border-color: var(--accent2);
 }
 .review-hint {
   position: fixed; left: 20px; bottom: 62px; z-index: 1100;
@@ -431,12 +438,127 @@ body {
   pointer-events: none; opacity: 0; transition: opacity 0.3s;
 }
 .review-hint.show { opacity: 1; }
-.review-edited {
-  outline: 2px dashed var(--accent) !important;
-  outline-offset: 4px;
-  background: var(--accent-soft) !important;
-  border-radius: 4px;
+
+/* Password modal */
+.pw-dialog {
+  position: fixed; inset: 0; z-index: 3000;
+  background: var(--modal-overlay);
+  display: none; justify-content: center; align-items: center;
+  backdrop-filter: blur(6px);
 }
+.pw-dialog.show { display: flex; }
+.pw-dialog .pw-box {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 28px 32px;
+  box-shadow: var(--shadow-lg); text-align: center; max-width: 360px;
+  animation: modalIn 0.25s ease;
+}
+.pw-dialog .pw-box h3 { margin-bottom: 12px; font-size: 1.1em; }
+.pw-dialog .pw-box input {
+  width: 100%; padding: 10px 14px; margin: 10px 0;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-size: 0.95em; outline: none; font-family: inherit;
+}
+.pw-dialog .pw-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.pw-dialog .pw-box .pw-btns { display: flex; gap: 8px; margin-top: 12px; }
+.pw-dialog .pw-box button {
+  flex:1; padding: 8px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); cursor: pointer;
+  font-size: 0.85em; font-weight: 500; font-family: inherit;
+  transition: all 0.15s;
+}
+.pw-dialog .pw-box button.confirm { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pw-dialog .pw-box button.confirm:hover { opacity: 0.85; }
+.pw-dialog .pw-box button.cancel { background: var(--bg); color: var(--text-dim); }
+.pw-dialog .pw-box .pw-error { color: var(--accent2); font-size: 0.8em; margin-top: 6px; display: none; }
+
+/* Annotation badges on paragraphs */
+.ann-badge {
+  display: inline-block; width: 20px; height: 20px; line-height: 20px;
+  text-align: center; font-size: 0.7em; font-weight: 700;
+  background: var(--gold); color: #fff; border-radius: 50%;
+  margin-right: 6px; cursor: pointer; vertical-align: middle;
+  transition: all 0.15s; user-select: none;
+}
+.ann-badge:hover { transform: scale(1.15); }
+.ann-badge.resolved { background: var(--text-muted); }
+
+/* Annotated paragraphs get a subtle gold left-border */
+.annotated {
+  border-left: 3px solid var(--gold) !important;
+  padding-left: 16px !important;
+}
+
+/* Annotation popup */
+.ann-popup {
+  position: absolute; left: 0; right: 0; z-index: 1500;
+  background: var(--bg-elevated); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 14px; margin-top: 6px;
+  box-shadow: var(--shadow-md); display: none;
+}
+.ann-popup.show { display: block; }
+.ann-popup textarea {
+  width: 100%; min-height: 60px; padding: 8px 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-size: 0.875em; font-family: inherit; resize: vertical;
+  outline: none;
+}
+.ann-popup textarea:focus { border-color: var(--accent); }
+.ann-popup .ann-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+.ann-popup .ann-actions button {
+  padding: 5px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); cursor: pointer;
+  font-size: 0.8em; font-family: inherit; transition: all 0.15s;
+}
+.ann-popup .ann-actions button.save { background: var(--accent); color: #fff; border-color: var(--accent); }
+.ann-popup .ann-actions button.cancel-btn { background: var(--bg); color: var(--text-dim); }
+.ann-popup .ann-actions button.delete-btn { background: var(--accent2-soft); color: var(--accent2); border-color: transparent; }
+.ann-thread { max-height: 160px; overflow-y: auto; margin-bottom: 8px; font-size: 0.85em; }
+.ann-thread .ann-item {
+  padding: 6px 8px; border-radius: var(--radius-sm);
+  background: var(--bg); margin-bottom: 4px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+}
+.ann-thread .ann-item .ann-text { flex: 1; color: var(--text); line-height: 1.5; }
+.ann-thread .ann-item .ann-meta { font-size: 0.72em; color: var(--text-muted); white-space: nowrap; }
+.ann-thread .ann-item .ann-resolve {
+  font-size: 0.72em; cursor: pointer; color: var(--text-muted);
+  padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg); white-space: nowrap;
+}
+.ann-thread .ann-item .ann-resolve:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Export annotations modal */
+.export-modal {
+  position: fixed; inset: 0; z-index: 3100;
+  background: var(--modal-overlay);
+  display: none; justify-content: center; align-items: center;
+  backdrop-filter: blur(6px);
+}
+.export-modal.show { display: flex; }
+.export-modal .export-box {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 24px 28px;
+  box-shadow: var(--shadow-lg); max-width: 700px; width: 94%;
+  max-height: 82vh; overflow-y: auto;
+  animation: modalIn 0.25s ease;
+}
+.export-modal .export-box pre {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; font-size: 0.8em;
+  line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  max-height: 50vh; overflow-y: auto; color: var(--text);
+}
+.export-modal .export-box .export-btns { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+.export-modal .export-box .export-btns button {
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); cursor: pointer;
+  font-size: 0.85em; font-family: inherit; transition: all 0.15s;
+}
+.export-modal .export-box .export-btns button.copy { background: var(--accent); color: #fff; border-color: var(--accent); }
+.export-modal .export-box .export-btns button.cls { background: var(--bg); color: var(--text-dim); }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
@@ -494,8 +616,36 @@ body {
 <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()">☀️</button>
 
 <!-- Review Mode Toggle -->
-<button class="review-toggle" id="reviewToggle" title="审阅模式：直接在浏览器中编辑文字" onclick="toggleReviewMode()">📝 审阅模式</button>
-<div class="review-hint" id="reviewHint">💡 点击文字即可编辑。修改后的文字已自动保存。</div>
+<button class="review-toggle" id="reviewToggle" title="审阅模式：添加批注" onclick="requestReviewMode()">📝 审阅模式</button>
+<div class="review-hint" id="reviewHint"></div>
+
+<!-- Password Dialog -->
+<div class="pw-dialog" id="pwDialog">
+  <div class="pw-box">
+    <h3>🔒 审阅模式需要密码</h3>
+    <input type="password" id="pwInput" placeholder="请输入密码" onkeydown="if(event.key==='Enter')verifyPassword()">
+    <div class="pw-error" id="pwError">密码错误，请重试。</div>
+    <div class="pw-btns">
+      <button class="cancel" onclick="closePwDialog()">取消</button>
+      <button class="confirm" onclick="verifyPassword()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Annotations Modal -->
+<div class="export-modal" id="exportModal">
+  <div class="export-box">
+    <h3 style="margin-bottom:12px;">📋 批注导出</h3>
+    <p style="color:var(--text-dim); font-size:0.85em; margin-bottom:12px;">
+      以下是所有待处理的批注。请将内容复制给接手项目的 AI，告知其根据批注修改网页。
+    </p>
+    <pre id="exportContent"></pre>
+    <div class="export-btns">
+      <button class="cls" onclick="closeExport()">关闭</button>
+      <button class="copy" onclick="copyExport()">📋 复制全部</button>
+    </div>
+  </div>
+</div>
 
 <!-- Header -->
 <header class="header">
@@ -1170,118 +1320,374 @@ document.addEventListener('click', function(e) {
     if (next && next.classList.contains('spoiler-content')) {
       next.classList.toggle('show');
       if (next.tagName === 'DIV' || next.tagName === 'P') next.classList.toggle('block');
-      e.target.textContent = next.classList.contains('show') ? '（收起剧透）' : '（可能涉及剧透）';
+      e.target.textContent = next.classList.contains('show') ? '（收起剧透）' : '（可能涉及剧透，点击查看）';
     }
   }
 });
 
-// ===== REVIEW MODE =====
-const REVIEW_STORAGE_KEY = 'lumen-review-edits';
-const REVIEW_FLAG_KEY = 'lumen-review-has-edits';
+// ===== REVIEW MODE (Annotation System) =====
+// ── For future AI maintainers ──
+// When the user says "最新的批注已经修订，请根据批注进行修改",
+// read the exported annotations (or localStorage key 'lumen-annotations')
+// and apply the requested changes to this HTML file.
+// After applying, clear 'lumen-annotations' in localStorage.
+// ───────────────────────────────
+const ANN_STORAGE_KEY = 'lumen-annotations';
+const REVIEW_PASSWORD = '1T1Gsdxsp!!';
 let reviewModeActive = false;
+let activePopups = [];
 
-function getEditableElements() {
-  return document.querySelectorAll('#main-content p, #main-content h3, #main-content .story-quote, #main-content .card-desc, #main-content .rel-desc, #main-content .info-value, #main-content .footer');
+function getAnnotatableElements() {
+  return document.querySelectorAll('#main-content p, #main-content h3, #main-content .story-quote, #main-content .card-desc, #main-content .rel-desc, #main-content .info-value, #main-content .footer, #main-content h2');
 }
 
 function getElementPath(el) {
   const parent = el.closest('#main-content');
   if (!parent) return null;
-  const all = Array.from(parent.querySelectorAll('p, h3, .story-quote, .card-desc, .rel-desc, .info-value, .footer'));
+  const all = Array.from(parent.querySelectorAll('p, h3, .story-quote, .card-desc, .rel-desc, .info-value, .footer, h2'));
   return 'el-' + all.indexOf(el);
 }
 
-function saveEdit(el) {
-  const path = getElementPath(el);
-  if (path === null) return;
-  const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
-  edits[path] = el.innerHTML;
-  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(edits));
-  localStorage.setItem(REVIEW_FLAG_KEY, 'true');
+function getAnnotations() {
+  try { return JSON.parse(localStorage.getItem(ANN_STORAGE_KEY) || '{}'); }
+  catch(e) { return {}; }
 }
 
-function applyStoredEdits(silent) {
-  const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
-  const elements = Array.from(getEditableElements());
-  let applied = 0;
-  elements.forEach((el, i) => {
-    const path = 'el-' + i;
-    if (edits[path] && edits[path] !== el.innerHTML) {
-      el.innerHTML = edits[path];
-      if (!silent) {
-        el.classList.add('review-edited');
-      }
-      applied++;
-    }
-  });
-  if (!silent && applied === 0) {
-    const hint = document.getElementById('reviewHint');
-    if (hint) { hint.textContent = '📭 没有检测到待审阅的修改。'; hint.classList.add('show'); setTimeout(() => hint.classList.remove('show'), 3000); }
+function saveAnnotations(anns) {
+  localStorage.setItem(ANN_STORAGE_KEY, JSON.stringify(anns));
+}
+
+function getAnnotationCount(path) {
+  const anns = getAnnotations();
+  if (!anns[path]) return 0;
+  return anns[path].filter(a => !a.resolved).length;
+}
+
+function getTotalAnnotationCount() {
+  const anns = getAnnotations();
+  let count = 0;
+  Object.values(anns).forEach(arr => count += arr.filter(a => !a.resolved).length);
+  return count;
+}
+
+// ── Password ──
+function requestReviewMode() {
+  if (reviewModeActive) {
+    exitReviewMode();
+    return;
   }
-  return applied;
+  document.getElementById('pwDialog').classList.add('show');
+  document.getElementById('pwError').style.display = 'none';
+  document.getElementById('pwInput').value = '';
+  setTimeout(() => document.getElementById('pwInput').focus(), 100);
 }
 
-function clearReviewMarks() {
-  document.querySelectorAll('.review-edited').forEach(el => el.classList.remove('review-edited'));
-  localStorage.removeItem(REVIEW_FLAG_KEY);
+function closePwDialog() {
+  document.getElementById('pwDialog').classList.remove('show');
 }
 
-function toggleReviewMode() {
-  reviewModeActive = !reviewModeActive;
+function verifyPassword() {
+  const input = document.getElementById('pwInput').value;
+  if (input === REVIEW_PASSWORD) {
+    closePwDialog();
+    enterReviewMode();
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+// ── Enter / Exit ──
+function enterReviewMode() {
+  reviewModeActive = true;
   const btn = document.getElementById('reviewToggle');
   const hint = document.getElementById('reviewHint');
-  const elements = getEditableElements();
+  btn.classList.add('active');
+  btn.textContent = '✅ 退出审阅';
 
-  if (reviewModeActive) {
-    btn.classList.add('active');
-    btn.textContent = '✅ 退出审阅';
-    hint.classList.add('show');
-    hint.textContent = '💡 点击任意文字段落即可编辑。修改会自动保存到浏览器。';
+  const total = getTotalAnnotationCount();
+  hint.textContent = total > 0
+    ? `📌 当前共 ${total} 条未处理批注。点击段落添加新批注，点击 🔵 查看已有批注。`
+    : '💡 点击任意段落即可添加批注。右键段落可查看/导出。';
+  hint.classList.add('show');
 
-    elements.forEach(el => {
-      el.contentEditable = 'true';
-      el.addEventListener('input', function() { saveEdit(el); });
-      el.style.cursor = 'text';
-    });
+  renderAllBadges();
 
-    const applied = applyStoredEdits(false);
-    if (applied > 0) {
-      hint.textContent = `📌 已加载 ${applied} 处之前的修改（虚线标记）。退出审阅后将清除标记。`;
-    }
-  } else {
-    btn.classList.remove('active');
-    btn.textContent = '📝 审阅模式';
-    hint.textContent = '✅ 修改已保存。审阅标记已清除。';
-    hint.classList.add('show');
-    setTimeout(() => hint.classList.remove('show'), 3000);
+  getAnnotatableElements().forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', onElementClick);
+  });
 
-    elements.forEach(el => {
-      el.contentEditable = 'false';
-      el.style.cursor = '';
-    });
-
-    clearReviewMarks();
-  }
+  // Add export button next to review toggle
+  addExportButton();
 }
 
-// On page load: apply stored edits silently (no marks) if they exist
-(function initReviewMode() {
-  const hasEdits = localStorage.getItem(REVIEW_FLAG_KEY);
-  if (hasEdits === 'true') {
-    const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
-    const elements = Array.from(getEditableElements());
-    let applied = 0;
-    elements.forEach((el, i) => {
-      const path = 'el-' + i;
-      if (edits[path] && edits[path] !== el.innerHTML) {
-        el.innerHTML = edits[path];
-        applied++;
-      }
-    });
-    // Clear the flag so marks don't show on next load (review marks removed)
-    localStorage.removeItem(REVIEW_FLAG_KEY);
+function exitReviewMode() {
+  reviewModeActive = false;
+  const btn = document.getElementById('reviewToggle');
+  const hint = document.getElementById('reviewHint');
+  btn.classList.remove('active');
+  btn.textContent = '📝 审阅模式';
+
+  const total = getTotalAnnotationCount();
+  hint.textContent = total > 0
+    ? `✅ 已退出审阅。当前共 ${total} 条未处理批注已保存。`
+    : '✅ 已退出审阅模式。';
+  hint.classList.add('show');
+  setTimeout(() => hint.classList.remove('show'), 4000);
+
+  removeAllPopups();
+  removeAllBadges();
+  removeExportButton();
+
+  getAnnotatableElements().forEach(el => {
+    el.style.cursor = '';
+    el.classList.remove('annotated');
+    el.removeEventListener('click', onElementClick);
+  });
+}
+
+// ── Badges ──
+function renderAllBadges() {
+  removeAllBadges();
+  const anns = getAnnotations();
+  getAnnotatableElements().forEach(el => {
+    const path = getElementPath(el);
+    if (!path) return;
+    const count = anns[path] ? anns[path].filter(a => !a.resolved).length : 0;
+    if (count > 0) {
+      el.classList.add('annotated');
+      const badge = document.createElement('span');
+      badge.className = 'ann-badge';
+      badge.textContent = count;
+      badge.title = `${count} 条批注`;
+      badge.dataset.path = path;
+      badge.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showAnnotationPopup(el, path);
+      });
+      el.insertBefore(badge, el.firstChild);
+    }
+  });
+}
+
+function removeAllBadges() {
+  document.querySelectorAll('.ann-badge').forEach(b => b.remove());
+  document.querySelectorAll('.annotated').forEach(el => el.classList.remove('annotated'));
+}
+
+// ── Export button ──
+function addExportButton() {
+  removeExportButton();
+  const btn = document.createElement('button');
+  btn.id = 'exportBtn';
+  btn.className = 'review-toggle';
+  btn.style.left = '140px';
+  btn.textContent = '📋 导出批注';
+  btn.title = '导出所有批注';
+  btn.addEventListener('click', showExport);
+  document.body.appendChild(btn);
+}
+
+function removeExportButton() {
+  const btn = document.getElementById('exportBtn');
+  if (btn) btn.remove();
+}
+
+// ── Annotation Popup ──
+function onElementClick(e) {
+  if (!reviewModeActive) return;
+  // Don't re-trigger when clicking inside a popup or on a badge
+  if (e.target.closest('.ann-popup') || e.target.closest('.ann-badge')) return;
+  const el = e.currentTarget;
+  const path = getElementPath(el);
+  if (!path) return;
+  showAnnotationPopup(el, path);
+}
+
+function showAnnotationPopup(el, path) {
+  removeAllPopups();
+
+  const anns = getAnnotations();
+  const thread = anns[path] || [];
+  const activeThread = thread.filter(a => !a.resolved);
+
+  const popup = document.createElement('div');
+  popup.className = 'ann-popup show';
+  popup.dataset.path = path;
+
+  let threadHTML = '';
+  if (activeThread.length > 0) {
+    threadHTML = '<div class="ann-thread">' + activeThread.map((a, i) => `
+      <div class="ann-item">
+        <span class="ann-text">${escapeHtml(a.text)}</span>
+        <span class="ann-meta">${a.time || ''}</span>
+        <span class="ann-resolve" data-id="${a.id}" data-path="${path}">✓ 已处理</span>
+      </div>
+    `).join('') + '</div>';
   }
-})();
+
+  popup.innerHTML = `
+    ${threadHTML}
+    <textarea placeholder="输入批注内容（告知 AI 需要如何修改此段落）..." id="annInput-${path}"></textarea>
+    <div class="ann-actions">
+      <button class="cancel-btn" onclick="removeAllPopups()">取消</button>
+      <button class="save-btn" data-path="${path}">💬 添加批注</button>
+    </div>
+  `;
+
+  el.style.position = 'relative';
+  el.appendChild(popup);
+  activePopups.push(popup);
+
+  // Save button
+  popup.querySelector('.save-btn').addEventListener('click', function() {
+    const textarea = popup.querySelector('textarea');
+    const text = textarea.value.trim();
+    if (!text) return;
+    addAnnotation(path, text);
+    removeAllPopups();
+    renderAllBadges();
+  });
+
+  // Resolve buttons
+  popup.querySelectorAll('.ann-resolve').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.dataset.id;
+      const p = this.dataset.path;
+      resolveAnnotation(p, id);
+      removeAllPopups();
+      renderAllBadges();
+    });
+  });
+
+  // Focus textarea
+  setTimeout(() => {
+    const ta = popup.querySelector('textarea');
+    if (ta) ta.focus();
+  }, 100);
+}
+
+function removeAllPopups() {
+  activePopups.forEach(p => p.remove());
+  activePopups = [];
+}
+
+// ── CRUD ──
+function addAnnotation(path, text) {
+  const anns = getAnnotations();
+  if (!anns[path]) anns[path] = [];
+  anns[path].push({
+    id: 'ann-' + Date.now(),
+    text: text,
+    time: new Date().toLocaleString('zh-CN'),
+    resolved: false
+  });
+  saveAnnotations(anns);
+}
+
+function resolveAnnotation(path, id) {
+  const anns = getAnnotations();
+  if (!anns[path]) return;
+  const a = anns[path].find(x => x.id === id);
+  if (a) a.resolved = true;
+  saveAnnotations(anns);
+}
+
+// ── Export ──
+function showExport() {
+  const anns = getAnnotations();
+  const allPaths = Object.keys(anns);
+  const unresolved = [];
+  const resolved = [];
+
+  allPaths.forEach(path => {
+    (anns[path] || []).forEach(a => {
+      const el = getElementByPath(path);
+      const snippet = el ? el.textContent.substring(0, 80) : '(未知位置)';
+      const entry = { path, snippet, ...a };
+      if (a.resolved) resolved.push(entry);
+      else unresolved.push(entry);
+    });
+  });
+
+  let output = '// ===== 永恒流光 网页批注导出 =====\n';
+  output += `// 导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
+  output += `// 未处理批注: ${unresolved.length} 条 | 已处理: ${resolved.length} 条\n`;
+  output += '//\n';
+  output += '// ⚠️  以下批注需要 AI 根据内容进行修改。\n';
+  output += '// 每条批注包含：位置（段落开头文字）、批注内容、创建时间。\n';
+  output += '// 修改完成后请清除 localStorage 中的 "lumen-annotations" 键。\n';
+  output += '// =========================================\n\n';
+
+  if (unresolved.length === 0) {
+    output += '（暂无未处理的批注）\n';
+  } else {
+    unresolved.forEach((a, i) => {
+      output += `【批注 #${i + 1}】\n`;
+      output += `  位置: "${a.snippet}..."\n`;
+      output += `  内容: ${a.text}\n`;
+      output += `  时间: ${a.time}\n`;
+      output += `  路径: ${a.path}\n`;
+      output += '\n';
+    });
+  }
+
+  if (resolved.length > 0) {
+    output += '// ===== 以下为已处理的批注（仅供参考）=====\n\n';
+    resolved.forEach((a, i) => {
+      output += `【已处理 #${i + 1}】 "${a.snippet}..." → ${a.text}\n`;
+    });
+  }
+
+  document.getElementById('exportContent').textContent = output;
+  document.getElementById('exportModal').classList.add('show');
+}
+
+function closeExport() {
+  document.getElementById('exportModal').classList.remove('show');
+}
+
+function copyExport() {
+  const text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('#exportModal .copy');
+    btn.textContent = '✅ 已复制!';
+    setTimeout(() => btn.textContent = '📋 复制全部', 2000);
+  }).catch(() => {
+    alert('复制失败，请手动选择并复制文本。');
+  });
+}
+
+function getElementByPath(path) {
+  const all = Array.from(getAnnotatableElements());
+  const idx = parseInt(path.replace('el-', ''));
+  return all[idx] || null;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Close popups on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('exportModal').classList.contains('show')) {
+      closeExport();
+    } else if (reviewModeActive) {
+      removeAllPopups();
+    }
+    closePwDialog();
+  }
+});
+
+// Close export modal on overlay click
+document.getElementById('exportModal').addEventListener('click', function(e) {
+  if (e.target === this) closeExport();
+});
 </script>
 </body>
 </html>

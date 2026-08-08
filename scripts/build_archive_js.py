@@ -1,4 +1,4 @@
-"""Convert parsed abilities JSON to JS code for index.html."""
+"""Convert parsed abilities JSON to JS code for index.html (section-based timelines)."""
 import json, os, re
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -6,262 +6,206 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 with open('../data/abilities_parsed.json', 'r', encoding='utf-8') as f:
     abilities = json.load(f)
 
-# Stat mapping: EX=5, A=4, B=3, C=2, D=1
-stat_val = {'EX':5, 'A':4, 'B':3, 'C':2, 'D':1, 'S':5, '':0, '?':0}
+stat_val = {'EX': 5, 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'S': 5, '': 0, '?': 0, '？': 0}
 
 def esc(s):
     return s.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'").replace('\n', '\\n')
 
-# Group by timeline/faction based on order and naming patterns
-# We'll organize them manually since the document structure varies
-# For now, generate a flat list with timeline/faction tags based on the order
-# The abilities are in document order, so we can infer structure
+# ---- annotations that DELETE entries ----
+# #27 删除 恶血天堂（十七）与其下的 幻血之梦（达克多）
+# #33 删除 真视魔瞳（明风）
+DELETED = {'恶血天堂', '幻血之梦', '真视魔瞳'}
 
-# Actually, let's just output a flat JS array keyed by ability ID
-# The timeline/faction organization will be done in the rendering code
+# ---- section → (timeline, faction) ----
+SECTION_MAP = {
+    '第二代时之秩序': ('卢纳森特阵营 · 序章', '第二代时之秩序'),
+    '圣标联合': ('卢纳森特阵营 · 序章', '圣标联合'),
+    '潮涌居士号': ('沃克加德阵营', '潮涌居士号'),
+    '蓝河明船': ('沃克加德阵营', '蓝河明船'),
+    '第一章 最终战部分': ('沃克加德阵营', '第一章最终战'),
+    '浪庄游击队': ('沃克加德阵营', '浪庄游击队'),
+    '深雾城阵营': ('沃克加德阵营', '深雾城阵营'),
+    '珀利贝尔实业-亲卫队"渊海明灯"': ('霍因佩兹时间线', '珀利贝尔实业 · 亲卫队'),
+    '珀利贝尔实业-部门领导组': ('霍因佩兹时间线', '珀利贝尔实业 · 部门领导组'),
+    '寒城工坊': ('霍因佩兹时间线', '寒城工坊'),
+    '长夜事务所': ('霍因佩兹时间线', '长夜事务所'),
+    '第二章最终战部分': ('霍因佩兹时间线', '第二章最终战'),
+    '神国': ('霍因佩兹时间线', '神国'),
+    '牧人': ('洛琛顿时间线', '牧人'),
+    '爱丽丝马戏团': ('洛琛顿时间线', '爱丽丝马戏团'),
+    '洛琛顿中，不属于任何阵营的角色': ('洛琛顿时间线', '其他势力'),
+    '第三章最终战部分': ('洛琛顿时间线', '第三章最终战'),
+    '初代时之秩序': ('卢纳森特基地 · 初代时之秩序', '初代时之秩序'),
+    '基地其他部门': ('卢纳森特基地 · 初代时之秩序', '基地其他部门'),
+    '卢纳森特基地': ('卢纳森特基地 · 初代时之秩序', '基地其他部门'),
+    '"没名字的组合"': ('柯洛雯时间线', '没名字的组合'),
+    '柯洛雯中，不属于任何阵营的角色': ('柯洛雯时间线', '其他角色'),
+    '柯洛雯第三帝国': ('柯洛雯时间线', '柯洛雯第三帝国 · 第四章最终战'),
+    '第四章最终战部分': ('柯洛雯时间线', '柯洛雯第三帝国 · 第四章最终战'),
+    '芬奈法拉战线': ('芬奈法拉战线', '芬奈法拉战线'),
+    '第五章最终战部分': ('第五章最终战', '第五章最终战'),
+    '十七前传': ('前传相关', '十七前传'),
+    '卢纳森特共和国': ('前传相关', '正义前传'),
+    '圣奈特莉学院': ('前传相关', '正义前传'),
+    '碎暮异团': ('前传相关', '正义前传'),
+    '在正义前传中，不属于任何阵营的角色': ('前传相关', '正义前传'),
+    '正义前传最终战部分': ('前传相关', '正义前传'),
+}
+TIMELINE_ORDER = ['卢纳森特阵营 · 序章', '沃克加德阵营', '霍因佩兹时间线',
+                  '洛琛顿时间线', '卢纳森特基地 · 初代时之秩序', '柯洛雯时间线',
+                  '芬奈法拉战线', '第五章最终战', '前传相关']
+FALLBACK = ('其他时间线 & 角色', '其他势力')
 
+# ---- build abilityData ----
 lines = []
 lines.append('// Auto-generated from 永恒流光能力设定集 (2026.6.10)')
-lines.append(f'// {len(abilities)} abilities')
 lines.append('const abilityData = [')
 
-# Track seen ability names to avoid duplicates
 seen = set()
 count = 0
+ids_by = {}       # (timeline, faction) -> list of abIds
+fallback_ids = []
+unmapped_names = []
+
+# first collect abIds per ability in document order
+entry_ids = {}    # name -> abId (for cross-ref during timeline assembly)
+
+order = []
 for a in abilities:
     name = a['name'].strip()
     holder = a['holder'].strip()
     crt = a['crt'].strip()
+    stage = a['stage']
 
-    # Annotation #1: 马萨卡's 暴走-state 天平 is its 解放阶段 (release-stage) form
+    # deletions
+    if name in DELETED:
+        continue
+    if not name or not holder:
+        continue
+
+    # renames
     if holder == '马萨卡（暴走）':
         name = '天平（解放阶段）'
         holder = '马萨卡（解放阶段）'
+        stage = '解放阶段'
+    if stage == '解放阶段' and '阶段' not in name:
+        # mark liberation-stage abilities (name keeps distinct 解放-stage naming)
+        name = name + '（解放阶段）'
 
-    # Skip garbage entries
-    if not name or len(name) < 1:
-        continue
-    if name.startswith('……') or name.startswith('"'):
-        continue
-    if not holder:
-        continue
-
-    # Deduplicate
     key = f"{name}|{holder}"
     if key in seen:
         continue
     seen.add(key)
 
-    # Clean CRT
+    # CRT cleanup (siege detection happens in the renderer: max CRT > 14, non-zpn)
     crt_clean = crt.replace('（', '(').replace('）', ')').replace('：', ':').strip()
+    zpn_note = (a.get('zpn') or '').strip().strip('【】').strip()
 
-    # Map stats to numeric
-    import re
+    # stats
     stats = []
-    for k in ['pow','spd','end','rng','frz','def']:
-        v = a.get(k, '').replace('*','').replace('：','').replace(':','').strip()
-        # Handle ranges like "B/A" or special cases
+    for k in ['pow', 'spd', 'end', 'rng', 'frz', 'def']:
+        v = (a.get(k) or '').replace('*', '').replace('：', '').replace(':', '').strip()
         v = v.split('/')[0].strip()
-        # Remove Chinese prefixes (e.g. "狂热-B" -> "B", "范围-A*" -> "A")
-        v = re.sub(r'^[^\x00-\x7F]+', '', v)  # remove leading CJK chars
         v = v.strip('-').strip()
-        if v in stat_val:
-            stats.append(str(stat_val[v]))
-        else:
-            stats.append('0')
+        stats.append(str(stat_val.get(v, 0)))
 
-    desc = a.get('desc', '').strip()
-    quote = a.get('quote', '').strip()
-    note = a.get('note', '').strip()
+    desc = (a.get('desc') or '').strip()
+    quote = (a.get('quote') or '').strip()
+    note = (a.get('note') or '').strip()
+    qb = (a.get('qb') or '').strip()
 
-    # Spoiler flag: 司明's evaluation quote reveals 马萨卡's true strength
     spoiler = ('虽然这个能力经过更合理的运用' in quote)
 
-    # Annotation #10: remove 斯帕里森's '强运加持/大难不死' self-claim quote.
-    # The claim is wrapped in curly quotes “...”, then attribution follows.
+    # #10: strip 斯帕里森's self-claim, keep attribution
     if holder == '斯帕里森' and '强运加持' in quote:
-        open_q = quote.find('“')  # “
-        attrib = quote.find('——《')  # ——《
-        if open_q != -1 and attrib != -1 and open_q < attrib:
+        attrib = quote.find('——《')
+        if attrib != -1:
             quote = quote[attrib:]
 
-    # Clean desc: remove the quote that got embedded in desc
-    if quote and desc.endswith(quote):
-        desc = desc[:-len(quote)].strip()
-    if quote and desc.endswith(quote.strip('"')):
-        desc = desc[:-len(quote.strip('"'))].strip()
+    # section-based timeline/faction
+    section = a.get('section', '')
+    if section in SECTION_MAP:
+        tl, fac = SECTION_MAP[section]
+    else:
+        tl, fac = FALLBACK
+        unmapped_names.append(name)
 
-    # Generate a safe ID
     aid = f"ab{count}"
     count += 1
+    entry_ids[name] = aid
+
+    ids_by.setdefault((tl, fac), []).append(aid)
+
+    # extra fields
+    extra = ''
+    if quote:
+        extra += f'q:"{esc(quote)}",'
+    if qb:
+        extra += f'qb:"{esc(qb)}",'
+    if note:
+        extra += f'nt:"{esc(note)}",'
+    if zpn_note:
+        extra += 'zn:"' + esc(zpn_note) + '",'
+    if stage == '解放阶段':
+        extra += 'st:"解放阶段",'
+    if spoiler:
+        extra += 'sp:1,'
 
     lines.append(f'  {{id:"{aid}",n:"{esc(name)}",h:"{esc(holder)}",c:"{esc(crt_clean)}",')
     lines.append(f'   s:[{",".join(stats)}],')
     lines.append(f'   d:"{esc(desc)}",')
-    if quote:
-        lines.append(f'   q:"{esc(quote)}",')
-    if spoiler:
-        lines.append(f'   sp:1,')
-    if note:
-        lines.append(f'   nt:"{esc(note)}",')
+    if extra:
+        lines.append(f'   {extra}')
     lines.append(f'  }},')
 
 lines.append('];')
+ability_count = count
 
-# Add timeline/faction organization
-lines.append('''
-// Timeline & faction organization
-const abilityTimelines = [
-  {
-    name: "卢纳森特阵营 · 序章",
-    factions: [
-      {
-        name: "第二代时之秩序",
-        abIds: ["ab0","ab1","ab2","ab3","ab4","ab5","ab6"]
-      },
-      {
-        name: "圣标联合",
-        abIds: ["ab7","ab8","ab9","ab10","ab11"]
-      }
-    ]
-  },
-  {
-    name: "沃克加德阵营",
-    factions: [
-      {
-        name: "潮涌居士号",
-        abIds: ["ab12","ab13"]
-      },
-      {
-        name: "蓝河明船",
-        abIds: ["ab14","ab15","ab16","ab17","ab18","ab19","ab20"]
-      },
-      {
-        name: "浪庄游击队",
-        abIds: ["ab21"]
-      },
-      {
-        name: "深雾城阵营",
-        abIds: ["ab22"]
-      }
-    ]
-  },
-  {
-    name: "霍因佩兹时间线",
-    factions: [
-      {
-        name: "珀利贝尔实业 · 亲卫队",
-        abIds: ["ab23","ab24","ab25"]
-      },
-      {
-        name: "珀利贝尔实业 · 部门领导组",
-        abIds: ["ab26"]
-      },
-      {
-        name: "寒城工坊",
-        abIds: ["ab27","ab28","ab29","ab30","ab31","ab32"]
-      },
-      {
-        name: "长夜事务所",
-        abIds: ["ab33","ab34","ab35","ab36","ab37"]
-      },
-      {
-        name: "第二章最终战",
-        abIds: ["ab38","ab39","ab40","ab41"]
-      }
-    ]
-  },
-  {
-    name: "洛琛顿时间线",
-    factions: [
-      {
-        name: "牧人",
-        abIds: ["ab42","ab43","ab44","ab45"]
-      },
-      {
-        name: "爱丽丝马戏团",
-        abIds: ["ab46","ab47"]
-      },
-      {
-        name: "其他势力",
-        abIds: ["ab48","ab49","ab50","ab51","ab52","ab53"]
-      },
-      {
-        name: "第三章最终战",
-        abIds: ["ab54","ab55","ab56","ab57"]
-      }
-    ]
-  },
-  {
-    name: "卢纳森特基地 · 初代时之秩序",
-    factions: [
-      {
-        name: "初代时之秩序",
-        abIds: ["ab58","ab59","ab60","ab61","ab62"]
-      },
-      {
-        name: "基地其他部门",
-        abIds: ["ab63","ab64","ab65"]
-      }
-    ]
-  },
-  {
-    name: "柯洛雯时间线",
-    factions: [
-      {
-        name: "没名字的组合",
-        abIds: ["ab66","ab67","ab68","ab69"]
-      },
-      {
-        name: "其他角色",
-        abIds: ["ab70","ab71","ab72","ab73","ab74"]
-      },
-      {
-        name: "柯洛雯第三帝国 · 第四章最终战",
-        abIds: ["ab75","ab76","ab77"]
-      }
-    ]
-  },
-  {
-    name: "芬奈法拉战线",
-    factions: [
-      {
-        name: "芬奈法拉战线",
-        abIds: ["ab78","ab79","ab80","ab81","ab82"]
-      }
-    ]
-  },
-  {
-    name: "其他时间线 & 角色",
-    factions: [
-      {
-        name: "其他势力",
-        abIds: ["ab83","ab84","ab85","ab86","ab87"]
-      }
-    ]
-  },
-  {
-    name: "前传相关",
-    factions: [
-      {
-        name: "十七前传",
-        abIds: ["ab88","ab89","ab90"]
-      },
-      {
-        name: "正义前传",
-        abIds: ["ab91","ab92","ab93","ab94","ab95","ab96","ab97","ab98","ab99"]
-      }
-    ]
-  }
-];
-''')
+# ---- #30: move 海拉克利斯's 魔导之王 + 乐土 to the very bottom ----
+# they already live in 前传相关/正义前传; ensure they are the LAST entries there.
+hercules = {}
+for a in abilities:
+    n = a['name'].strip()
+    if n in ('魔导之王', '乐土'):
+        # compute the same transformed name as above
+        nn = n
+        if a['stage'] == '解放阶段' and '阶段' not in nn:
+            nn = nn + '（解放阶段）'
+        hid = entry_ids.get(nn)
+        if hid:
+            hercules.setdefault('all', []).append(hid)
+
+# remove from current positions, then append to last faction
+last_tl_fac = ('前传相关', '正义前传')
+ids_by[last_tl_fac] = [i for i in ids_by.get(last_tl_fac, []) if i not in set(hercules.get('all', []))]
+ids_by[last_tl_fac] = ids_by[last_tl_fac] + hercules.get('all', [])
+
+# ---- build abilityTimelines ----
+lines.append('')
+lines.append('// Timeline & faction organization')
+lines.append('const abilityTimelines = [')
+for tl in TIMELINE_ORDER:
+    factions = [(f, ids) for (t, f), ids in ids_by.items() if t == tl and ids]
+    if not factions:
+        continue
+    lines.append(f'  {{')
+    lines.append(f'    name: "{esc(tl)}",')
+    lines.append(f'    factions: [')
+    for fac, ids in factions:
+        ids_str = ','.join(f'"{i}"' for i in ids)
+        lines.append(f'      {{ name: "{esc(fac)}", abIds: [{ids_str}] }},')
+    lines.append(f'    ]')
+    lines.append(f'  }},')
+# fallback timeline for anything unmapped (should be empty)
+for fac, ids in sorted(ids_by.items()):
+    if fac[0] not in TIMELINE_ORDER and ids:
+        ids_str = ','.join(f'"{i}"' for i in ids)
+        lines.append(f'  {{ name: "{esc(fac[0])}", factions: [ {{ name: "{esc(fac[1])}", abIds: [{ids_str}] }} ] }},')
+lines.append('];')
 
 with open('../data/ability_archive.js', 'w', encoding='utf-8') as f:
     f.write('\n'.join(lines))
 
-print(f'Generated {count} abilities to data/ability_archive.js')
-
-# Print the first few IDs for reference
-for i in range(min(20, count)):
-    a = abilities[i]
-    print(f'  ab{i}: {a["name"]} - {a["holder"]}')
+print(f'Generated {ability_count} abilities to data/ability_archive.js')
+if unmapped_names:
+    print(f'WARNING: unmapped sections -> {unmapped_names}')

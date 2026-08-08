@@ -26,13 +26,22 @@ rendering_js = '''
 // ===== ABILITY ARCHIVE RENDERING =====
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 const RADAR_LABELS = ['破坏力', '速度', '耐力', '范围', '狂热', '防御'];
+const ZPN_LABELS   = ['侵蚀力', '速度', '耐力', '范围', '理智', '防御'];
 const abilityMap = {};
 abilityData.forEach(a => { abilityMap[a.id] = a; });
 
-function drawRadarChart(stats) {
-  const size = 200, cx = 100, cy = 100, r = 78, levels = 5;
+// Highest numeric value in a CRT string (handles "(-15.8)", "15.4/16.1", "16.7")
+function maxCrt(c) {
+  if (!c) return 0;
+  const nums = (String(c).match(/\\d+(\\.\\d+)?/g) || []).map(Number);
+  return nums.length ? Math.max.apply(null, nums) : 0;
+}
+
+function drawRadarChart(stats, isZpn) {
+  const size = 200, cx = 100, cy = 100, r = 78, levels = 4; // A sits on the outer edge; EX bursts beyond it
+  const labels = isZpn ? ZPN_LABELS : RADAR_LABELS;
   let svg = '<svg viewBox="0 0 ' + size + ' ' + size + '">';
-  // Background grid
+  // Background grid (4 rings; A = outermost ring)
   for (let l = 1; l <= levels; l++) {
     let pts = [];
     for (let i = 0; i < 6; i++) {
@@ -47,21 +56,23 @@ function drawRadarChart(stats) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
     svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
   }
-  // Data polygon
+  // Data polygon: A(4) -> edge (r), EX(5) -> 1.25r (bursts out past the rim)
+  const dataCls = isZpn ? 'radar-data-zpn' : 'radar-data';
+  const dotCls  = isZpn ? 'radar-dot-zpn' : 'radar-dot';
   let dpts = [];
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    const v = Math.max(0.3, stats[i] || 0);
+    const v = Math.max(0.25, stats[i] || 0);
     const d = (r / levels) * v;
     dpts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
   }
-  svg += '<polygon points="' + dpts.join(' ') + '" class="radar-data"/>';
+  svg += '<polygon points="' + dpts.join(' ') + '" class="' + dataCls + '"/>';
   // Dots
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    const v = Math.max(0.3, stats[i] || 0);
+    const v = Math.max(0.25, stats[i] || 0);
     const d = (r / levels) * v;
-    svg += '<circle cx="' + (cx + d * Math.cos(a)).toFixed(1) + '" cy="' + (cy + d * Math.sin(a)).toFixed(1) + '" r="3" class="radar-dot"/>';
+    svg += '<circle cx="' + (cx + d * Math.cos(a)).toFixed(1) + '" cy="' + (cy + d * Math.sin(a)).toFixed(1) + '" r="3" class="' + dotCls + '"/>';
   }
   // Labels
   for (let i = 0; i < 6; i++) {
@@ -69,7 +80,7 @@ function drawRadarChart(stats) {
     const lr = r + 16;
     const lx = cx + lr * Math.cos(a);
     const ly = cy + lr * Math.sin(a) + 4;
-    svg += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label">' + RADAR_LABELS[i] + '</text>';
+    svg += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label">' + labels[i] + '</text>';
   }
   svg += '</svg>';
   return svg;
@@ -102,19 +113,31 @@ function renderAbilityArchive() {
       f.abIds.forEach(id => {
         const a = abilityMap[id];
         if (!a) return;
-        const statStr = a.s.map((v, i) => statLabels[i] + '-' + (grades[v] || '?')).join('  ');
-        let html = '<div class="ability-card" id="ab-' + a.id + '">';
-        // Card top: name + meta bar
+        const isZpn = !!a.zn;                     // 镇压院区 (suppression-zone) ability
+        const siege = !isZpn && maxCrt(a.c) > 14; // 攻城级 (siege-tier) -> red frame
+        const labels = isZpn ? ZPN_LABELS : statLabels;
+        const statStr = a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
+        let cls = 'ability-card';
+        if (isZpn) cls += ' ability-card-zpn';
+        if (siege) cls += ' ability-card-siege';
+        let html = '<div class="' + cls + '" id="ab-' + a.id + '">';
+        // Card top: name + badges + meta bar
         html += '<div class="ability-card-top">';
-        html += '<div class="ability-name">「' + escHtml(a.n) + '」</div>';
+        html += '<div class="ability-name">「' + escHtml(a.n) + '」';
+        if (a.st) html += '<span class="release-badge">解放阶段</span>';
+        if (isZpn) html += '<span class="zpn-badge">镇压院区</span>';
+        if (siege) html += '<span class="siege-badge">攻城级</span>';
+        html += '</div>';
         html += '<div class="ability-meta-bar">';
         html += '<span>👤 ' + escHtml(a.h) + '</span>';
         if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
         html += '<span class="ability-stats">' + statStr + '</span>';
         html += '</div></div>';
+        // 镇压院区 note at the start of the card body
+        if (a.zn) html += '<div class="zpn-note">' + escHtml(a.zn) + '</div>';
         // Card body: radar chart (left) + content (right)
         html += '<div class="ability-card-body">';
-        html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s) + '</div>';
+        html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
         html += '<div class="ability-content">';
         if (a.d) {
           const paras = a.d.split('\\n').filter(p => p.trim());
@@ -129,6 +152,10 @@ function renderAbilityArchive() {
             quoteInner = '<span class="spoiler-mark">（评价可能涉及剧透，点击查看）</span><span class="spoiler-content">' + quoteInner + '</span>';
           }
           html += '<div class="ability-quote">' + quoteInner + '</div>';
+        }
+        if (a.qb) {
+          const qbLines = a.qb.split('\\n').filter(p => p.trim());
+          html += '<div class="ability-admin"><span class="ability-admin-tag">⚠ 管理员</span>' + qbLines.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
         }
         if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
         html += '</div></div></div>';

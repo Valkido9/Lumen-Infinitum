@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.5">
+<title>永恒流光 - 可视化故事网站</title>
+<style>
+/* ===== Reset & Variables ===== */
+:root {
+  /* Light theme (default) */
+  --bg: #ffffff;
+  --bg-card: #f6f8fa;
+  --bg-card-hover: #eef1f5;
+  --bg-elevated: #fafbfc;
+  --text: #1f2328;
+  --text-dim: #656d76;
+  --text-muted: #8b949e;
+  --accent: #0969da;
+  --accent-soft: rgba(9,105,218,0.08);
+  --accent2: #cf222e;
+  --accent2-soft: rgba(207,34,46,0.08);
+  --accent3: #9a6700;
+  --gold: #9a6700;
+  --gold-soft: rgba(154,103,0,0.08);
+  --border: #d0d7de;
+  --border-light: #d8dee4;
+  --header-bg: rgba(255,255,255,0.88);
+  --header-border: #d0d7de;
+  --shadow-sm: 0 1px 3px rgba(31,35,40,0.06);
+  --shadow-md: 0 4px 16px rgba(31,35,40,0.1);
+  --shadow-lg: 0 8px 32px rgba(31,35,40,0.14);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --prologue: #0969da;
+  --wokgard: #cf222e;
+  --modal-overlay: rgba(140,140,140,0.5);
+  --scrollbar-thumb: #c1c7cd;
+  --scrollbar-thumb-hover: #9ba1a8;
+  --story-quote-bg: rgba(154,103,0,0.04);
+  --story-quote-border: rgba(154,103,0,0.35);
+  --story-quote-text: #57606a;
+  --sidebar-bg: #f6f8fa;
+}
+:root.dark {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-card-hover: #1c2333;
+  --bg-elevated: #1a212c;
+  --text: #c9d1d9;
+  --text-dim: #8b949e;
+  --text-muted: #6e7681;
+  --accent: #58a6ff;
+  --accent-soft: rgba(88,166,255,0.12);
+  --accent2: #f78166;
+  --accent2-soft: rgba(247,129,102,0.12);
+  --accent3: #d2991d;
+  --gold: #d4a843;
+  --gold-soft: rgba(212,168,67,0.1);
+  --border: #21262d;
+  --border-light: #30363d;
+  --header-bg: rgba(13,17,23,0.88);
+  --header-border: #21262d;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.24);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.32);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+  --prologue: #58a6ff;
+  --wokgard: #f78166;
+  --modal-overlay: rgba(0,0,0,0.75);
+  --scrollbar-thumb: #30363d;
+  --scrollbar-thumb-hover: #6e7681;
+  --story-quote-bg: rgba(212,168,67,0.04);
+  --story-quote-border: rgba(212,168,67,0.4);
+  --story-quote-text: #b8c0cc;
+  --sidebar-bg: #161b22;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+/* ===== Header ===== */
+.header {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  padding: 10px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.header .logo {
+  font-size: 1.3em; font-weight: 700; color: var(--gold);
+  letter-spacing: 6px; user-select: none;
+}
+.header .logo span {
+  color: var(--text-dim); font-size: 0.6em; font-weight: 400;
+  letter-spacing: 2px; margin-left: 10px;
+}
+.header nav { display: flex; gap: 4px; }
+.header nav a {
+  color: var(--text-dim); text-decoration: none;
+  font-size: 0.875em; padding: 6px 14px; border-radius: var(--radius-sm);
+  transition: all 0.2s ease; font-weight: 500;
+}
+.header nav a:hover { color: var(--text); background: var(--accent-soft); }
+.header nav a.active { color: var(--accent); background: var(--accent-soft); }
+
+/* ===== Layout ===== */
+.layout { display: flex; margin-top: 54px; min-height: calc(100vh - 54px); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 260px; min-width: 260px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  position: sticky; top: 54px;
+  height: calc(100vh - 54px);
+  overflow-y: auto;
+}
+.sidebar h3 {
+  color: var(--text-muted); font-size: 0.7em; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 2px;
+  padding: 14px 18px 6px;
+}
+.sidebar .chap-link {
+  display: block; padding: 9px 18px; margin: 1px 8px;
+  color: var(--text-dim); text-decoration: none;
+  font-size: 0.875em; border-radius: var(--radius-sm);
+  transition: all 0.15s ease; font-weight: 450;
+}
+.sidebar .chap-link:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.sidebar .chap-link.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.sidebar .badge {
+  display: inline-block; font-size: 0.68em; padding: 2px 8px;
+  border-radius: 10px; margin-left: 6px; font-weight: 500;
+}
+.sidebar .badge.prologue { background: rgba(88,166,255,0.15); color: var(--prologue); }
+.sidebar .badge.wokgard { background: rgba(247,129,102,0.15); color: var(--wokgard); }
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1; padding: 36px 48px;
+  max-width: 960px;
+}
+
+/* ===== Hero ===== */
+.hero {
+  text-align: center; padding: 56px 20px 44px;
+  position: relative;
+}
+.hero h1 {
+  font-size: 3.2em; font-weight: 800; letter-spacing: 14px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--accent) 50%, var(--accent2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+.hero .tagline {
+  color: var(--text-dim); font-size: 1.05em; letter-spacing: 4px; font-weight: 400;
+}
+.hero .divider {
+  width: 100px; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  margin: 22px auto; border-radius: 2px; opacity: 0.7;
+}
+
+/* ===== Hero Intro Text ===== */
+.intro-text {
+  max-width: 680px; margin: 0 auto; text-align: left;
+  color: var(--text-dim); font-size: 0.925em; line-height: 2;
+}
+.intro-text p { margin: 14px 0; text-indent: 2em; }
+.intro-text p:first-child { margin-top: 0; }
+.intro-text p:last-child { margin-bottom: 0; }
+
+/* ===== Section Titles ===== */
+.section-title {
+  font-size: 1.5em; font-weight: 700; margin: 48px 0 20px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; letter-spacing: 1px;
+}
+.section-title .icon { font-size: 1.2em; }
+
+/* ===== Blockquote for text excerpts ===== */
+.story-quote {
+  margin: 28px 0; padding: 22px 26px;
+  background: var(--story-quote-bg);
+  border-left: 3px solid var(--story-quote-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.925em; color: var(--story-quote-text); line-height: 1.85;
+}
+.story-quote .quote-source {
+  font-size: 0.8em; color: var(--text-dim); margin-top: 12px;
+  text-align: right; font-style: italic;
+}
+
+/* ===== Chapter paragraph styling ===== */
+.chapter-body p {
+  margin: 14px 0; text-indent: 2em; line-height: 1.85;
+  font-size: 0.95em;
+}
+.chapter-body p.no-indent { text-indent: 0; }
+
+/* ===== Chapter Cards ===== */
+.chapter-grid { display: grid; gap: 16px; margin: 20px 0; }
+.chapter-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 22px 24px;
+  transition: all 0.25s ease; cursor: pointer; position: relative;
+  overflow: hidden;
+}
+.chapter-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.chapter-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 3px 0 0 3px;
+}
+.chapter-card.prologue::before { background: var(--prologue); }
+.chapter-card.wokgard::before { background: var(--wokgard); }
+.chapter-card .card-num {
+  font-size: 0.72em; color: var(--text-muted); letter-spacing: 1px;
+  margin-bottom: 6px; font-weight: 500;
+}
+.chapter-card .card-title {
+  font-size: 1.15em; font-weight: 700; margin-bottom: 8px; color: var(--text);
+}
+.chapter-card .card-desc { color: var(--text-dim); font-size: 0.875em; line-height: 1.6; }
+.chapter-card .card-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.chapter-card .card-tag {
+  font-size: 0.7em; padding: 3px 10px;
+  border-radius: 12px; background: var(--accent-soft);
+  color: var(--accent); font-weight: 500;
+}
+.chapter-card .card-tag.wokgard { background: var(--accent2-soft); color: var(--accent2); }
+
+/* ===== Character / Term Links ===== */
+.char-link {
+  color: var(--accent); cursor: pointer;
+  border-bottom: 1px dashed rgba(88,166,255,0.5);
+  transition: all 0.2s; font-weight: 500;
+}
+.char-link:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
+.term-link {
+  color: var(--gold); cursor: pointer;
+  border-bottom: 1px dashed rgba(212,168,67,0.5);
+  transition: all 0.2s;
+}
+.term-link:hover { color: var(--accent3); border-bottom-color: var(--accent3); }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: var(--modal-overlay); z-index: 2000;
+  justify-content: center; align-items: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); max-width: 680px; width: 92%;
+  max-height: 82vh; overflow-y: auto;
+  padding: 30px; position: relative;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.25s ease;
+}
+@keyframes modalIn { from { opacity:0; transform: translateY(16px) scale(0.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+.modal .close-btn {
+  position: sticky; top: 0; float: right;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 1.4em; cursor: pointer; z-index: 10;
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: all 0.15s ease;
+}
+.modal .close-btn:hover { background: var(--accent-soft); color: var(--text); }
+.modal .char-header { display: flex; gap: 16px; align-items: center; margin-bottom: 22px; }
+.modal .char-avatar {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6em; font-weight: 700;
+  border: 2px solid var(--border-light); flex-shrink: 0;
+}
+.modal .char-avatar.female { background: var(--accent2-soft); color: var(--accent2); border-color: rgba(247,129,102,0.25); }
+.modal .char-avatar.male { background: var(--accent-soft); color: var(--accent); border-color: rgba(88,166,255,0.25); }
+.modal .char-avatar.other { background: var(--gold-soft); color: var(--gold); border-color: rgba(212,168,67,0.25); }
+.modal .char-name { font-size: 1.3em; font-weight: 700; }
+.modal .char-title { color: var(--text-dim); font-size: 0.825em; margin-top: 2px; }
+.modal .info-block { margin: 16px 0; }
+.modal .info-label {
+  font-size: 0.7em; color: var(--text-muted); letter-spacing: 2px;
+  margin-bottom: 6px; text-transform: uppercase; font-weight: 600;
+}
+.modal .info-value { font-size: 0.925em; line-height: 1.7; }
+.modal .crt-badge {
+  display: inline-block; padding: 3px 12px;
+  border-radius: 16px; font-size: 0.8em; font-weight: 600;
+  background: var(--gold-soft); color: var(--gold);
+  margin-top: 4px;
+}
+
+/* ===== Timeline ===== */
+.timeline { position: relative; padding-left: 28px; margin: 20px 0; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(180deg, var(--prologue), var(--wokgard));
+  border-radius: 1px;
+}
+.timeline-item { position: relative; margin-bottom: 22px; }
+.timeline-item::before {
+  content: ''; position: absolute; left: -24px; top: 7px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--accent); background: var(--bg);
+}
+.timeline-item.wokgard::before { border-color: var(--wokgard); }
+.timeline-item .tl-title { font-weight: 600; font-size: 0.95em; }
+.timeline-item .tl-desc { color: var(--text-dim); font-size: 0.825em; margin-top: 4px; }
+
+/* ===== Relationship / Term Cards ===== */
+.relation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 20px 0; }
+.relation-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  transition: all 0.2s ease;
+}
+.relation-card:hover {
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+.relation-card .rel-chars { font-weight: 600; margin-bottom: 4px; }
+.relation-card .rel-type { font-size: 0.78em; color: var(--gold); margin-bottom: 6px; font-weight: 500; }
+.relation-card .rel-desc { font-size: 0.85em; color: var(--text-dim); line-height: 1.6; }
+
+/* ===== Search ===== */
+.search-bar { position: relative; margin: 20px 0; }
+.search-bar input {
+  width: 100%; padding: 11px 18px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text); font-size: 0.925em;
+  outline: none; transition: all 0.2s ease; font-family: inherit;
+}
+.search-bar input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search-bar input::placeholder { color: var(--text-muted); }
+
+/* ===== Tabs ===== */
+.tabs { display: flex; gap: 0; margin: 20px 0; border-bottom: 1px solid var(--border); }
+.tab-btn {
+  padding: 10px 22px; background: none; border: none;
+  color: var(--text-dim); cursor: pointer; font-size: 0.9em; font-weight: 500;
+  border-bottom: 2px solid transparent; transition: all 0.15s ease;
+  font-family: inherit;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:hover { color: var(--text); }
+
+/* ===== Table in world tabs ===== */
+.ability-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em; }
+.ability-table th {
+  padding: 10px 14px; text-align: left; font-weight: 600;
+  color: var(--text-muted); font-size: 0.8em; letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+}
+.ability-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ability-table tr:hover td { background: var(--accent-soft); }
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center; padding: 28px 20px;
+  color: var(--text-muted); font-size: 0.8em; line-height: 1.8;
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%; min-width: auto; height: auto;
+    position: static; border-right: none; border-bottom: 1px solid var(--border);
+    display: flex; overflow-x: auto; padding: 8px 6px;
+    white-space: nowrap;
+  }
+  .sidebar h3 { display: none; }
+  .sidebar .chap-link {
+    white-space: nowrap; margin: 0 2px; padding: 7px 12px;
+    font-size: 0.8em; border-radius: var(--radius);
+  }
+  .main { padding: 20px 16px; max-width: 100%; }
+  .hero { padding: 36px 12px 28px; }
+  .hero h1 { font-size: 2em; letter-spacing: 8px; }
+  .hero .tagline { font-size: 0.9em; letter-spacing: 2px; }
+  .modal { max-width: 96%; padding: 22px 18px; }
+  .relation-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Theme Toggle ===== */
+.theme-toggle {
+  position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+  z-index: 1100;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 1.2em;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-50%) scale(1.08);
+}
+.theme-toggle:active { transform: translateY(-50%) scale(0.95); }
+@media (max-width: 768px) {
+  .theme-toggle { right: 8px; width: 38px; height: 38px; font-size: 1em; }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()">☀️</button>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo">永恒流光<span>LUMEN INFINITUM</span></div>
+  <nav>
+    <a href="#story" class="active" onclick="scrollToSection('story')">故事主线</a>
+    <a href="#characters" onclick="scrollToSection('characters')">角色档案</a>
+    <a href="#world" onclick="scrollToSection('world')">世界设定</a>
+  </nav>
+</header>
+
+<!-- Layout -->
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <h3>📖 序幕 · 异世的呼唤</h3>
+    <a href="#pro-ch1" class="chap-link active">第一章 礼奈的日常与云略降临</a>
+    <a href="#pro-ch2" class="chap-link">第二至四章 基地日常与能力展现</a>
+    <a href="#pro-ch3" class="chap-link">第五至七章 手杖之谜·粥娘实验室</a>
+    <a href="#pro-ch4" class="chap-link">第八至九章 正义·前司长的哀伤</a>
+    <a href="#pro-ch5" class="chap-link">第十至十一章 可乐之夜·马萨卡暴走</a>
+    <a href="#pro-ch6" class="chap-link">第十二章 沃克加德任务·新的征途</a>
+    <a href="#pro-ch7" class="chap-link">第十三至十六章 基地遇袭·燃烧的逃亡</a>
+    <a href="#pro-ep" class="chap-link">序幕终章 附魔师与妖狐的棋局</a>
+
+    <h3>⚓ 第一章 · 星兆之海</h3>
+    <a href="#wok-ch1" class="chap-link">开篇 迷雾商船·海盗登场</a>
+    <a href="#wok-ch2" class="chap-link">灵魂投影·新的身份</a>
+    <a href="#wok-ch3" class="chap-link">富家千金·通缉犯罗伊</a>
+    <a href="#wok-ch4" class="chap-link">褐浪酒吧·意外频发</a>
+    <a href="#wok-ch5" class="chap-link">船都之夜·优碧卡的悲剧</a>
+    <a href="#wok-ch6" class="chap-link">云略vs优碧卡·意外的羁绊</a>
+    <a href="#wok-ch7" class="chap-link">圆翼党地下基地·革命策源地</a>
+    <a href="#wok-ch8" class="chap-link">亡灵兔与六八·双面博弈</a>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main-content">
+
+    <!-- Hero -->
+    <section class="hero" id="story">
+      <h1>永 恒 流 光</h1>
+      <p class="tagline">—— 本我的史诗从这里开始。永恒的大幕已然拉开。</p>
+      <div class="divider"></div>
+
+      <div class="intro-text">
+        <p>十一年前，一座古老钟楼的废墟在卢纳森特联盟的国境之内被人发现。勘探工作很快取得进展，而其中被发掘出的原型机械则被确认为在几十年前的帝国时期便已夭折的科研产物——"时光机器"。传闻之中能够沟通平行世界、扭曲时间法则的终极武器竟真实存在，一时间震撼了整个世界。</p>
+        <p>高瞻远瞩之人忧心忡忡，图谋已久之人伺机而动。来自全球的科考组织共赴此地，各大势力的明争暗斗拉开角逐——最终，神秘的时光机器化作了潘多拉的魔盒，十一年前的故事以它带来的、一场席卷世界的惊世浩劫作为开端，又以一位英雄的献身和短暂的和平作为结束。</p>
+        <p>十一年光阴弹指间。时光机已然不是新奇的技术。科技的爆发、平行世界间的交流、还有数不尽的"时光机能力使"的诞生……人们在剧变之中寻找着生活的方向。作为后时光机时代的新兴势力，"卢纳森特基地"抓住红利，迅速崛起，把其势力范围扩张到了其他的平行世界——一个属于"基地"的时代，似乎即将到来。</p>
+        <p>故事以在刹那之间降临到基地的女孩<span class="char-link" onclick="openChar('yunlue')">云略</span>为主视角，通过她的所见所闻为读者展现这个横跨多个世界观与无穷平行宇宙的宏大故事。从千年荣光的余晖再到赛博朋克的霓虹，从航海时代的纷争再到剑与魔法的冒险——时光机的门扉之后，便是无穷无尽的可能。</p>
+      </div>
+    </section>
+
+    <!-- ===== PROLOGUE SECTION ===== -->
+    <h2 class="section-title" id="pro-ch1"><span class="icon">📖</span>序幕 · 异世的呼唤</h2>
+    <div class="chapter-body">
+
+    <h3 style="color:var(--prologue); margin:24px 0 12px;">第一章 礼奈的日常与云略的降临</h3>
+
+    <p><span class="char-link" onclick="openChar('linai')">礼奈</span>是卢纳森特基地特别行动部「第二代时之秩序」的队长。她有一个奇特的症状：<span class="term-link" onclick="openTerm('memory')">每天早上醒来都会失去所有的记忆</span>。她在签署保密协议时接受了最高级别的记忆删除，因此每一天都是一张白纸。闹钟响起前五分钟，礼奈准时睁开眼睛，看到胸前用别针挂着的红色字条——上面用黑色记号笔写着"今天休假"，那是她自己的字迹。</p>
+
+    <p>"健忘的人是当不成队长的。"她只记得有人这么挖苦过她，却已忘记了那人是谁。她穿上便服，好好梳了梳自己打卷的头发，"任凭温水在肌肤上流淌，为这种不真实感沉思上一次这样做是在什么时候"。</p>
+
+    <div class="story-quote">
+      黎明的基地看不见太阳，天空在窗棂之外是淡淡的蓝青色。其他部门的嘈杂交谈与交通载具在管道间风驰电掣——礼奈听着这些喧闹的声音从走廊的四面八方传来。越是放开耳朵，她的脚步就越是急遽，刚起床的她在昏昏沉沉中也一并忘记了这么匆忙的理由。
+      <div class="quote-source">——序章·第一章</div>
+    </div>
+
+    <p>在电梯中，礼奈遇到了她的搭档——金发中一撮红色挑染的<span class="char-link" onclick="openChar('masaka')">马萨卡</span>。他闪进电梯，露出一个灿烂的笑容："早上好，<span class="term-link" onclick="openTerm('leader_pun')">礼队</span>。我是马萨卡——很高兴第无数次认识你。"两人从来到基地的第一天起就是最佳拍档，马萨卡来自一个科技相当落后的地方，经常闹出各种笑话，但他结实健壮的身体完全符合一名特工的要求。</p>
+
+    <p>电梯突然失控——齿轮崩裂，轿厢自由落体。在这生死关头，两人展现了令人窒息的默契配合：马萨卡嘶吼<span class="term-link" onclick="openTerm('balance')">「天平」</span>减缓坠落速度；礼奈发动<span class="term-link" onclick="openTerm('twin_sun')">「双生烈阳」</span>闪身半空，接过马萨卡的黑色拳套，以火焰重拳击穿轿厢顶。拳套"小凝"变作小型降落伞缠住礼奈，两人在钢铁碰撞与火花四溅中安稳落地。这次配合没有一句多余的对白——战斗本身就是他们之间最好的交流。</p>
+
+    <p>废墟之中，他们发现了一个满身伤痕的女孩。她穿着格格不入的夏季校服，身旁靠着一根约一米九长的<span class="term-link" onclick="openTerm('staff')">哥特风手杖</span>，末端是钟表表盘，时针分针重叠处齿轮发光，胸前还挂着一块怀表。手杖支起的狭小空间在电梯坠落中救了她的命。这个女孩，就是<span class="char-link" onclick="openChar('yunlue')">云略</span>——来自"其他世界"的<span class="term-link" onclick="openTerm('abnormal_traveler')">异常穿越者</span>。</p>
+
+    <!-- Ch2-4 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch2">第二至四章 基地日常与能力展现</h3>
+
+    <p>云略在日保院大厅中苏醒，发现自己来到了一个完全陌生的世界。这里的语言她一个字也听不懂。直到<span class="char-link" onclick="openChar('kenuo')">克诺</span>——第二代时之秩序的支援位——给她安装了一枚<span class="term-link" onclick="openTerm('ear_translator')">耳译装置</span>，周围嘈杂的声音才终于变成她能理解的语言。当云略在纸上写下"奇变偶不变，符号看象限"时，克诺递给她一本《卢纳森特时间线保全组织概况 长川语本》。通过这本手册，云略第一次了解了这个世界的底层逻辑：<span class="term-link" onclick="openTerm('timeline')">时间线空间</span>、<span class="term-link" onclick="openTerm('command_force')">指令之力</span>、<span class="term-link" onclick="openTerm('ability_user')">能力使</span>与时光机能力。而最令她震撼的发现是——她的穿越并非偶然。<span class="term-link" onclick="openTerm('time_crack')">时间裂缝</span>正在不断扩大，她的出现就是裂缝存在的最直接证据。</p>
+
+    <p>云略没有超能力。在这个遍地能力使的世界里，她只是一个普通高中生——她的武器不是指令之力，而是三年高中攒下来的生存直觉。与此同时，礼奈和马萨卡在超市采购麦丽素和桃汁，遇到了曾在桥洞底下当过流浪歌手的预备特工"酒吧小子"。短暂的假日片刻后，基地的紧急通知打破了宁静：<span style="color:var(--accent2); font-weight:bold;">所有特别行动部，明早六点中央核心集合。</span></p>
+
+    <!-- Ch5-7 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch3">第五至七章 手杖之谜 · 粥娘实验室</h3>
+
+    <p>云略背后的那根手杖成了第二代时之秩序的头号难题。克诺动用链锯，马萨卡使出浑身蛮力——甚至发动了<span class="term-link" onclick="openTerm('balance')">「天平」</span>操控时间流速——手杖只转动了极其微小的角度。全力一拳的余波把整个房间搅得人仰马翻。<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>，队伍里极度理性、从不信任指令之力的工程师，通过精密实验推算出了手杖的CRT抗性数据，但依然没能找到取下它的方法。云略只能双手撑着这根金属杆，像撑着一把永远合不上的伞。</p>
+
+    <p>在<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>的建议下，礼奈带着云略前往圣标联合实验组，见到了<span class="char-link" onclick="openChar('zhouniang')">粥娘</span>——一位戴着兔耳帽的活泼科学家（能力「狂乱的鸡尾酒」，CRT-8.4）。在粥娘的实验室中，礼奈喝下了一种特殊的显影液——它让她观看了一段被<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>删除的记忆。这段仅存三十秒的记忆，揭示了礼奈的导师：代号<span class="char-link" onclick="openChar('wuming')">「无名」</span>（又名"BBQ"），十一年前以一己之力终结了惊天浩劫的传奇能力使。在圆形特训室中，无名戴着棒球帽、披着漆黑风衣，旋转短剑以残影般的速度砍向礼奈。礼奈瞬移至其身后，高温刀刃划破无名后领——但无名以无法捕捉的速度转身，顺势冲拳将她击飞。</p>
+
+    <div class="story-quote">
+      "不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"
+      <div class="quote-source">——无名（BBQ），序章·第七章</div>
+    </div>
+
+    <p>粥娘看到这段记忆后大惊失色："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"</p>
+
+    <!-- Ch8-9 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch4">第八至九章 情报司前司长——正义</h3>
+
+    <p>在圣标联合，云略和礼奈遇到了<span class="char-link" onclick="openChar('zhengyi')">正义（贾斯汀）</span>——刚刚被当众革职的情报司前司长。这位蓝发男子正用实验室器材调配碳酸氢钠溶液泡枸杞，给自己安排精确到秒的"悲伤时间"。他的冷漠几乎令人不适："道歉是解决不了任何问题的。"但在那副麻木不仁的外表下，隐藏着极其强大的实力：<span class="term-link" onclick="openTerm('space_fault')">「空间断层」</span>（CRT-11.5，高危级），可在默念坐标后瞬间交换任意两个两立方米的空间——理论上可以直接削除空间致人死地，但他从不这样使用。</p>
+
+    <p>在正义的实验室中，还有<span class="char-link" onclick="openChar('lannier')">兰尼尔</span>——一位患有奇特<span class="term-link" onclick="openTerm('speech_radiation')">"言语辐射病"</span>的少年，当他开口说话时，周围的人都会感到强烈的压迫感与慌乱。</p>
+
+    <!-- Ch10-11 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch5">第十至十一章 可乐之夜 · 马萨卡的暴走</h3>
+
+    <p>马萨卡兴冲冲地带回了沃克加德的新奇饮料——<span class="term-link" onclick="openTerm('cola')">可乐</span>，在他口中变成了"可笑"。云略靠着"上课憋笑经验"试图忍住，最终"卡在沙发上不管不顾地笑出了声来"。三人干杯共饮，云略评价这饮料"喝起来像是可口可乐和百事可乐的一比一混合"。这是序幕中难得的一段温馨时光。</p>
+
+    <p>但温馨未能长久。马萨卡在书房冰箱中发现了<span class="term-link" onclick="openTerm('memory_drug')">记忆分离药剂</span>——那是莱克丝为学习苛志室技术而存放的。药剂诱发了他签署保密协议前被压抑的黑暗记忆：他以撕裂声带的嗓音嘶吼着，将云略抛上半空，右拳攀上黑色拳套，雷电与火光瞬间照亮房间。</p>
+
+    <div class="story-quote">
+      "……看来你这家伙就是典狱长了！告诉我你把他关到了什么地方！"
+      <div class="quote-source">——马萨卡（暴走状态），序章·第十一章</div>
+    </div>
+
+    <p>原来马萨卡在加入基地前曾在某座监狱中服刑，承受过来自"典狱长"的极大压迫。开朗阳光的外表下，是一段被封印的黑暗过去——<span class="term-link" onclick="openTerm('prison_trauma')">监狱创伤</span>。暴走状态下的他CRT飙升至12.4，变为不分敌我的战斗机器。礼奈瞬移而入，勉力架住第三下重击。她佯装正面劈砍，在马萨卡扑空后瞬移至其身后，干脆利落地击晕了自己的搭档。每天早上忘记一切，却从未忘记如何保护自己的队员。</p>
+
+    <!-- Ch12 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch6">第十二章 沃克加德任务 · 新的征途</h3>
+
+    <p>中央核心集结。在最高领导人<span class="term-link" onclick="openTerm('lainuo')">莱诺</span>的广播声中，第二代时之秩序接到了正式任务：前往<span class="term-link" onclick="openTerm('wokgard')">沃克加德时间线</span>——一颗海洋覆盖率超过95%的星球。目标：找到人称"海盗之王"的<span class="char-link" onclick="openChar('sipalisen')">波普里卡·斯帕里森</span>，获取他手中的<span class="term-link" onclick="openTerm('alchemy_array')">大炼金阵</span>碎片。这个古代文明的终极遗物可以将一种东西转化为等价的另一种东西——炼金术的最高成就。协同联络者是科研司新任司长<span class="char-link" onclick="openChar('kangmingde')">康明德</span>，一位年仅二十七岁的物理学教授。</p>
+
+    <p>小队将采用<span class="term-link" onclick="openTerm('soul_projection')">「灵魂投影式折跃」</span>进入沃克加德——穿梭者取代目标时间线中与自己灵魂匹配的本地人的意识。礼奈→富家千金<strong>帕瓦蒂·罗伊</strong>；马萨卡→赏金猎人<strong>斐迪南·马斯克</strong>；克诺→平民<strong>本杰明·克里夫塔</strong>；亡灵兔→学士<strong>特伦特·提斯亚威尔</strong>。按照计划，云略不在传送名单中——她应该留在基地等待他们归来。但计划从来赶不上变化。</p>
+
+    <!-- Ch13-16 -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch7">第十三至十六章 基地遇袭 · 燃烧的逃亡</h3>
+
+    <p>就在传送即将启动之际，<span style="color:var(--accent2); font-weight:bold;">卢纳森特基地遭遇了前所未有的大规模袭击。</span>入侵者如潮水般涌入，爆炸声此起彼伏，整个基地陷入火海。云略被爆炸声惊醒，在浓烟中与莱克丝一起逃命。走廊中遇到兰尼尔后，她独自冲向圣标联合寻找正义。</p>
+
+    <p>正义驾驶摩托车载着云略穿越燃烧的基地。在情报司，他们遭遇了蓝色狼耳的神秘能力使<span class="term-link" onclick="openTerm('twilight_breaker')">「暮蓝隙行」</span>——一个身份不明的强敌，黑炎能够侵蚀空间本身，将触及的一切瞬间湮灭。正义不断以「空间断层」置换墙壁防御，在断裂的桥梁上凭空置换桥面完成惊险跳跃——每一个操作都如计算机般精确。当他在火焰中说"你在着急什么？这不过只是一场大火而已"时，摩托车正在翻越一道燃烧的断口。最终在基地最强反能力使武器<span class="term-link" onclick="openTerm('judgement_day')">「曼菲斯菲的审判日」</span>的金色铆钉掩护下，两人才得以脱身。</p>
+
+    <p>然而在最后关头，正义做出了一个决定性的举动。<span style="color:var(--accent2); font-weight:bold;">他用「空间断层」将云略直接置换进了正在传送的时光机。</span>云略在尖叫中拍打着舱门玻璃："我不是你们要传送走的人！"——但传送已经不可逆地启动了。一声巨响，她与第二代时之秩序一起被送往了沃克加德。</p>
+
+    <!-- Epilogue -->
+    <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ep">序幕终章 附魔师与妖狐的棋局</h3>
+
+    <p>故事在最后一刻拉远镜头。萧索秋景之中，一方树桩为棋盘。<span class="char-link" onclick="openChar('daojiesi')">附魔师道杰斯</span>（胸前玻璃瓶中燃烧着青蓝火焰）与<span class="char-link" onclick="openChar('hongying')">妖狐鸿荧</span>（白发青瞳）正在对弈。他们讨论着修瓦尔扎的预言："时间将不再被称为时间。"</p>
+
+    <div class="story-quote">
+      "十一年前我的牺牲为他们带去了和平——十一年后这场灾难也必将把我带回到你的身边。"
+      <div class="quote-source">——道杰斯，序章·终章</div>
+    </div>
+
+    <p>白日耀光笼罩一切，空间无声消去。仅剩鸿荧立在棋盘旁，那双幽迷的眼眸望向远方。</p>
+
+    <p style="text-align:center; color:var(--gold); font-weight:bold; margin:30px 0;">——序幕「异世的呼唤」完结——</p>
+
+    <!-- ===== WOKGARD SECTION ===== -->
+    <h2 class="section-title" id="wok-ch1"><span class="icon">⚓</span>第一章 · 星兆之海 —— 沃克加德卷</h2>
+    <div class="chapter-body">
+
+    <p>沃克加德，一颗被汪洋覆盖的星球。这里处于大航海时代，教皇国的统治如铁幕般笼罩着列岛，海盗团与赏金猎人割据四方。几千年前覆灭的古文明留下了强力遗物——<span class="term-link" onclick="openTerm('alchemy_array')">大炼金阵</span>，能将一种东西转化为等价的另一种东西，炼金术的最高成就。这，就是小队此行的世界。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;">开篇 迷雾商船 · 海盗登场</h3>
+
+    <p>沃克加德卷以一场诡异的航行拉开序幕。商船在迷雾中挣扎了整整八天。船员一个接一个离奇死亡——身体"像是被什么东西凭空切成了两半"。吊灯在没有一丝风的船舱里狂舞不止。船长奥德里奇的精神已到崩溃边缘，他拔枪对准了大副。而大副脸上挂着神经质的微笑：</p>
+
+    <div class="story-quote">
+      "海上没有风。"<br>
+      "几天前就是这样了。海上没有风。"<br>
+      "……没有风，我的灯居然还能晃成这个鬼样。"
+      <div class="quote-source">——大副与船长奥德里奇，第一章·开篇</div>
+    </div>
+
+    <p>一艘黑帆巨船破雾而出。身穿金属潜水服的巨人以一条铁臂将千斤重的船锚掷入船头——不是炮弹，是船锚。一把冰冷的枪抵上了奥德里奇的后脑。年轻而动听的声音在他的颅骨中响起："我名为<span class="char-link" onclick="openChar('meinade')">梅纳德·庞奇</span>，教皇城海域海盗的头领……欢迎来到沃克加德。"</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch2">灵魂投影 · 新的身份</h3>
+
+    <p><span class="char-link" onclick="openChar('masaka')">马萨卡</span>在监狱中醒来——他的对应身份"斐迪南·马斯克"是个被关押的赏金猎人。一个小男孩偷面包被五个壮汉追打，马萨卡出手相救——然后一脚把小孩踹飞，只因为"谁都没法打扰我享受饭后水果"。这就是马萨卡：正义感和任性不可分割，善良与暴力共存于一身。</p>
+
+    <p>而最令人意想不到的是——<span style="color:var(--accent2);">云略居然也跟着来了。</span>她没有"对应躯体"，只能以自己的身体出现。她的话沃克加德人完全听不懂，那根手杖让她连衣服都换不了。一个穿着现代校服、撑着一米九哥特手杖的中国女高中生，就这样突兀地出现在满是帆船和燧发枪的大航海世界里。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch3">富家千金 · 通缉犯罗伊</h3>
+
+    <p><span class="char-link" onclick="openChar('linai')">礼奈</span>在教堂医院中醒来，穿着沾满血的白色连衣裙。她的身份是<strong>帕瓦蒂·罗伊</strong>——教皇城通缉的政治犯，反教皇组织<span class="term-link" onclick="openTerm('round_wing')">「圆翼党」</span>核心家族罗伊家的唯一幸存者。在仓库中，她遇到了全身裹在黑衣中的<span class="char-link" onclick="openChar('boundary')">boundary</span>——圆翼党骨干，能力<span class="term-link" onclick="openTerm('lonely_illusion')">「孤尽幻怨」</span>（CRT-10.0）：以自身为中心释放大量烟雾隔绝声音，在无声中接近并击倒敌人。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch4">褐浪酒吧 · 意外频发的集合</h3>
+
+    <p>四条支线交汇于一间名为"褐浪"的破旧酒吧。小队成员陆续聚集——然而<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>用秘密通讯器联络时，屏幕上显示的不是基地频道，而是<span style="color:var(--accent2);">珀利贝尔实业的通话专区</span>。这家跨时空巨型企业要求他在沃克加德提供情报，作为交换，对方承诺派出亲卫队队长<span class="char-link" onclick="openChar('liuba')">「永冻领域」</span>在暗中保护。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch5">船都之夜 · 优碧卡与六八</h3>
+
+    <p>船都的夜晚，三个黑帮分子拦住了一个体态娇小、披着破布长袍的少女。当他们扯下她的衣服时——暴露出来的不是血肉，而是<span style="color:var(--accent2);">断裂的机械臂、外露的电线和不断滴落的机油</span>。她的双眼瞬间变红，右臂展开高速旋转电锯，在眨眼之间将三人斩杀。<span class="char-link" onclick="openChar('youbika')">优碧卡（UPK-002）</span>——<span class="char-link" onclick="openChar('kangmingde')">康明德博士</span>制造的炼金仿生机器人，为了回到"父亲"身边，已在不同时间线间穿梭了三十二次，依靠捕杀能力使来维持能量。电量仅剩约二十天。</p>
+
+    <p>随即登场的，是迄今为止最强的能力使：<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。金发蓝眼、容貌精致如女性（以"他"称呼），身着湖蓝色长袍与青蓝百褶裙——攻城级（CRT 14-18），足以单枪匹马夷平一座城池。他从背上拔出长剑，剑刃在空气中凝结出层层冰霜。</p>
+
+    <div class="story-quote">
+      "机器小姐……我奉劝你停止反抗，立刻投降。我不希望，在你身上展现出连我自己都无法控制的强大力量。"
+      <div class="quote-source">——「永冻领域」六八，第一章</div>
+    </div>
+
+    <p>优碧卡计算出存活率仅为<span style="color:var(--accent2); font-weight:bold;">8%</span>。她的选择：将电锯切入船体，把整艘船拦腰掰开，在木板碎裂与海水的咆哮中坠海逃脱。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch6">云略 vs 优碧卡 · 意外的羁绊</h3>
+
+    <p>深夜的酒馆走廊中，优碧卡从天花板上倒挂而下，电锯轰鸣剁向云略的额头。云略——一个没有超能力的普通高中生——借手杖卡住墙壁凹槽架在半空，蹲身转体将优碧卡狠狠拍在墙上。</p>
+
+    <div class="story-quote">
+      "没在人山人海的食堂抢过饭……还敢试探我的身手？"
+      <div class="quote-source">——云略，第一章</div>
+    </div>
+
+    <p>优碧卡随即一口咬住她的脖子——她的牙齿能抽取血液中的指令之力。礼奈及时赶到，高温剑刃精准切断优碧卡的电锯手臂。在杂物间中，云略发现了一个惊人的事实：优碧卡的<span style="color:var(--accent2);">发声模块被装在了那条断臂里</span>。她无法说话。云略没有选择逃走或反击，而是重新连接了优碧卡的断臂并替她松了绑。两人的关系从这一刻开始从敌对转为互相理解。优碧卡随后协助云略追踪消失的亡灵兔，通过通风管道发现了他与六八的秘密会面。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch7">圆翼党地下基地 · 革命策源地</h3>
+
+    <p>酒馆老板鲍勃大叔的真实身份令人大吃一惊——他是<span class="term-link" onclick="openTerm('round_wing')">圆翼党</span>的区域管理部长。他用一根撬棍打开机关：整面墙壁下沉，锁链齿轮牵动地板如棋盘般展开，露出隐藏在酒吧之下的庞大地下基地。海港主<span class="char-link" onclick="openChar('yiwanlaosi')">伊万劳斯</span>用犀利目光扫视众人——"那目光简直就是饱含着对这水世界彻头彻尾的憎恨"。赏金猎人<span class="char-link" onclick="openChar('K')">K</span>上午还差点和马萨卡火并，现在发现大家是同一战壕的战友。</p>
+
+    <p>圆翼党给出的关键情报：<span class="char-link" onclick="openChar('sipalisen')">斯帕里森</span>并非海盗，而是销声匿迹近十年的宝藏猎人——一个自称"'强运加持'的至福所归、'大难不死'的天命之人"的传奇角色。而最近教皇城水域出现了一个划着"冰做的船"的蓝衣神秘人——正是<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。</p>
+
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch8">亡灵兔与六八 · 双面博弈</h3>
+
+    <p>深夜无人的酒馆中，亡灵兔与六八相对而坐。六八喝着瓶中的鲜奶，温和地解释自己的来意——捕获优碧卡，收回珀利贝尔的原型机。亡灵兔在艰难权衡后做出了回应：</p>
+
+    <div class="story-quote">
+      "这不是为了那个满是虫豸的基地……而是为了我的朋友们。"
+      <div class="quote-source">——亡灵兔，第一章</div>
+    </div>
+
+    <p>六八微微一笑，握住烛台的手涌起寒风——烛火没有熄灭，而是被冻结成了一朵剔透的冰晶，永远封存在摇曳的姿态之中。这就是六八：优雅、克制、却蕴含足以粉碎一切的力量。</p>
+
+    </div>
+    <p style="text-align:center; color:var(--wokgard); font-weight:bold; margin:30px 0;">——沃克加德卷 · 持续更新中——</p>
+
+    <!-- ===== CHARACTERS SECTION ===== -->
+    <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色档案</h2>
+    <div class="search-bar">
+      <input type="text" id="charSearch" placeholder="搜索角色（输入名字、代号或能力名）..." oninput="filterCharacters()">
+    </div>
+    <div class="chapter-grid" id="charGrid">
+    </div>
+
+    <!-- ===== WORLD SECTION ===== -->
+    <h2 class="section-title" id="world" style="color:var(--accent);"><span class="icon">🌐</span>世界设定</h2>
+    <div class="tabs" id="worldTabs">
+      <button class="tab-btn active" onclick="switchWorldTab('terms', event)">名词解释</button>
+      <button class="tab-btn" onclick="switchWorldTab('abilities', event)">能力一览</button>
+      <button class="tab-btn" onclick="switchWorldTab('timelines', event)">时间线介绍</button>
+    </div>
+    <div id="worldTabContent"></div>
+
+    <!-- Footer -->
+    <div class="footer">
+      《永恒流光》可视化故事网站 · 基于序章正文（异世的呼唤）与第一章正文（星兆之海）构建<br>
+      以云略为主视角 · 强调人物羁绊、互动与战斗细节<br>
+      "不管身处多么光怪陆离的世界，对待生活的态度都是很重要的。" —— 异世的呼唤
+    </div>
+
+  </main>
+</div>
+
+<!-- Character Modal -->
+<div class="modal-overlay" id="charModal">
+  <div class="modal" id="charModalContent"></div>
+</div>
+
+<!-- Term Modal -->
+<div class="modal-overlay" id="termModal">
+  <div class="modal" id="termModalContent"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const characters = {
+  yunlue: {
+    name: '云略', title: '「异世的使徒」· 「流光」', avatar: 'F', avatarText: '云',
+    crt: '?', ability: '流光',
+    identity: '来自中国的普通女高中生（帏风岭二中十四班），异常穿越者',
+    personality: '外表大大咧咧，实则心思缜密。擅长用吐槽和幽默化解紧张气氛，有着丰富的高中生存经验（包括但不限于上课憋笑和在食堂抢饭）。面对危险时展现出超乎常人的冷静和求生本能。对自己"帮不上忙"的事实有清醒认识，但从未停止努力融入队伍。',
+    bonds: [
+      { with: '礼奈', type: '信任与依赖', desc: '从最初的敬畏发展为深厚的信任。礼奈是第一个完全接纳她的基地成员。' },
+      { with: '莱克丝', type: '姐妹般的羁绊', desc: '比莱克丝大六个月，被莱克丝默默当作姐姐般的存在。' },
+      { with: '马萨卡', type: '复杂的友谊', desc: '暴走事件后对他既有同情也有戒心，但欣赏他的真诚。' },
+      { with: '优碧卡', type: '独特的搭档', desc: '从敌对到互相理解，为优碧卡接上手臂，建立了超越种族的羁绊。' }
+    ],
+    quotes: ['"奇变偶不变，符号看象限。"', '"这个世界是不是除了我都是能力使啊？"', '"我的存在价值约等于零。"'],
+    appearances: ['序章第一章：从天而降，在电梯废墟中被发现', '序章第五至七章：手杖困扰，粥娘实验室', '序章第十三至十六章：基地遇袭，与正义的逃亡', '第一章：在沃克加德被误传送，与优碧卡搏斗并建立羁绊', '第一章：圆翼党地下基地中逐渐融入队伍'],
+    abilityDetail: '「流光」（CRT-?）：源自修瓦尔扎「长终」之力的削弱态。扭转怀表发条后，接触物品变为"时间炸弹"，爆炸后停止范围内所有生命体活动3-8秒。优先级最高，可打断一切时光机能力。粥娘的机器无法测出CRT数值。'
+  },
+  linai: {
+    name: '礼奈（铃）', title: '「失语的烈阳」· 队长', avatar: 'F', avatarText: '礼',
+    crt: '10.8', ability: '双生烈阳',
+    identity: '卢纳森特基地特别行动部第二代时之秩序队长，协议能力使',
+    personality: '飒爽而不失细腻，对队员极度负责。每天早上醒来都会失忆——性格都可能改变——但从未因此放弃队长的职责。战斗中冷静果断，生活中却也有温柔的一面。导师是十一年前终结浩劫的传奇——无名（BBQ）。',
+    bonds: [
+      { with: '马萨卡', type: '最佳拍档', desc: '从来到基地的第一天起就是搭档。战场上配合无间，是最信赖的战友。' },
+      { with: '云略', type: '接纳与引导', desc: '第一个接纳云略的人，以自己的方式引导她融入这个陌生的世界。' },
+      { with: '莱克丝', type: '大姐姐般的关怀', desc: '对莱克丝包容有加，也被莱克丝暗暗尊敬和依赖。' },
+      { with: '无名（BBQ）', type: '师承之谜', desc: '她的导师，十一年前终结浩劫的传奇。三十秒的记忆是她与导师唯一的联系。' }
+    ],
+    quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"（马萨卡对她的问候）', '"第二代时之秩序，从来就不是一个需要隐蔽的组织。"', '"特工？看着电梯墙上这个甚至有点瘦弱的女性，她费解过去的自己到底是有多么不理智。"'],
+    appearances: ['序章全部章节', '第一章：作为帕瓦蒂·罗伊在沃克加德行动'],
+    abilityDetail: '「双生烈阳」（CRT-10.8，特种级）：短距离瞬间移动（落点必须比脚下温度更高），瞬移成功后下一次攻击附带高温燃烧效果。可从高处释放"焚风"——一道缓慢推进的高温火幕，造成无差别杀伤。可通过持续升高体温缩短冷却时间。不能携带他人瞬移。'
+  },
+  masaka: {
+    name: '马萨卡', title: '「金色的判官」· 双能力使', avatar: 'M', avatarText: '马',
+    crt: '11.1（天平）/ 9.4（司明）', ability: '天平 + 司明',
+    identity: '卢纳森特基地第二代时之秩序战斗位，罕见的双能力使，协议能力使',
+    personality: '热情开朗，大大咧咧，总是带着灿烂的笑容。来自科技落后地区，经常闹出各种笑话。"言多必失"的典范。战场上是令人恐惧的战士（高危级），平时是队伍的气氛制造者。内心深处隐藏着监狱时代的黑暗记忆——"里人格"状态下无比危险。',
+    bonds: [
+      { with: '礼奈', type: '绝对的忠诚', desc: '称呼她为"礼队"（谐音 Leader，礼奈觉得这是个糟糕的双关），是礼奈最为信赖的搭档，每天早上重新自我介绍。' },
+      { with: '云略', type: '保护欲', desc: '对云略展现出强烈的保护欲，暴走事件后深感愧疚。' },
+      { with: '克诺', type: '战友', desc: '虽然常常因为他的俏皮话而无奈，但战场上彼此信任。' }
+    ],
+    quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"', '"这玩意不吃不喝，连遛弯都不用，可好养了。"（指他的武器"小凝"）', '"……看来你这家伙就是典狱长了！告诉我你把他关到了什么地方……"（暴走状态）'],
+    appearances: ['序章第一章：电梯坠落中展现能力', '序章第十一章：暴走事件', '第一章：监狱记忆、酒馆集合、圆翼党基地'],
+    abilityDetail: '「天平」（CRT-11.1，高危级）：操控范围内指定区域的时间流速，从而加快或减缓物体运动状态。可加速交通工具、弹射物与肢体挥动来增加破坏力，也可减速威胁目标。暴走状态（CRT-12.4）：移除体力限制，作用范围和目标数量随释放次数增加。\n「司明」（CRT-9.4）：储存太阳能以操控电能，主要用于照明和麻痹对手。'
+  },
+  zhengyi: {
+    name: '正义（贾斯汀）', title: '情报司前司长', avatar: 'M', avatarText: '正',
+    crt: '11.5', ability: '空间断层',
+    identity: '卢纳森特基地情报司前司长，圣标联合成员',
+    personality: '极度冷漠，被评价为"麻木不仁"。用实验室器材调配碳酸氢钠溶液泡枸杞，给自己安排精确到秒的"悲伤时间"。说话方式像一台计算机——"道歉是解决不了任何问题的。"然而对情报司部下有着深沉的感情，关键时刻总能挺身而出。',
+    bonds: [
+      { with: '兰尼尔', type: '上下级/朋友', desc: '兰尼尔是最了解他的人之一，在他被革职后依然陪伴在侧。' },
+      { with: '云略', type: '奇特的因缘', desc: '无意中将她送入沃克加德，对此感到内疚但嘴上从不承认。' },
+      { with: '情报司成员', type: '深厚的羁绊', desc: '尽管已被革职，情报司成员们依然对他脱帽致意。' }
+    ],
+    quotes: ['"道歉是解决不了任何问题的。"', '"我真不知道其他的能力使为什么要在打架的时候胡言乱语，这让他们简直蠢得像是日保院送的大塑料袋。"', '"你在着急什么？这不过只是一场大火而已。"'],
+    appearances: ['序章第八章：在圣标联合首次登场', '序章第十四至十六章：带领云略穿越燃烧的基地'],
+    abilityDetail: '「空间断层」（CRT-11.5，高危级）：在以自己为原点默念坐标后，可立刻交换任意两个2m³的空间。理论上可直接削除空间致人死地，但正义从不这样使用。每次使用后进入10秒缓冲期（易损乏力），连续使用会引发半径6米内的空间切裂重组。'
+  },
+  youbika: {
+    name: '优碧卡（UPK-002）', title: '炼金仿生人偶', avatar: 'O', avatarText: '优',
+    crt: 'N/A', ability: '电锯·血液抽取·超空间穿梭',
+    identity: '康明德博士制造的炼金仿生机器人，科研司特殊机动部队预备役',
+    personality: '机械而纯真。会将思考过程完整地"广播"出来（在云略建议下学习隐藏）。拥有感情模块——会感到恐惧（存活率8%）、愤怒和悲伤（被威胁"大卸八块"时会流泪）。与康明德博士有深厚的"父女"情感。',
+    bonds: [
+      { with: '康明德博士', type: '父女之情', desc: '为了回到博士身边，不惜捕杀能力使维持能量，穿梭了三十二次。' },
+      { with: '云略', type: '意外的理解者', desc: '云略是第一个对她展现善意的陌生人，为她接上了断臂。' },
+      { with: '永冻领域 六八', type: '追捕关系', desc: '六八奉公司之命追捕她以回收原型机，两人之间有过惨烈战斗。' }
+    ],
+    quotes: ['"根据概率论计算和数据分析……各位并不需要帮助。"', '"本机，感到恐惧……"', '"异议。本机没有\'随便杀人\'。正加载愤怒情绪模块。"'],
+    appearances: ['第一章：船都之战，与永冻领域的对决', '第一章：酒馆中与云略的搏斗与和解'],
+    abilityDetail: '右臂内置高频电锯，可通过抽取能力使血液提取指令之力。装配实验型单体超空间穿梭系统（应急模式下以炼金核心供能）。电量仅剩约二十天。感情模块曾出现严重问题，被删除部分记忆。'
+  },
+  wanglingtu: {
+    name: '亡灵兔', title: '孤独的技术天才', avatar: 'M', avatarText: '兔',
+    crt: 'N/A（非能力使）', ability: '无',
+    identity: '卢纳森特基地第二代时之秩序工程师，非能力使',
+    personality: '极度理性，信不过指令之力——"这力量的危险性简直逼近无穷"。笑容极为罕见，但偶尔会展现惊人幽默感。与克诺在科研司时就是老搭档。暗地里与珀利贝尔实业保持秘密联系，动机复杂——既非纯粹背叛，也非完全忠诚。',
+    bonds: [
+      { with: '克诺', type: '老搭档', desc: '两人在科研司时就已合作，默契十足。' },
+      { with: '六八', type: '秘密联系', desc: '与珀利贝尔亲卫队队长建立了微妙的合作关系。' },
+      { with: '第二代时之秩序', type: '深厚但隐晦的羁绊', desc: '"这不是为了那个满是虫豸的基地……而是为了我的朋友们。"' }
+    ],
+    quotes: ['"这有什么问题。现在基地的情报处在反常状态……"', '"这不是为了那个满是虫豸的基地……而是为了我的朋友们。"'],
+    appearances: ['序章：作为工程师提供技术支持', '第一章：秘密联络珀利贝尔，与六八会面'],
+    abilityDetail: '非能力使。精通机械工程和炼金术的基础知识（来自家父的熏陶）。依靠技术能力和聪明才智在战场上发挥作用。持有可与基地及珀利贝尔通讯的秘密联络设备。'
+  },
+  liuba: {
+    name: '「永冻领域」六八', title: '攻城级能力使', avatar: 'O', avatarText: '六',
+    crt: '14-18（估）', ability: '永冻领域',
+    identity: '珀利贝尔实业亲卫队队长，攻城级能力使',
+    personality: '金发蓝眼，容貌精致如女性（以"他"称呼），身着湖蓝色长袍和青蓝百褶裙。举止优雅温和，但每句话都暗含令人不寒而栗的力量。对优碧卡的态度中既有猎人般的执着，也有对劲敌的尊重。',
+    bonds: [
+      { with: '优碧卡', type: '追猎与尊重', desc: '"你是一个值得尊重的劲敌"——在追捕之余，对优碧卡抱有某种敬意。' },
+      { with: '亡灵兔', type: '合作关系', desc: '通过亡灵兔获取情报，但尊重对方的底线和戒心。' }
+    ],
+    quotes: ['"我不希望，在你身上展现出连我自己都无法控制的强大力量。"', '"有戒心是好事。很高兴能看到你这么操心自己的组织。"'],
+    appearances: ['第一章：船都之战，与优碧卡的对决', '第一章：酒馆夜色中与亡灵兔的秘密会面'],
+    abilityDetail: '操控极低温的攻城级能力（CRT估计14-18）。可瞬间凝结黑色冰墙，冻结火焰，在水面上制造可站立的冰面。长剑被冰霜覆盖后可释放冰刺进行远程攻击。具体CRT和能力细节尚未完全公开。'
+  },
+  kangmingde: {
+    name: '康明德', title: '科研司司长', avatar: 'M', avatarText: '康',
+    crt: 'N/A', ability: '未知',
+    identity: '卢纳森特基地科研司司长，沃克加德行动协同联络者',
+    personality: '二十七岁便在莱斯托尼亚理工学院担任物理系教授的天才。温和从容，没有丝毫学者的架子，对巫魔一族的炼金科技有深入研究。是优碧卡的创造者——"父亲"。',
+    bonds: [
+      { with: '优碧卡', type: '创造者/父亲', desc: '制造了优碧卡，与她共同生活。优碧卡为了回到他身边，不惜一切代价。' }
+    ],
+    quotes: ['"千万别叫我\'康博士\'或\'康教授\'，那样容易让人误会我是个长川人。"'],
+    appearances: ['序章第十二章：作为协同联络者向小队介绍沃克加德任务'],
+    abilityDetail: '具体能力未知。专精于先进微电子元件和巫魔炼金科技。作为科研司司长主持多项机密研发项目。优碧卡是他最杰出的作品之一。'
+  },
+  sipalisen: {
+    name: '斯帕里森', title: '海盗之王·宝藏猎人', avatar: 'M', avatarText: '斯',
+    crt: '9.7', ability: '空屿',
+    identity: '潮涌居士号船长，（前）宝藏猎人，传说级人物',
+    personality: '已销声匿迹近十年。拥有大量宝物和秘术，战斗时不主要依靠能力而是依靠各种稀奇宝物的奇袭。"\'强运加持\'的至福所归、\'大难不死\'的天命之人"——自称。受到炼金诅咒，不能长久停留在陆地上。',
+    bonds: [],
+    quotes: ['"\'强运加持\'的至福所归、\'大难不死\'的天命之人……这就是我，而你只是试图挑战我的这么多人之中，最微不足道的那一个。"'],
+    appearances: ['第一章：作为基地行动的目标被提及，但本人尚未登场'],
+    abilityDetail: '「空屿」（CRT-9.7）：心跳和肢体运动提供抗性护盾，护盾被击破时爆出尖利水刺击退周围敌人并再生水膜。水膜存在时护盾回复加速。持有大量宝物：威尔士柯基（腐蚀金属弯刀）、金色巡回（展开式回旋镖）、鹦鹉螺壳（激光）、章鱼令牌（召唤巨型章鱼）、无定（穿墙传送门）等。'
+  },
+  kenuo: {
+    name: '克诺', title: '「灵魂之桥」· 支援位', avatar: 'M', avatarText: '克',
+    crt: '8.9', ability: '灵魂之桥',
+    identity: '第二代时之秩序支援位，来自卢纳森特奎斯塔尔圣奈特莉堡',
+    personality: '性格温暖，是队伍的粘合剂。曾在时空学专业学习（"名字这么霸气的专业，到头来居然需要调剂"），对时间线理论了如指掌。与亡灵兔是老搭档。在云略事件中不断尝试各种方法解决问题。',
+    bonds: [
+      { with: '亡灵兔', type: '老搭档', desc: '两人在科研司时就已合作，默契十足。' },
+      { with: '云略', type: '帮助者', desc: '第一个为云略安装耳译的人，一直努力帮助她适应环境。' }
+    ],
+    quotes: ['"我很高兴能认识你，云略。"', '"应到四人，实到四人……某种意义上来说，咱们已经可以开始行动了。"'],
+    appearances: ['序章第三章起：为云略安装耳译', '第一章：沃克加德行动中负责联络和检查优碧卡'],
+    abilityDetail: '「灵魂之桥」（CRT-8.9）：使目标和自己的肉体失去实体进入"幽灵状态"，持续5秒（只对自己时15秒），期间免疫一切攻击且可穿墙。冷却120分钟。如果能力解除时目标在障碍物中，会被回弹至安全位置。'
+  },
+  laikesi: {
+    name: '莱克丝', title: '「浴缸之神」· 文书', avatar: 'F', avatarText: '莱',
+    crt: 'N/A（非能力使）', ability: '无',
+    identity: '第二代时之秩序唯一文职人员，十六岁',
+    personality: '嘴上刻薄辛辣——"我真是对你们这群能力使羡慕嫉妒恨……"，内心却十分柔软。酷爱洗澡。对能力使们"含着金钥匙出生"的境遇有着复杂的嫉妒和向往。正在努力学习高级技术以证明自己的价值。',
+    bonds: [
+      { with: '礼奈', type: '尊敬与依赖', desc: '被礼奈当妹妹一样照顾，虽然嘴上不承认。' },
+      { with: '云略', type: '姐姐般的羁绊', desc: '比云略小六个月，在陌生人面前会害羞，但相处久了就变得十分亲近。' }
+    ],
+    quotes: ['"我真是对你们这群能力使羡慕嫉妒恨……"', '"谁——谁呀？一天两次不算特别夸张吧？！"', '"如果你想死得像块炸鸡一样……"'],
+    appearances: ['序章第六章起：作为文书登场', '序章第十三章：与云略在火海中逃生'],
+    abilityDetail: '非能力使。第二代时之秩序年龄最小的成员。负责文书工作，同时在努力学习苛志室药物护理员的知识。对记忆分离药剂等化学品有一定了解。'
+  },
+  boundary: {
+    name: 'boundary', title: '「孤尽幻怨」· 圆翼党骨干', avatar: 'M', avatarText: 'B',
+    crt: '10.0', ability: '孤尽幻怨',
+    identity: '贫民窟黑帮组织小头目，圆翼党骨干成员',
+    personality: '外表冷淡不耐烦，实则忠于职守。受罗伊父亲的遗嘱保护礼奈（罗伊）。对马萨卡的"没头没脑"感到十分头疼，但在关键时刻能放下个人情绪。',
+    bonds: [
+      { with: '罗伊（礼奈）', type: '守护者', desc: '受罗伊先生遗嘱前来保护她，虽然经常被气得七窍生烟。' },
+      { with: '歌涅法', type: '同志', desc: '同为圆翼党成员，在船都并肩战斗。' }
+    ],
+    quotes: ['"免冠以示我微不足道的敬意，罗伊小姐。"', '"计划哪赶得上变化。"'],
+    appearances: ['第一章：在教堂试图保护罗伊', '第一章：与歌涅法在船都会面'],
+    abilityDetail: '「孤尽幻怨」（CRT-10.0）：以自己为中心释放大量烟雾，范围约20米。烟雾逐渐加重并具有隔音效果，完全展开后可隔绝一切声音。在烟雾中boundary获得行动速度加成，吸入烟雾的敌人抗击打能力被削弱。无论是否戴口罩，烟雾不会对他自身造成影响。'
+  },
+  hongying: {
+    name: '鸿荧', title: '白发妖狐', avatar: 'F', avatarText: '鸿',
+    crt: '?', ability: '未知',
+    identity: '第三/四代芬奈法拉战线成员，妖狐族裔',
+    personality: '白发翩翩的妖狐，外表平和，但青色的眼瞳中迸射着凄厉而凶残的希望——那是她全身上下唯一不可被以"平和"评价的地方。与道杰斯有着千年的羁绊，即使对方已"死去"，也不肯向梦境屈服。',
+    bonds: [
+      { with: '道杰斯', type: '千年羁绊', desc: '"我的梦境都在让我相信\'你已经死去\'……如果我真的向这种想法屈服……那才是我最害怕的事情呀。"' }
+    ],
+    quotes: ['"如果此处，还有第三副白棋呢？"', '"……不。不会。……那才是我最害怕的事情呀。"'],
+    appearances: ['序幕终章：与道杰斯对弈'],
+    abilityDetail: '具体能力未知。妖狐族裔，拥有漫长的寿命。提出了"业理"猜想，试图统一所有超自然能力。是芬奈法拉战线的重要成员。'
+  },
+  daojiesi: {
+    name: '道杰斯', title: '附魔师·绝望院能力使', avatar: 'M', avatarText: '道',
+    crt: '?', ability: '未知',
+    identity: '附魔师，芬奈法拉战线成员，终端四区·绝望院的第一位能力使',
+    personality: '历经沧海桑田，在十一年前的大浩劫中"牺牲"——但他坚信自己必将归来。胸前玻璃瓶中燃烧着青蓝火焰。对鸿荧有着无法割舍的羁绊，即使身处虚无之中也从未停止寻找归途。',
+    bonds: [
+      { with: '鸿荧', type: '千年羁绊', desc: '"十一年前我的牺牲为他们带去了和平——十一年后这场灾难也必将把我带回到你的身边。"' }
+    ],
+    quotes: ['"我们活过了无数朦胧而感动的岁月……所以我们便是，这时代的终末。"', '"如果连重返这场棋局都做不到的话……只在你的梦里出现，又怎么能算是亲手把自己憎恨且祝福的命运送往终点呢。"'],
+    appearances: ['序幕终章：与鸿荧对弈'],
+    abilityDetail: '具体能力未知。终端四区中绝望院的第一位能力使，拥有反指令之力的特质。十一年前以"牺牲"换取了和平，目前处于某种虚无状态，但正在寻找归来的方法。'
+  },
+  wuming: {
+    name: '无名（BBQ）', title: '传奇·晨霄与暮鼓的共主', avatar: 'M', avatarText: '无',
+    crt: '?', ability: '无名',
+    identity: '十一年前终结大浩劫的传奇能力使，礼奈的导师，英雄组织"晨霄"与"暮鼓"的共主',
+    personality: '戴着棒球帽，漆黑风衣上挂银色臂章。剑柄状的重型武器斜挎背后。目光犀利，隐含无数腥风血雨。以"BBQ"这个好笑的名字作为礼奈可以称呼他的代号。在中央核心遇袭时以"黑十字"的身份出现在正义面前，胸牌上写着"BBQ"。',
+    bonds: [
+      { with: '礼奈', type: '导师', desc: '礼奈的能力启蒙者，"史上最强的学员"——他的评价。' }
+    ],
+    quotes: ['"不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"', '"我的存在不能在基地里公之于众……如果你要来找我，可以去我们刚才相遇的地方，高喊那个我曾用过的名字——\'BBQ\'。"'],
+    appearances: ['序章第九章：礼奈的三十秒记忆中', '序章第十六章：中央核心遇袭时以"黑十字"身份出现'],
+    abilityDetail: '具体能力未知。十一年前凭借一己之力终结了席卷世界的"大浩劫"。目前似乎在暗中为基地效力，但基地方面不愿公开这个事实。粥娘的判断："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"'
+  }
+};
+
+const terms = {
+  command_force: { name: '指令之力（Command Force）', content: '以辐射形式弥漫在时间线空间每个角落的神秘能量。来源于位于洛琛顿时间线的"本我核心"。可作为时间机器的驱动能源，也可使受辐射者觉醒"时光机能力"。高剂量辐射会导致辐射病。' },
+  ability_user: { name: '能力使', content: '在遭受指令之力辐射后获得驾驭指令之力能力的人。能力被称为"时光机能力"，可以扭曲现实、释放超自然力量。按CRT分为普通、特种、高危、攻城等级别。' },
+  timeline: { name: '时间线空间', content: '由无限条时间线组成的广袤空间。分为无数层级，每层包含无数条"特异时间线"（平行宇宙）。每条特异时间线拥有各自不同的自然景观、科技水平和人文历史。' },
+  time_crack: { name: '时间裂缝', content: '时间线空间中不同层级之间的界限出现的混乱。一旦出现会不断扩大，直到导致"时间线屏障破碎"灾难——不同平行时间线的合并，造成毁灭性的时空错乱。云略的出现就是裂缝存在的证明。' },
+  crt: { name: 'CRT（指令之力再造倾向）', content: '衡量能力使强弱的数值体系。CRT 0-6：常人与辐射病患者；6-9：普通能力使；9-11：特种级；11-14：高危级；14-18：攻城级。数值越高，能力越强，反噬越轻微。' },
+  soul_projection: { name: '灵魂投影式折跃', content: '一种隐蔽的时间线穿梭方式。穿梭者取代目标时间线中与自己灵魂相匹配的本地人的意识，被传送的行李自动出现在身体附近。可以保留指令之力的操控性。' },
+  wokgard: { name: '沃克加德时间线', content: '海洋面积超过95%的大航海时代世界。畸形发展的魔法与科技严重对立，海盗团与赏金猎人团割据四方。教皇国是最强大的势力。几千年前的古文明留下了"大炼金阵"等强力遗物。' },
+  alchemy_array: { name: '大炼金阵', content: '沃克加德古代文明遗留的终极造物。可以将一种东西转化为等价的另一种东西——炼金术的最高成就。目前五分之三在教皇城控制之下，其余碎片散落在海盗和宝藏猎人中。基地需要它来确保赈灾行动。' },
+  round_wing: { name: '圆翼党', content: '以罗伊家族为核心的反教皇革命组织。成员渗透在教皇城各个阶层——黑帮、骑士团、赏金猎人、商人、精英和贫民。主张推翻教皇统治，建立属于人而非神的新国家。地下基地隐藏在褐浪酒吧之下。' },
+  judgement_day: { name: '曼菲斯菲的审判日', content: '卢纳森特基地最强的反能力使武器。悬挂在中央核心上方的金色轨道炮，由检察院院长操纵。发射的金色铆钉如激光般贯穿目标，温度极高。"正常人早该碎成渣了"——但「暮蓝隙行」挨了一枪后仍能逃脱。' },
+  staff: { name: '云略的手杖', content: '云略穿越时携带的神秘手杖。长约一米九，蚀刻着哥特风花纹，末端是钟表表盘。对能力攻击有强大排斥力（"九点三千格每度"），可在云略受到能力攻击时旋转并反弹攻击。无法被取下，像长在身上一样。实质上是一种强大的指令之力防护装置。' },
+  kezhi_room: { name: '苛志室', content: '卢纳森特基地中负责记忆删除和记忆管理的特殊部门。特工签署保密协议后，由苛志室执行记忆删除。同时存储着被删除的记忆档案，在特定条件下可以释放部分记忆。' },
+  memory: { name: '周期性失忆', content: '协议能力使在签署"二次保密协议"后接受的记忆删除的副作用。礼奈每天早上醒来都会忘掉所有东西——包括性格。马萨卡虽然也是协议能力使，但似乎没有出现并发症。' },
+  cola: { name: '可乐', content: '柯洛雯时间线的新品饮料，在沃克加德也有售卖。黑色冒泡的液体，被马萨卡称为"可笑"，被酒吧小子称为"极为致命的化学品，有着强大的成瘾性"（开玩笑）。云略评价："喝起来像是可口可乐和百事可乐的一比一混合。"' },
+  prison_trauma: { name: '监狱创伤', content: '马萨卡在签署保密协议前经历的黑暗过去。他曾在某个监狱中服刑，有一个被称为"典狱长"的压迫者。被记忆分离药剂触发后，马萨卡会进入暴走状态——将周围人误认为是典狱长而发起攻击。' },
+  ear_translator: { name: '耳译装置', content: '卢纳森特基地的微型实时翻译设备。植入耳道后可将听到的语言实时翻译为使用者的母语。有不同型号——礼奈的型号支持电话和MP3扩展（亡灵兔不推荐）。需要配合视网膜手术才能阅读文字。' },
+  leader_pun: { name: '「礼队」', content: '马萨卡对礼奈的称呼，谐音英文 Leader（领导者/队长）。礼奈觉得这是一个糟糕的双关——但并没有阻止他这样叫。实际上，每天早上忘记一切的她，或许并不讨厌这个每天都有人重新称呼她的方式。' }
+};
+
+// ===== BUILD CHARACTER CARDS =====
+function buildCharCards(filter = '') {
+  const grid = document.getElementById('charGrid');
+  const entries = Object.entries(characters);
+  const filtered = filter ? entries.filter(([k, c]) => {
+    const q = filter.toLowerCase();
+    return c.name.toLowerCase().includes(q) || c.title.toLowerCase().includes(q) || c.ability.toLowerCase().includes(q) || c.identity.toLowerCase().includes(q);
+  }) : entries;
+
+  grid.innerHTML = filtered.map(([key, c]) => `
+    <div class="chapter-card" onclick="openChar('${key}')" style="cursor:pointer;">
+      <div class="card-num">CRT ${c.crt} · ${c.ability}</div>
+      <div class="card-title">${c.name} <span style="font-size:0.7em; color:var(--text-dim);">${c.title.split('·')[0]}</span></div>
+      <div class="card-desc">${c.identity}</div>
+      <div class="card-tags">
+        ${c.bonds.slice(0,3).map(b => `<span class="card-tag">${b.with}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCharacters() {
+  const q = document.getElementById('charSearch').value;
+  buildCharCards(q);
+}
+
+// ===== OPEN CHARACTER MODAL =====
+function openChar(key) {
+  const c = characters[key];
+  if (!c) return;
+  const avatarClass = c.avatar === 'F' ? 'female' : c.avatar === 'M' ? 'male' : 'other';
+
+  document.getElementById('charModalContent').innerHTML = `
+    <button class="close-btn" onclick="closeModal('charModal')">&times;</button>
+    <div class="char-header">
+      <div class="char-avatar ${avatarClass}">${c.avatarText}</div>
+      <div>
+        <div class="char-name">${c.name}</div>
+        <div class="char-title">${c.title}</div>
+        ${c.crt !== 'N/A' ? `<span class="crt-badge">CRT ${c.crt}</span>` : ''}
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-label">身份</div>
+      <div class="info-value">${c.identity}</div>
+    </div>
+    <div class="info-block">
+      <div class="info-label">性格特点</div>
+      <div class="info-value">${c.personality}</div>
+    </div>
+    <div class="info-block">
+      <div class="info-label">能力详情</div>
+      <div class="info-value">${c.abilityDetail}</div>
+    </div>
+    ${c.bonds.length ? `
+    <div class="info-block">
+      <div class="info-label">核心羁绊</div>
+      ${c.bonds.map(b => `<div class="relation-card" style="margin:8px 0;">
+        <div class="rel-chars">${b.with}</div>
+        <div class="rel-type">${b.type}</div>
+        <div class="rel-desc">${b.desc}</div>
+      </div>`).join('')}
+    </div>` : ''}
+    <div class="info-block">
+      <div class="info-label">标志性台词</div>
+      ${c.quotes.map(q => `<div class="info-value" style="color:var(--gold); margin:4px 0;">${q}</div>`).join('')}
+    </div>
+    <div class="info-block">
+      <div class="info-label">主要出场</div>
+      ${c.appearances.map(a => `<div class="info-value" style="margin:2px 0;">• ${a}</div>`).join('')}
+    </div>
+  `;
+  document.getElementById('charModal').classList.add('show');
+}
+
+// ===== OPEN TERM MODAL =====
+function openTerm(key) {
+  const t = terms[key];
+  if (!t) return;
+  document.getElementById('termModalContent').innerHTML = `
+    <button class="close-btn" onclick="closeModal('termModal')">&times;</button>
+    <h3 style="color:var(--gold); margin-bottom:12px;">${t.name}</h3>
+    <p>${t.content}</p>
+  `;
+  document.getElementById('termModal').classList.add('show');
+}
+
+// ===== CLOSE MODAL =====
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+document.getElementById('charModal').addEventListener('click', function(e) { if (e.target === this) closeModal('charModal'); });
+document.getElementById('termModal').addEventListener('click', function(e) { if (e.target === this) closeModal('termModal'); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal('charModal');
+    closeModal('termModal');
+  }
+});
+
+// ===== WORLD TABS =====
+function switchWorldTab(tab, e) {
+  document.querySelectorAll('#worldTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  if (e && e.target) {
+    e.target.classList.add('active');
+  } else {
+    const btn = document.querySelector(`#worldTabs .tab-btn[onclick*="${tab}"]`);
+    if (btn) btn.classList.add('active');
+  }
+
+  const content = document.getElementById('worldTabContent');
+  if (tab === 'terms') {
+    content.innerHTML = Object.entries(terms).map(([k, t]) => `
+      <div class="relation-card" style="cursor:pointer;" onclick="openTerm('${k}')">
+        <div class="rel-chars">${t.name}</div>
+        <div class="rel-desc">${t.content.substring(0, 100)}...</div>
+      </div>
+    `).join('');
+  } else if (tab === 'abilities') {
+    const abs = Object.entries(characters).filter(([k, c]) => c.ability !== '未知' && c.ability !== '无');
+    content.innerHTML = `<table class="ability-table">
+      <thead><tr><th>能力名</th><th>持有者</th><th>CRT</th><th>描述</th></tr></thead>
+      <tbody>${abs.map(([k, c]) => `
+        <tr>
+          <td style="color:var(--accent);">${c.ability}</td>
+          <td><span class="char-link" onclick="openChar('${k}')">${c.name}</span></td>
+          <td style="color:var(--gold);">${c.crt}</td>
+          <td style="font-size:0.85em; color:var(--text-dim);">${c.abilityDetail.substring(0, 80)}...</td>
+        </tr>
+      `).join('')}</tbody>
+    </table>`;
+  } else if (tab === 'timelines') {
+    content.innerHTML = `
+      <div class="chapter-card" style="margin:10px 0;"><div class="card-title">🛡️ 卢纳森特时间线</div><div class="card-desc">主角团所在的时间线。地理环境类似地球，是所有时间线中较为宜居的一条。卢纳森特基地总部所在地。超级强国长川国与卢纳森特联盟曾经爆发世界大战，战后基地在领导人莱诺的引领下异军突起。</div></div>
+      <div class="chapter-card" style="margin:10px 0;"><div class="card-title">⚓ 沃克加德时间线</div><div class="card-desc">海洋面积超过95%的汪洋行星。数千年前曾一度发达，巫师种与人类的大战导致海啸淹没世界。如今处在封建专制的大航海时代，教皇国是最强势力。古代遗留的大炼金阵是各方争夺的目标。</div></div>
+      <div class="chapter-card" style="margin:10px 0;"><div class="card-title">🏭 霍因佩兹时间线</div><div class="card-desc">荒凉的极端气候世界，盛产"末原晶矿"——可萃取指令之力的战略资源。珀利贝尔实业的总部所在地，公司城"无尽之塔"是整个时间线空间的技术枢纽。赛博朋克风格的反乌托邦都市。</div></div>
+      <div class="chapter-card" style="margin:10px 0;"><div class="card-title">🏛️ 洛琛顿时间线</div><div class="card-desc">本我核心所在地。曾经是最强大的时间线，如同"诸神的国度"。几千年前通向外界的大门因"腐化"灾难而关闭，文明倒退至原始社会。如今是一片废土，残存的洛琛顿人在绝望中等待终末。</div></div>
+      <div class="chapter-card" style="margin:10px 0;"><div class="card-title">🦊 芬奈法拉时间线</div><div class="card-desc">天使与死神的领域。妖蝎族围绕古树建立了地下的伦茨斯特帝国。芬奈法拉战线是抵抗"苍镰诡神"艾克森的最后防线。修瓦尔扎在此留下预言。鸿荧与道杰斯的棋局就发生在这条时间线的某处。</div></div>
+    `;
+  }
+}
+
+// ===== SCROLL TO SECTION =====
+function scrollToSection(id) {
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if (event && event.target) event.target.classList.add('active');
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== THEME TOGGLE =====
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.getElementById('themeToggle').textContent = '🌙';
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+}
+function toggleTheme() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
+}
+
+// ===== INIT =====
+initTheme();
+buildCharCards();
+switchWorldTab('terms', null);
+</script>
+</body>
+</html>

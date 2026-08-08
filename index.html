@@ -651,6 +651,34 @@ body {
   .radar-chart-wrap { width: 150px; height: 150px; }
   .ability-content { text-align: left; }
 }
+
+/* ===== TIMELINE OVERVIEW ===== */
+.timeline-overview { margin: 28px 0 10px; }
+.timeline-overview .tl-ov-head { text-align: center; margin-bottom: 20px; }
+.timeline-overview .tl-ov-head h2 { font-size: 1.6em; color: var(--accent); margin: 0 0 6px; }
+.timeline-overview .tl-ov-head p { font-size: 0.9em; color: var(--text-dim); margin: 0; }
+.timeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.timeline-panel { position: relative; background: linear-gradient(145deg, var(--bg-card), var(--bg)); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px; cursor: pointer; transition: all 0.25s ease; overflow: hidden; min-height: 170px; display: flex; flex-direction: column; justify-content: flex-end; }
+.timeline-panel:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 24px rgba(88,166,255,0.15); }
+.timeline-panel .tl-panel-icon { font-size: 2.2em; margin-bottom: 10px; }
+.timeline-panel .tl-panel-name { font-size: 1.25em; font-weight: bold; color: var(--text); margin-bottom: 6px; }
+.timeline-panel .tl-panel-tag { display: inline-block; font-size: 0.72em; color: var(--accent); background: rgba(88,166,255,0.12); border: 1px solid var(--accent); border-radius: 10px; padding: 2px 10px; margin-bottom: 10px; }
+.timeline-panel .tl-panel-short { font-size: 0.86em; color: var(--text-dim); line-height: 1.6; }
+.timeline-panel .tl-panel-cta { font-size: 0.78em; color: var(--accent); margin-top: 12px; font-weight: 600; }
+.timeline-modal .tlm-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.timeline-modal .tlm-header .tl-icon { font-size: 2em; }
+.timeline-modal .tl-stories { font-size: 0.95em; line-height: 1.8; color: var(--text); margin-bottom: 18px; }
+.timeline-modal .tl-section { margin: 16px 0; }
+.timeline-modal .tl-section-title { font-size: 1.05em; color: var(--gold); font-weight: bold; margin-bottom: 8px; padding-left: 10px; border-left: 3px solid var(--accent); }
+.timeline-modal .tl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.timeline-modal .tl-chip { display: inline-block; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); font-size: 0.82em; color: var(--text); cursor: pointer; transition: all 0.2s; }
+.timeline-modal .tl-chip:hover { border-color: var(--accent); color: var(--accent); }
+.timeline-modal .tl-jump { display: inline-block; margin-top: 8px; padding: 8px 18px; border-radius: 18px; background: var(--accent); color: #fff; font-size: 0.85em; cursor: pointer; border: none; transition: all 0.2s; }
+.timeline-modal .tl-jump:hover { opacity: 0.85; }
+@media (max-width: 768px) {
+  .timeline-grid { grid-template-columns: 1fr; }
+  .timeline-panel { min-height: 140px; }
+}
 </style>
 </head>
 <body>
@@ -743,6 +771,15 @@ body {
       </div>
     </section>
 
+    <!-- ===== TIMELINE OVERVIEW ===== -->
+    <section class="timeline-overview" id="timeline-overview">
+      <div class="tl-ov-head">
+        <h2><span class="icon">🗺️</span>时间线一览</h2>
+        <p>横跨无数平行世界的宏大故事——选择一条时间线，进入它的世界</p>
+      </div>
+      <div class="timeline-grid" id="timelineGrid"></div>
+    </section>
+
     <!-- ===== PROLOGUE SECTION ===== -->
     <h2 class="section-title" id="pro-ch1"><span class="icon">📖</span>序幕 · 异世的呼唤</h2>
     <div class="chapter-body">
@@ -758,9 +795,9 @@ body {
       <div class="quote-source">——序章·第一章</div>
     </div>
 
-    <p>在电梯中，礼奈遇到了她的搭档——金发中一撮红色挑染的<span class="char-link" onclick="openChar('masaka')">马萨卡</span>。他闪进电梯，露出一个灿烂的笑容："早上好，<span class="term-link" onclick="openTerm('leader_pun')">礼队</span>。我是马萨卡——很高兴第无数次认识你。"两人从来到基地的第一天起就是最佳拍档，马萨卡来自一个科技相当落后的地方，经常闹出各种笑话，但他结实健壮的身体完全符合一名特工的要求。</p>
+    <p>在电梯中，礼奈遇到了她的搭档——金发中一撮红色挑染的<span class="char-link" onclick="openChar('masaka')">马萨卡</span>。他闪进电梯，露出一个灿烂的笑容："早上好，<span class="term-link" onclick="openTerm('leader_pun')">礼队</span>。我是马萨卡——很高兴第无数次认识你。"两人从来到基地的第一天起就是最佳拍档，马萨卡来自一个科技相当落后的地方，经常闹出各种笑话，但他结实健壮的身体完全符合一名特工的要求。反观礼奈——她低头看看自己这副弱不禁风的身体，怎么也想不通过去的自己究竟为什么会选择当一名特工。</p>
 
-    <p>电梯突然失控——齿轮崩裂，轿厢自由落体。在这生死关头，两人展现了令人窒息的默契配合：马萨卡嘶吼<span class="term-link" onclick="openChar('masaka')">「天平」</span>减缓坠落速度；礼奈发动<span class="term-link" onclick="openChar('linai')">「双生烈阳」</span>闪身半空，接过马萨卡的黑色拳套，以火焰重拳击穿轿厢顶。拳套"小凝"变作小型降落伞缠住礼奈，两人在钢铁碰撞与火花四溅中安稳落地。这次配合没有一句多余的对白——战斗本身就是他们之间最好的交流。</p>
+    <p>电梯突然失控——齿轮崩裂，轿厢自由落体。在这生死关头，两人展现了令人窒息的默契配合：马萨卡释放他的超能力<span class="term-link" onclick="openChar('masaka')">「天平」</span>减缓坠落速度——如雷贯耳的施术咒令击中礼奈脑海深处的回忆，记忆如潮水般涌回，礼奈想起所有记忆，瞬间清醒；礼奈发动<span class="term-link" onclick="openChar('linai')">「双生烈阳」</span>闪身半空，接过马萨卡的黑色拳套，以火焰重拳击穿轿厢顶。拳套"小凝"变作小型降落伞缠住礼奈，两人在钢铁碰撞与火花四溅中安稳落地。落地的瞬间，礼奈终于想起自己为什么会来当特工——作为一个有能击穿电梯力量的超能力者，除了去一个同类云集的地方，恐怕也只能被抓进动物园，让其他人买票围观了。这次配合没有一句多余的对白——战斗本身就是他们之间最好的交流。</p>
 
     <p>废墟之中，他们发现了一个满身伤痕的女孩。她穿着格格不入的夏季校服，身旁靠着一根约一米九长的<span class="term-link" onclick="openTerm('staff')">哥特风手杖</span>，末端是钟表表盘，时针分针重叠处齿轮发光，胸前还挂着一块怀表。手杖支起的狭小空间在电梯坠落中救了她的命。这个女孩，就是<span class="char-link" onclick="openChar('yunlue')">云略</span>——来自"其他世界"的<span class="term-link" onclick="openTerm('abnormal_traveler')">异常穿越者</span>。</p>
 
@@ -774,21 +811,21 @@ body {
     <!-- Ch5-7 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch3">第五至七章 手杖之谜 · 粥娘实验室</h3>
 
-    <p>云略背后的那根手杖成了第二代时之秩序的头号难题。克诺动用链锯，手杖纹丝不动——链锯反而像扔垃圾一样被从手杖上缄默地甩了出去。<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>通过精密实验推算出手杖对指令之力的排斥力高达"九点三千格每度"——这意味着常规手段对它毫无作用。只有马萨卡使出全力发动能力后，手杖才转动了极其微小的角度（一圈有余），成为唯一能对它产生影响的尝试。然而即使如此，也依然没能找到将云略与它分离的方法——这根手杖死死地粘在她背后，简直像长在她身上一样。因为背后这根蠢棍子，云略无法正常换衣服（只能把外套反着朝前穿，像个滑稽的太空人），过门框时会被卡住，起身时棍子会猛然戳向天花板，走路时更会时不时跌上一跤。她只能靠在这根一米九长的金属杆上，像靠着一把永远合不上的伞。</p>
+    <p>云略背后的那根手杖成了第二代时之秩序的头号难题。无论是克诺的链锯还是亡灵兔的精密测算，都指向同一个结论——<strong>常规手段对它毫无作用</strong>：链锯切上去纹丝不动，反而被手杖像扔垃圾一样缄默地甩了出去；<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>推算出手杖对指令之力的排斥力高达"九点三千格每度"，"偏转四百度，需要大概三千七百二十千格的指令之力能量"。唯一能对它产生影响的尝试，来自马萨卡——他使出全力发动能力，高压的闪电与火光瞬间照亮整个房间，手杖这才转动了整整一圈，把云略像螺旋桨一样甩回床上。然而即便如此，也依然没能找到将云略与它分离的方法——这根手杖死死地粘在她背后，简直像长在她身上一样。因为背后这根蠢棍子，云略无法正常换衣服（只能把外套反着朝前穿，像个滑稽的太空人），过门框时会被卡住，起身时棍子会猛然戳向天花板，走路时更会时不时跌上一跤。</p>
 
-    <p>在<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>的建议下，礼奈带着云略前往圣标联合实验组——礼奈此行另有目的：她每天早晨都会丧失所有记忆，而粥娘正是基地中处理记忆删除后遗症的专家，她配置的显影液可以帮助礼奈读取被<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>删除的记忆。两人见到了<span class="char-link" onclick="openChar('zhouniang')">粥娘</span>——一位戴着兔耳帽、精力旺盛的活泼科学家（能力<span class="term-link" onclick="openChar('zhouniang')">「狂乱的鸡尾酒」</span>，CRT-8.4），她"确实很擅长处理基地记忆删除的后遗症，也在指令之力研究这方面颇有建树"。在粥娘的实验室中，礼奈喝下了一种特殊的显影液——它让她观看了一段被苛志室删除的记忆。这段仅存三十秒的记忆，揭示了礼奈的导师：代号<span class="char-link" onclick="openChar('wuming')">「无名」</span>（又名"BBQ"），十一年前以一己之力终结了惊天浩劫的传奇能力使。在圆形特训室中，无名戴着棒球帽、披着漆黑风衣，旋转短剑以残影般的速度砍向礼奈。礼奈瞬移至其身后，高温刀刃划破无名后领——但无名以无法捕捉的速度转身，顺势冲拳将她击飞。</p>
+    <p>在<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>的建议下，礼奈带着云略前往圣标联合实验组——礼奈此行另有目的：她每天早晨都会丧失所有记忆，而粥娘正是基地中处理记忆删除后遗症的专家，她配置的显影液可以帮助礼奈读取被<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>删除的记忆。两人见到了<span class="char-link" onclick="openChar('zhouniang')">粥娘</span>——一位头顶长着一对真正兔耳朵的"异兔"、精力旺盛的活泼科学家（能力<span class="term-link" onclick="openChar('zhouniang')">「狂乱的鸡尾酒」</span>，CRT-8.4）。不等礼奈开口，粥娘便主动招呼道："啊啊，礼奈小姐身边的人？"——莱克丝早已打电话知会过她的到来。她"确实很擅长处理基地记忆删除的后遗症，也在指令之力研究这方面颇有建树"。在粥娘的实验室中，礼奈喝下了一种特殊的显影液——那是粥娘特地向<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>申请来的（"和苛志室的那群变态们打交道，可不是这么容易的"）。它让她观看了一段被苛志室删除的记忆。这段仅存三十秒的记忆，揭示了礼奈的导师：代号<span class="char-link" onclick="openChar('wuming')">「无名」</span>（又名"BBQ"），十一年前以一己之力终结了惊天浩劫的传奇能力使。在圆形特训室中，无名戴着棒球帽、披着漆黑风衣，旋转短剑以残影般的速度砍向礼奈。礼奈瞬移至其身后，高温刀刃划破无名后领——但无名以无法捕捉的速度转身，顺势冲拳将她击飞。</p>
 
     <div class="story-quote">
-      "不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"
+      "不错。你简直是史上最强的学员！……"
       <div class="quote-source">——无名（BBQ），序章·第七章</div>
     </div>
 
-    <p>粥娘看到这段记忆后大惊失色："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"</p>
+    <p>粥娘看到这段记忆后大惊失色——十一年来，基地从未公开承认过「无名」的存在，人们只传闻他"一定在某个隐秘的角落为基地工作"。如今苛志室那群老顽固竟会坦然公开"无名在为基地效力"这个事实，还放行了这段机密记忆，只说明一件事：无名，一定要正面介入战斗了。"这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"</p>
 
     <!-- Ch8-9 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch4">第八至九章 情报司前司长——正义</h3>
 
-    <p>在圣标联合，云略和礼奈遇到了<span class="char-link" onclick="openChar('zhengyi')">正义（贾斯汀）</span>——刚刚被当众革职的情报司前司长。这位蓝发男子正用实验室器材调配碳酸氢钠溶液泡枸杞，给自己安排精确到秒的"悲伤时间"。他的冷漠几乎令人不适："道歉是解决不了任何问题的。"但在那副麻木不仁的外表下，隐藏着极其强大的实力：<span class="term-link" onclick="openChar('zhengyi')">「空间断层」</span>（CRT-11.5，高危级），可在默念坐标后瞬间交换任意两个两立方米的空间——理论上可以直接削除空间致人死地，但他从不这样使用。</p>
+    <p>在圣标联合，云略和礼奈遇到了<span class="char-link" onclick="openChar('zhengyi')">正义（贾斯汀）</span>——刚刚被当众革职的情报司前司长。这位蓝发男子正用实验室器材调配碳酸氢钠溶液泡枸杞，给自己安排精确到秒的"悲伤时间"。他的冷漠几乎令人不适："道歉是解决不了任何问题的。"</p>
 
     <p>在正义的实验室中，还有<span class="char-link" onclick="openChar('lannier')">兰尼尔</span>——一位患有奇特<span class="term-link" onclick="openTerm('speech_radiation')">"言语辐射病"</span>的少年，当他开口说话时，周围的人都会感到强烈的压迫感与慌乱。</p>
 
@@ -804,7 +841,7 @@ body {
       <div class="quote-source">——马萨卡（暴走状态），序章·第十一章</div>
     </div>
 
-    <p>原来马萨卡在加入基地前曾在某座监狱中服刑，承受过来自"典狱长"的极大压迫。开朗阳光的外表下，是一段被封印的黑暗过去——<span class="term-link" onclick="openTerm('prison_trauma')">监狱创伤</span>。暴走状态下的他CRT飙升至12.4，变为不分敌我的战斗机器。礼奈瞬移而入，勉力架住第三下重击。她佯装正面劈砍，在马萨卡扑空后瞬移至其身后，干脆利落地击晕了自己的搭档。每天早上忘记一切，却从未忘记如何保护自己的队员。</p>
+    <p>原来马萨卡在加入基地前曾在某座监狱中服刑，承受过来自"典狱长"的极大压迫——那管记忆分离药剂，诱发了他签署保密协议前被压抑的黑暗记忆。开朗阳光的外表下，是一段被封印的黑暗过去。神智错乱的马萨卡把眼前之人误认作典狱长，眼睛里暴涨着令人恐惧的杀意。礼奈瞬移而入，卷携着火焰的一刀勉勉强强接住了他戴着拳套的第三下重击——一道火幕在马萨卡面前突然炸开，简直如同瓦斯爆炸一样瞬间燃烧殆尽。已经连礼奈的能力也一并忘记的马萨卡毫无疑问地扑了个空，一头撞在地板上，手脚打滑着想要爬起来——而瞬移到他背后的礼奈则干脆利落，避开致命部位一下砸去，像是打晕一条刚捞上来的鲜鱼。每天早上忘记一切，却从未忘记如何保护自己的队员。</p>
 
     <!-- Ch12 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch6">第十二章 沃克加德任务 · 新的征途</h3>
@@ -818,7 +855,7 @@ body {
 
     <p>就在传送即将启动之际，<span style="color:var(--accent2); font-weight:bold;">卢纳森特基地遭遇了前所未有的大规模袭击。</span>入侵者如潮水般涌入，爆炸声此起彼伏，整个基地陷入火海。云略被爆炸声惊醒，在浓烟中与莱克丝一起逃命。走廊中遇到兰尼尔后，她独自冲向圣标联合寻找正义。</p>
 
-    <p>正义驾驶摩托车载着云略穿越燃烧的基地。在情报司，他们遭遇了蓝色狼耳的神秘能力使<span class="term-link" onclick="openTerm('twilight_breaker')">「暮蓝隙行」</span>——一个身份不明的强敌，黑炎能够侵蚀空间本身，将触及的一切瞬间湮灭。正义不断以<span class="term-link" onclick="openChar('zhengyi')">「空间断层」</span>置换墙壁防御，在断裂的桥梁上凭空置换桥面完成惊险跳跃——每一个操作都如计算机般精确。当他在火焰中说"你在着急什么？这不过只是一场大火而已"时，摩托车正在翻越一道燃烧的断口。最终在基地最强反能力使武器<span class="term-link" onclick="openTerm('judgement_day')">「曼菲斯菲的审判日」</span>的金色铆钉掩护下，两人才得以脱身。</p>
+    <p>正义驾驶摩托车载着云略穿越燃烧的基地。在情报司，他们遭遇了蓝色狼耳的神秘能力使<span class="term-link" onclick="openTerm('twilight_breaker')">「暮蓝隙行」</span>——一个身份不明的强敌，黑炎能够侵蚀空间本身，将触及的一切瞬间湮灭。这时正义才真正展露出他的能力——<span class="term-link" onclick="openChar('zhengyi')">「空间断层」</span>（CRT-11.5，高危级）：默念坐标后，可瞬间交换任意两个两立方米的空间。他以之不断置换墙壁防御，在断裂的桥梁上凭空置换桥面完成惊险跳跃——每一个操作都如计算机般精确，理论上甚至可以直接削除空间致人死地，但他从不这样使用。当他在火焰中说"你在着急什么？这不过只是一场大火而已"时，摩托车正在翻越一道燃烧的断口。最终在基地最强反能力使武器<span class="term-link" onclick="openTerm('judgement_day')">「曼菲斯菲的审判日」</span>的金色铆钉掩护下，两人才得以脱身。</p>
 
     <p>然而在最后关头，正义做出了一个决定性的举动。<span style="color:var(--accent2); font-weight:bold;">他用<span class="term-link" onclick="openChar('zhengyi')" style="color:var(--accent2); font-weight:bold;">「空间断层」</span>将云略直接置换进了正在传送的时光机。</span>云略在尖叫中拍打着舱门玻璃："我不是你们要传送走的人！"——但传送已经不可逆地启动了。一声巨响，她与第二代时之秩序一起被送往了沃克加德。</p>
 
@@ -863,7 +900,7 @@ body {
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch3">富家千金 · 通缉犯罗伊</h3>
 
-    <p><span class="char-link" onclick="openChar('linai')">礼奈</span>在教堂医院中醒来，穿着沾满血的白色连衣裙。她的身份是<strong>帕瓦蒂·罗伊</strong>——教皇城通缉的政治犯，反教皇组织<span class="term-link" onclick="openTerm('round_wing')">「圆翼党」</span>核心家族罗伊家的唯一幸存者。在仓库中，她遇到了全身裹在黑衣中的<span class="char-link" onclick="openChar('boundary')">boundary</span>——圆翼党骨干，能力<span class="term-link" onclick="openChar('boundary')">「孤尽幻怨」</span>（CRT-10.0）：以自身为中心释放大量烟雾隔绝声音，在无声中接近并击倒敌人。</p>
+    <p><span class="char-link" onclick="openChar('linai')">礼奈</span>在教堂医院中醒来，穿着沾满血的白色连衣裙，四周铺满了同她一样躺在烂床铺上的伤号——这里是专收濒死者的"重伤部"，进了这地方的人就不可能痊愈出院。鸟嘴面具的大夫误以为她需要锯掉一条腿，直到她掀开衣服证明双腿安然无恙，才被指望去仓库取回自己的随身行李。她很快醒悟：自己正以「灵魂投影式折跃」成为<strong>帕瓦蒂·罗伊</strong>——教皇城通缉的政治犯、反教皇组织<span class="term-link" onclick="openTerm('round_wing')">「圆翼党」</span>核心家族罗伊家的唯一幸存者，这"死了全家"的千金身份意外地好用。然而她并不知道，仓库门口的两个门卫早已凭那撮粉头发认出她来，正为了赏金掏出一把装好弹的燧发枪——枪响了。一团迷雾吞噬了火光。全身裹在黑衣中的<span class="char-link" onclick="openChar('boundary')">boundary</span>动用了他的能力<span class="term-link" onclick="openChar('boundary')">「孤尽幻怨」</span>：以自身为中心释放大量烟雾，把通往外界的一切声音尽数阻断——枪声、惊呼全都湮没在浓烟里，他在无声的黑暗中接近敌人，将两个门卫在片刻间悉数击倒。随后他打了个响指，雾气散去——可留在那里的并不是礼奈，只剩两个昏死的门卫和一堆烧焦的破布：早在烟幕与混乱之中，她已悄然溜走。</p>
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch4">褐浪酒吧 · 意外频发的集合</h3>
 
@@ -871,7 +908,7 @@ body {
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch5">船都之夜 · 优碧卡与六八</h3>
 
-    <p>船都的夜晚，三个黑帮分子拦住了一个体态娇小、披着破布长袍的少女。当他们扯下她的衣服时——暴露出来的不是血肉，而是<span style="color:var(--accent2);">断裂的机械臂、外露的电线和不断滴落的机油</span>。她的双眼瞬间变红，右臂展开高速旋转电锯，在眨眼之间将三人斩杀。<span class="char-link" onclick="openChar('youbika')">优碧卡（UPK-002）</span>——<span class="char-link" onclick="openChar('kangmingde')">康明德博士</span>制造的炼金仿生机器人，为了回到"父亲"身边，已在不同时间线间穿梭了三十二次，依靠捕杀能力使来维持能量。电量仅剩约二十天。</p>
+    <p>船都的夜晚，三个黑帮分子拦住了一个体态娇小、披着破布长袍的少女。当他们扯下她的衣服时——暴露出来的不是血肉，而是<span style="color:var(--accent2);">断裂的机械臂、外露的电线和不断滴落的机油</span>。她的双眼瞬间变红，右臂展开高速旋转电锯，在眨眼之间将三人斩杀。<span class="char-link" onclick="openChar('youbika')">优碧卡（UPK-002）</span>——<span class="char-link" onclick="openChar('kangmingde')">康明德博士</span>制造的炼金仿生机器人，为了回到她的发明者身边，已在不同时间线间穿梭了三十二次，依靠捕杀能力使来维持能量。电量仅剩约二十天。</p>
 
     <p>随即登场的，是迄今为止最强的能力使：<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。金发蓝眼、容貌精致如女性（以"他"称呼），身着湖蓝色长袍与青蓝百褶裙——攻城级（CRT 14-18），足以单枪匹马夷平一座城池。他从背上拔出长剑，剑刃在空气中凝结出层层冰霜。</p>
 
@@ -884,48 +921,49 @@ body {
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch6">云略 vs 优碧卡 · 意外的羁绊</h3>
 
-    <p>深夜的酒馆走廊中，优碧卡从天花板上倒挂而下，电锯轰鸣剁向云略的额头。云略——一个没有超能力的普通高中生——借手杖卡住墙壁凹槽架在半空，蹲身转体将优碧卡狠狠拍在墙上。</p>
+    <p>深夜的酒馆走廊中，云略正对着窗外的海出神——背后却毫无征兆地响起一句冰冷的电子音："……剩余目标，一人。"她刚要尖叫，一双马蹄铁般坚硬的鞋底已经从天而降，把她狠狠踹翻在地。双眼血红的机械少女从天花板上无声倒挂而下，纤细的右臂转出一把圆锯，只是后退几步，便毫不留情地朝着她的额头剁来。云略——一个没有超能力的普通高中生——全凭求生的本能挣脱卡住身位的墙壁，借手杖卡住墙壁凹槽架在半空，蹲身转体将优碧卡狠狠拍在墙上。</p>
 
     <div class="story-quote">
       "没在人山人海的食堂抢过饭……还敢试探我的身手？"
       <div class="quote-source">——云略，第一章</div>
     </div>
 
-    <p>优碧卡随即一口咬住她的脖子——她的牙齿能抽取血液中的指令之力。礼奈及时赶到，高温剑刃精准切断优碧卡的电锯手臂。在杂物间中，云略发现了一个惊人的事实：优碧卡的<span style="color:var(--accent2);">发声模块被装在了那条断臂里</span>。她无法说话。云略没有选择逃走或反击，而是重新连接了优碧卡的断臂并替她松了绑。两人的关系从这一刻开始从敌对转为互相理解。优碧卡随后协助云略追踪消失的亡灵兔，通过通风管道发现了他与六八的秘密会面。</p>
+    <p>优碧卡随即一口咬住她的脖子——她的牙齿能抽取血液中的指令之力。这个谜团在克诺的检查中揭晓：这位仿生人身上找不到哪怕一块电池，也没有人为唤醒与应急关闭的开关，臂部的电路被意义不明地设计成类似血管的东西，两颗虎牙如同吸血鬼一般——亡灵兔一锤定音："这是炼金术作成的仿生人。"没有常规能源的她，只能靠捕杀能力使、抽干他们的血液，并将其转化为高纯度的指令之力来为自己充能——这正是她穿梭于各条时间线、不断杀戮的真正缘由。礼奈及时赶到，高温剑刃精准切断优碧卡的电锯手臂。在杂物间中，云略发现了一个惊人的事实：优碧卡的<span style="color:var(--accent2);">发声模块被装在了那条断臂里</span>。她无法说话。云略没有选择逃走或反击，而是重新连接了优碧卡的断臂并替她松了绑。两人的关系从这一刻开始从敌对转为互相理解。优碧卡随后协助云略追踪消失的亡灵兔，通过通风管道发现了他与六八的秘密会面。</p>
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch7">圆翼党地下基地 · 革命策源地</h3>
 
     <p>酒馆老板鲍勃大叔的真实身份令人大吃一惊——他是<span class="term-link" onclick="openTerm('round_wing')">圆翼党</span>的区域管理部长。他用一根撬棍打开机关：整面墙壁下沉，锁链齿轮牵动地板如棋盘般展开，露出隐藏在酒吧之下的庞大地下基地。海港主<span class="char-link" onclick="openChar('yiwanlaosi')">伊万劳斯</span>用犀利目光扫视众人——"那目光简直就是饱含着对这水世界彻头彻尾的憎恨"。赏金猎人<span class="char-link" onclick="openChar('K')">K</span>上午还差点和马萨卡火并，现在发现大家是同一战壕的战友。</p>
 
-    <p>圆翼党给出的关键情报：<span class="char-link" onclick="openChar('sipalisen')">斯帕里森</span>并非海盗，而是销声匿迹近十年的宝藏猎人——一个自称"'强运加持'的至福所归、'大难不死'的天命之人"的传奇角色。而最近教皇城水域出现了一个划着"冰做的船"的蓝衣神秘人——正是<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。</p>
+    <p>圆翼党给出的关键情报：<span class="char-link" onclick="openChar('sipalisen')">斯帕里森</span>并非海盗，而是销声匿迹近十年的宝藏猎人。而最近教皇城水域出现了一个划着"冰做的船"的蓝衣神秘人——正是<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。</p>
 
     <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch8">亡灵兔与六八 · 双面博弈</h3>
 
-    <p>深夜无人的酒馆中，亡灵兔与六八相对而坐。六八喝着瓶中的鲜奶，温和地解释自己的来意——捕获优碧卡，收回珀利贝尔的原型机。亡灵兔在艰难权衡后做出了回应：</p>
+    <p>深夜无人的酒馆中，亡灵兔与六八相对而坐。六八喝着瓶中的鲜奶，温和地解释自己的来意——他来到沃克加德并不是特地来接应亡灵兔的，只是在执行一项机密任务：捕获装载了珀利贝尔实业实验型"单体超空间穿梭系统"原型机的人造人——优碧卡。这台原型机多年前因实验事故遗失，如今竟被第三方改造升级成了高度稳定的完全体；而她为原型机充能的方式，是捕杀当前时间线的能力使，抽干他们的血液，并将其转化为高纯度的指令之力。亡灵兔在艰难权衡后抛出了自己的三个顾虑：这是绝对背叛组织的行为；他们从未见过这个人造人；卢纳森特基地内部正陷入完全的混乱，情报系统早已崩溃。六八却只是微笑着回应：</p>
 
     <div class="story-quote">
       "这不是为了那个满是虫豸的基地……而是为了我的朋友们。"
       <div class="quote-source">——亡灵兔，第一章</div>
     </div>
 
-    <p>六八微微一笑，握住烛台的手涌起寒风——烛火没有熄灭，而是被冻结成了一朵剔透的冰晶，永远封存在摇曳的姿态之中。这就是六八：优雅、克制、却蕴含足以粉碎一切的力量。</p>
+    <p>六八微微一笑，握住烛台的手涌起寒风——烛火没有熄灭，而是被冻结成了一朵剔透的冰晶，永远封存在摇曳的姿态之中。他起身告辞，却在门口忽然回头，那双蓝色的眼睛在月下闪着凛冽的光："明明是被汪洋覆盖的不毛之地……在这片狭小的大陆上，资源却像取之不尽、用之不竭一般，能够兴建起如此庞大的都城。你们卢纳森特基地在索求什么，我也许已经窥见了一些呢。"亡灵兔顿感全身激寒，仿佛一阵南极而来的暴风雪，吹得他险些睁不开眼睛。等他回过神来，酒馆里只剩下烛台上火苗形状的冰块，和那罐未拆封的鲜奶。</p>
 
     </div>
     <p style="text-align:center; color:var(--wokgard); font-weight:bold; margin:30px 0;">——沃克加德卷 · 持续更新中——</p>
 
-    <!-- ===== CHARACTERS SECTION ===== -->
-    <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色档案</h2>
-    <div class="search-bar">
-      <input type="text" id="charSearch" placeholder="搜索角色（输入名字、代号或能力名）..." oninput="filterCharacters()">
-    </div>
-    <div class="chapter-grid" id="charGrid">
+    <!-- ===== CHARACTERS SECTION (hidden; cards still callable from story text) ===== -->
+    <div style="display:none;">
+      <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色档案</h2>
+      <div class="search-bar">
+        <input type="text" id="charSearch" placeholder="搜索角色（输入名字、代号或能力名）..." oninput="filterCharacters()">
+      </div>
+      <div class="chapter-grid" id="charGrid">
+      </div>
     </div>
 
     <!-- ===== WORLD SECTION ===== -->
     <h2 class="section-title" id="world" style="color:var(--accent);"><span class="icon">🌐</span>世界设定</h2>
     <div class="tabs" id="worldTabs">
       <button class="tab-btn active" onclick="switchWorldTab('terms', event)">名词解释</button>
-      <button class="tab-btn" onclick="switchWorldTab('abilities', event)">能力一览</button>
       <button class="tab-btn" onclick="switchWorldTab('timelines', event)">时间线介绍</button>
     </div>
     <div id="worldTabContent"></div>
@@ -955,6 +993,11 @@ body {
   <div class="modal" id="termModalContent"></div>
 </div>
 
+<!-- Timeline Modal -->
+<div class="modal-overlay" id="tlModal">
+  <div class="modal timeline-modal" id="tlModalContent"></div>
+</div>
+
 <script>
 // ===== DATA =====
 const characters = {
@@ -974,7 +1017,7 @@ const characters = {
     abilityDetail: '「流光」（CRT-?）：<span class="spoiler-content">修瓦尔扎曾有能力「长终」的一个削弱态，具有其部分力量。扭转怀表上的发条后，云略下一次接触的物品将会变为"时间炸弹"，在云略决定发动能力时爆炸，造成一次分贝巨大的音波打击并停止范围内一切生命体的活动能力3-8秒。云略如果在爆炸范围内，也会受到时间停止的影响。时间停止范围内正在运动的物体会在能力启动后的0.3秒内被凝滞住。时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你真的释放能力了吗？为什么这机器读不出来CRT的数值？"——粥娘</em>'
   },
   linai: {
-    name: '礼奈（铃）', title: '「失语的烈阳」· 队长', avatar: 'F', avatarText: '礼',
+    name: '礼奈', title: '「失语的烈阳」· 队长', avatar: 'F', avatarText: '礼',
     crt: '10.8', ability: '双生烈阳',
     identity: '卢纳森特基地特别行动部第二代时之秩序队长，协议能力使',
     personality: '飒爽而不失细腻，对队员极度负责。每天早上醒来都会失忆——性格都可能改变——但从未因此放弃队长的职责。战斗中冷静果断，生活中却也有温柔的一面。导师是十一年前终结浩劫的传奇——无名（BBQ）。',
@@ -1000,7 +1043,7 @@ const characters = {
     ],
     quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"', '"这玩意不吃不喝，连遛弯都不用，可好养了。"（指他的武器"小凝"）', '"……看来你这家伙就是典狱长了！告诉我你把他关到了什么地方……"（暴走状态）'],
     appearances: ['序章第一章：电梯坠落中展现能力', '序章第十一章：暴走事件', '第一章：监狱记忆、酒馆集合、圆翼党基地'],
-    abilityDetail: '「天平」（CRT-11.1，高危级）：<span class="spoiler-mark">（可能涉及剧透）</span><span class="spoiler-content">在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期（前三卷）常被认为是"操纵动能的能力"。马萨卡可以加速交通工具、弹射物弹道与肢体的挥动来增加破坏力，也可以减速身边会对自己造成威胁的目标。每次加速都会消耗体力，连续多次加速会严重影响身体机能甚至出现假死现象，但一次足够睡眠后即可恢复正常。只要物体在半径0.8米范围内，加速时不需要直接接触物体。</span>\n暴走状态（CRT-12.4）：<span class="spoiler-content">移除连续多次释放的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。被击倒后会陷入比正常假死更长时间的昏迷；即使赢下战斗，也会在十分钟内快速耗尽体力晕倒。</span>\n「司明」（CRT-9.4）：储存太阳能以操控电能。可以让头发（尤其是呆毛）发光，也可以在短兵相接中麻痹对方。并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。'
+    abilityDetail: '「天平」（CRT-11.1，高危级）：<span class="spoiler-mark">（可能涉及剧透）</span><span class="spoiler-content">在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期（前三卷）常被认为是"操纵动能的能力"。马萨卡可以加速交通工具、弹射物弹道与肢体的挥动来增加破坏力，也可以减速身边会对自己造成威胁的目标。每次加速都会消耗体力，连续多次加速会严重影响身体机能甚至出现假死现象，但一次足够睡眠后即可恢复正常。只要物体在半径0.8米范围内，加速时不需要直接接触物体。</span>\n解放阶段「天平（解放阶段）」（CRT-12.4）：<span class="spoiler-content">移除连续多次释放的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。被击倒后会陷入比正常假死更长时间的昏迷；即使赢下战斗，也会在十分钟内快速耗尽体力晕倒。</span>\n「司明」（CRT-9.4）：储存太阳能以操控电能。可以让头发（尤其是呆毛）发光，也可以在短兵相接中麻痹对方。并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。'
   },
   zhengyi: {
     name: '正义（贾斯汀）', title: '情报司前司长', avatar: 'M', avatarText: '正',
@@ -1020,9 +1063,9 @@ const characters = {
     name: '优碧卡（UPK-002）', title: '炼金仿生人偶', avatar: 'O', avatarText: '优',
     crt: 'N/A', ability: '电锯·血液抽取·超空间穿梭',
     identity: '康明德博士制造的炼金仿生机器人，科研司特殊机动部队预备役',
-    personality: '机械而纯真。会将思考过程完整地"广播"出来（在云略建议下学习隐藏）。拥有感情模块——会感到恐惧（存活率8%）、愤怒和悲伤（被威胁"大卸八块"时会流泪）。与康明德博士有深厚的"父女"情感。',
+    personality: '机械而纯真。会将思考过程完整地"广播"出来（在云略建议下学习隐藏）。拥有感情模块——会感到恐惧（存活率8%）、愤怒和悲伤（被威胁"大卸八块"时会流泪）。与康明德博士之间存在着超越创造者与造物的深厚羁绊。',
     bonds: [
-      { with: '康明德博士', type: '父女之情', desc: '为了回到博士身边，不惜捕杀能力使维持能量，穿梭了三十二次。' },
+      { with: '康明德博士', type: '创造者与挚爱', desc: '为了回到博士身边，不惜捕杀能力使维持能量，穿梭了三十二次。' },
       { with: '云略', type: '意外的理解者', desc: '云略是第一个对她展现善意的陌生人，为她接上了断臂。' },
       { with: '永冻领域 六八', type: '追捕关系', desc: '六八奉公司之命追捕她以回收原型机，两人之间有过惨烈战斗。' }
     ],
@@ -1045,9 +1088,9 @@ const characters = {
     abilityDetail: '非能力使。精通机械工程和炼金术的基础知识（来自家父的熏陶）。依靠技术能力和聪明才智在战场上发挥作用。持有可与基地及珀利贝尔通讯的秘密联络设备。'
   },
   liuba: {
-    name: '「永冻领域」六八', title: '攻城级能力使', avatar: 'O', avatarText: '六',
+    name: '「永冻领域」六八', title: '珀利贝尔实业亲卫队队长', avatar: 'O', avatarText: '六',
     crt: '14-18（估）', ability: '永冻领域',
-    identity: '珀利贝尔实业亲卫队队长，攻城级能力使',
+    identity: '珀利贝尔实业亲卫队队长',
     personality: '金发蓝眼，容貌精致如女性（以"他"称呼），身着湖蓝色长袍和青蓝百褶裙。举止优雅温和，但每句话都暗含令人不寒而栗的力量。对优碧卡的态度中既有猎人般的执着，也有对劲敌的尊重。',
     bonds: [
       { with: '优碧卡', type: '追猎与尊重', desc: '"你是一个值得尊重的劲敌"——在追捕之余，对优碧卡抱有某种敬意。' },
@@ -1061,9 +1104,9 @@ const characters = {
     name: '康明德', title: '科研司司长', avatar: 'M', avatarText: '康',
     crt: 'N/A', ability: '未知',
     identity: '卢纳森特基地科研司司长，沃克加德行动协同联络者',
-    personality: '二十七岁便在莱斯托尼亚理工学院担任物理系教授的天才。温和从容，没有丝毫学者的架子，对巫魔一族的炼金科技有深入研究。是优碧卡的创造者——"父亲"。',
+    personality: '二十七岁便在莱斯托尼亚理工学院担任物理系教授的天才。温和从容，没有丝毫学者的架子，对巫魔一族的炼金科技有深入研究。是优碧卡的创造者。',
     bonds: [
-      { with: '优碧卡', type: '创造者/父亲', desc: '制造了优碧卡，与她共同生活。优碧卡为了回到他身边，不惜一切代价。' }
+      { with: '优碧卡', type: '创造者与挚爱', desc: '制造了优碧卡，两人之间存在着超越创造者与造物的深厚羁绊。优碧卡为了回到他身边，不惜一切代价。' }
     ],
     quotes: ['"千万别叫我\'康博士\'或\'康教授\'，那样容易让人误会我是个长川人。"'],
     appearances: ['序章第十二章：作为协同联络者向小队介绍沃克加德任务'],
@@ -1073,9 +1116,9 @@ const characters = {
     name: '斯帕里森', title: '海盗之王·宝藏猎人', avatar: 'M', avatarText: '斯',
     crt: '9.7', ability: '空屿',
     identity: '潮涌居士号船长，（前）宝藏猎人，传说级人物',
-    personality: '已销声匿迹近十年。拥有大量宝物和秘术，战斗时不主要依靠能力而是依靠各种稀奇宝物的奇袭。"\'强运加持\'的至福所归、\'大难不死\'的天命之人"——自称。受到炼金诅咒，不能长久停留在陆地上。',
+    personality: '已销声匿迹近十年。拥有大量宝物和秘术，战斗时不主要依靠能力而是依靠各种稀奇宝物的奇袭。受到炼金诅咒，不能长久停留在陆地上。',
     bonds: [],
-    quotes: ['"\'强运加持\'的至福所归、\'大难不死\'的天命之人……这就是我，而你只是试图挑战我的这么多人之中，最微不足道的那一个。"'],
+    quotes: [],
     appearances: ['第一章：作为基地行动的目标被提及，但本人尚未登场'],
     abilityDetail: '「空屿」（CRT-9.7）：心跳和肢体运动提供抗性护盾，护盾被击破时爆出尖利水刺击退周围敌人并再生水膜。水膜存在时护盾回复加速。持有大量宝物：威尔士柯基（腐蚀金属弯刀）、金色巡回（展开式回旋镖）、鹦鹉螺壳（激光）、章鱼令牌（召唤巨型章鱼）、无定（穿墙传送门）等。'
   },
@@ -1093,7 +1136,7 @@ const characters = {
     abilityDetail: '「灵魂之桥」（CRT-8.9）：<span class="spoiler-content">使目标和自己的肉体失去实体，进入"幽灵状态"。在此期间一切物体都会直接穿过两人，以此来达到让两人免疫一切攻击的效果。这也意味着处在幽灵状态下的人可以在墙壁之间穿梭。「灵魂之桥」持续五秒，冷却时间为120分钟。如果能力的目标只有克诺自己，那么时间将会被大幅度延长至15秒。持续时间结束后，"桥上之人"的躯体会立刻在当前自己所处的位置重现。如果在能力解除时目标在障碍物之中，会被回弹至一个有充足空间的落点。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"非常朴素的援助能力，简直就是为了保护队友而生的呢！"——粥娘</em>'
   },
   laikesi: {
-    name: '莱克丝', title: '「浴缸之神」· 文书', avatar: 'F', avatarText: '莱',
+    name: '莱克丝', title: '文书', avatar: 'F', avatarText: '莱',
     crt: 'N/A（非能力使）', ability: '无',
     identity: '第二代时之秩序唯一文职人员，十六岁',
     personality: '嘴上刻薄辛辣——"我真是对你们这群能力使羡慕嫉妒恨……"，内心却十分柔软。酷爱洗澡。对能力使们"含着金钥匙出生"的境遇有着复杂的嫉妒和向往。正在努力学习高级技术以证明自己的价值。',
@@ -1185,7 +1228,6 @@ const terms = {
   kezhi_room: { name: '苛志室', content: '卢纳森特基地中负责记忆删除和记忆管理的特殊部门。特工签署保密协议后，由苛志室执行记忆删除。同时存储着被删除的记忆档案，在特定条件下可以释放部分记忆。' },
   memory: { name: '周期性失忆', content: '协议能力使在签署"二次保密协议"后接受的记忆删除的副作用。礼奈每天早上醒来都会忘掉所有东西——包括性格。马萨卡虽然也是协议能力使，但似乎没有出现并发症。' },
   cola: { name: '可乐', content: '柯洛雯时间线的新品饮料，在沃克加德也有售卖。黑色冒泡的液体，被马萨卡称为"可笑"，被酒吧小子称为"极为致命的化学品，有着强大的成瘾性"（开玩笑）。云略评价："喝起来像是可口可乐和百事可乐的一比一混合。"' },
-  prison_trauma: { name: '监狱创伤', content: '马萨卡在签署保密协议前经历的黑暗过去。他曾在某个监狱中服刑，有一个被称为"典狱长"的压迫者。被记忆分离药剂触发后，马萨卡会进入暴走状态——将周围人误认为是典狱长而发起攻击。' },
   ear_translator: { name: '耳译装置', content: '卢纳森特基地的微型实时翻译设备。植入耳道后可将听到的语言实时翻译为使用者的母语。有不同型号——礼奈的型号支持电话和MP3扩展（亡灵兔不推荐）。需要配合视网膜手术才能阅读文字。' },
   leader_pun: { name: '「礼队」', content: '马萨卡对礼奈的称呼，谐音英文 Leader（领导者/队长）。礼奈觉得这是一个糟糕的双关——但并没有阻止他这样叫。实际上，每天早上忘记一切的她，或许并不讨厌这个每天都有人重新称呼她的方式。' }
 };
@@ -1283,10 +1325,12 @@ function closeModal(id) {
 }
 document.getElementById('charModal').addEventListener('click', function(e) { if (e.target === this) closeModal('charModal'); });
 document.getElementById('termModal').addEventListener('click', function(e) { if (e.target === this) closeModal('termModal'); });
+document.getElementById('tlModal').addEventListener('click', function(e) { if (e.target === this) closeModal('tlModal'); });
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeModal('charModal');
     closeModal('termModal');
+    closeModal('tlModal');
   }
 });
 
@@ -1330,6 +1374,106 @@ function switchWorldTab(tab, e) {
       <div class="chapter-card" style="margin:10px 0;"><div class="card-title">🦊 芬奈法拉时间线</div><div class="card-desc">天使与死神的领域。妖蝎族围绕古树建立了地下的伦茨斯特帝国。芬奈法拉战线是抵抗"苍镰诡神"艾克森的最后防线。修瓦尔扎在此留下预言。鸿荧与道杰斯的棋局就发生在这条时间线的某处。</div></div>
     `;
   }
+}
+
+// ===== TIMELINE OVERVIEW =====
+const timelineData = [
+  {
+    key: 'lunassent', icon: '🛡️', name: '卢纳森特时间线', tag: '序幕',
+    short: '主角团所在的时间线，卢纳森特基地总部所在地。故事从云略从天而降开始——礼奈的失忆之谜、神秘手杖、粥娘实验室、马萨卡的暴走……',
+    story: '后时光机时代的中心舞台。十一年前那场惊世浩劫以一位英雄的献身和短暂的和平作为结束，而"卢纳森特基地"抓住了时代红利迅速崛起，把势力范围扩张到其他平行世界。故事从女孩云略降临基地开始：她在电梯废墟中被礼奈与马萨卡救下，身上那根无法取下的神秘手杖成了第二代时之秩序的头号难题。礼奈背负着每天早上失去一切记忆的宿命，在粥娘的显影液中窥见自己的导师「无名」；情报司前司长正义在枸杞与悲伤时间中等待时机；马萨卡被记忆分离药剂诱发暴走，唤出被封印的监狱过往。当基地遭遇前所未有的大规模袭击，正义以「空间断层」将云略置换进正在传送的时光机——第二代时之秩序就此踏上沃克加德之旅。',
+    factions: ['卢纳森特基地', '第二代时之秩序', '圣标联合', '苛志室'],
+    characters: ['yunlue', 'linai', 'masaka', 'kenuo', 'wanglingtu', 'laikesi', 'zhouniang', 'zhengyi', 'wuming'],
+    settings: ['timeline', 'command_force', 'crt', 'kezhi_room', 'memory', 'staff', 'judgement_day'],
+    section: 'pro-ch1'
+  },
+  {
+    key: 'wokgard', icon: '⚓', name: '沃克加德时间线', tag: '第一章',
+    short: '海洋覆盖率超过95%的大航海时代世界。小队以灵魂投影折跃降临——礼奈成为教皇城通缉犯帕瓦蒂·罗伊，云略意外随行，与机械少女优碧卡结下奇缘。',
+    story: '被汪洋覆盖的大航海时代世界，教皇国的统治如铁幕笼罩列岛，海盗团与赏金猎人割据四方。小队以「灵魂投影式折跃」进入：礼奈成为圆翼党核心家族罗伊家唯一的幸存者帕瓦蒂·罗伊，在教堂医院中遭遇奉罗伊先生遗嘱前来保护她的boundary，两人在烟雾弥漫的仓库中初遇又失之交臂；马萨卡成为监狱中的赏金猎人斐迪南；云略意外以自身躯体跟来，穿着夏季校服撑着哥特手杖突兀地出现在帆船与燧发枪的世界。船都之夜，机械少女优碧卡与「永冻领域」六八的对决撕开了整艘船；褐浪酒吧的地下，圆翼党基地与斯帕里森的传说逐渐浮出水面。亡灵兔与六八在深夜酒馆中达成脆弱的默契，而六八临走前那句关于"资源取之不尽"的疑问，让亡灵兔不寒而栗。',
+    factions: ['圆翼党', '教皇国', '褐浪酒吧', '潮涌居士号'],
+    characters: ['youbika', 'liuba', 'boundary', 'sipalisen', 'kangmingde'],
+    settings: ['wokgard', 'alchemy_array', 'round_wing', 'soul_projection'],
+    section: 'wok-ch1'
+  },
+  {
+    key: 'huoyin', icon: '🏭', name: '霍因佩兹时间线', tag: '第二章',
+    short: '荒凉极端气候的赛博朋克反乌托邦，盛产可萃取指令之力的"末原晶矿"。珀利贝尔实业的总部——无尽之塔——是整个时间线空间的技术枢纽。',
+    story: '一个荒凉的极端气候世界，盛产可萃取指令之力的战略资源"末原晶矿"。跨时空巨型企业珀利贝尔实业的总部设于此，公司城"无尽之塔"是时间线空间的技术枢纽。亲卫队队长「永冻领域」六八便出身于此——他奉命追捕装载着珀利贝尔实验型超空间穿梭系统原型机的优碧卡，为此不惜与卢纳森特基地的亡灵兔建立秘密联系。亡灵兔一面为基地执行任务，一面与这头庞然大物周旋，在背叛与忠诚的钢丝上行走。第二章的最终战，将在这座技术至上的反乌托邦都市中展开。',
+    factions: ['珀利贝尔实业', '无尽之塔', '寒城工坊', '长夜事务所'],
+    characters: ['liuba', 'wanglingtu', 'youbika'],
+    settings: [],
+    section: null
+  },
+  {
+    key: 'luochengdun', icon: '🏛️', name: '洛琛顿时间线', tag: '第三章',
+    short: '本我核心所在地，曾经强大如"诸神的国度"。几千年前因"腐化"灾难关闭通往外界的大门，如今是一片文明倒退的废土。',
+    story: '本我核心所在地，指令之力的发源之地。这里曾经是最强大的时间线，如同"诸神的国度"，几千年前通向外界的大门却因"腐化"灾难而关闭，文明倒退至原始社会。如今它是一片废土，残存的洛琛顿人在绝望中等待终末。第三章的故事将在这里展开——牧人与爱丽丝马戏团的命运、本我核心的秘密，都埋藏在这片曾经辉煌如今沉寂的土地之下。',
+    factions: ['牧人', '爱丽丝马戏团'],
+    characters: [],
+    settings: ['command_force'],
+    section: null
+  },
+  {
+    key: 'keluowen', icon: '🎪', name: '柯洛雯时间线', tag: '第四章',
+    short: '以柯洛雯第三帝国为背景的时间线。神秘组合与帝国的暗流在此交汇，第四章的最终战即将到来。',
+    story: '一条暗流涌动的独立时间线，以柯洛雯第三帝国为背景。这里有着"没名字的组合"这样的神秘团体，也有着帝国森严的权力结构。即便是远在其他时间线的沃克加德，也能见到这里的新品饮料——可乐。第四章的故事与最终战，即将在这片帝国阴影之下展开。',
+    factions: ['柯洛雯第三帝国', '没名字的组合'],
+    characters: [],
+    settings: ['cola'],
+    section: null
+  },
+  {
+    key: 'fennaila', icon: '🦊', name: '芬奈法拉时间线', tag: '前线',
+    short: '天使与死神的领域。妖蝎族围绕古树建立地下伦茨斯特帝国，芬奈法拉战线是抵抗"苍镰诡神"艾克森的最后防线。',
+    story: '天使与死神的领域。妖蝎族围绕古树建立了地下的伦茨斯特帝国，而芬奈法拉战线则是抵抗"苍镰诡神"艾克森的最后防线。修瓦尔扎在此留下"时间将不再被称为时间"的预言；妖狐鸿荧与附魔师道杰斯的棋局，就发生在这条时间线的某处。当序幕落下，那方树桩棋盘旁只剩鸿荧幽迷的眼眸望向远方。',
+    factions: ['芬奈法拉战线', '伦茨斯特帝国'],
+    characters: ['hongying', 'daojiesi'],
+    settings: [],
+    section: null
+  }
+];
+
+function renderTimelineOverview() {
+  const grid = document.getElementById('timelineGrid');
+  if (!grid) return;
+  grid.innerHTML = timelineData.map(t => `
+    <div class="timeline-panel" onclick="openTimeline('${t.key}')">
+      <div class="tl-panel-icon">${t.icon}</div>
+      <div class="tl-panel-tag">${t.tag}</div>
+      <div class="tl-panel-name">${t.name}</div>
+      <div class="tl-panel-short">${t.short}</div>
+      <div class="tl-panel-cta">进入这条时间线 →</div>
+    </div>
+  `).join('');
+}
+
+function openTimeline(key) {
+  const t = timelineData.find(x => x.key === key);
+  if (!t) return;
+  const charHtml = t.characters.length
+    ? t.characters.map(k => `<span class="tl-chip" onclick="openChar('${k}')">${characters[k] ? escHtml(characters[k].name) : k}</span>`).join('')
+    : '<span style="font-size:0.82em;color:var(--text-muted);">暂未收录</span>';
+  const factionHtml = t.factions.map(f => `<span class="tl-chip">${escHtml(f)}</span>`).join('');
+  const settingHtml = t.settings.length
+    ? t.settings.map(k => `<span class="tl-chip" onclick="openTerm('${k}')">${terms[k] ? escHtml(terms[k].name) : k}</span>`).join('')
+    : '<span style="font-size:0.82em;color:var(--text-muted);">暂未收录</span>';
+  document.getElementById('tlModalContent').innerHTML = `
+    <button class="close-btn" onclick="closeModal('tlModal')">&times;</button>
+    <div class="tlm-header">
+      <span class="tl-icon">${t.icon}</span>
+      <div>
+        <div style="font-size:1.3em;font-weight:bold;color:var(--text);">${t.name}</div>
+        <div style="font-size:0.78em;color:var(--accent);">${t.tag}</div>
+      </div>
+    </div>
+    <div class="tl-stories">${t.story}</div>
+    ${t.factions.length ? `<div class="tl-section"><div class="tl-section-title">势力</div><div class="tl-chips">${factionHtml}</div></div>` : ''}
+    ${t.characters.length ? `<div class="tl-section"><div class="tl-section-title">主要角色</div><div class="tl-chips">${charHtml}</div></div>` : ''}
+    ${t.settings.length ? `<div class="tl-section"><div class="tl-section-title">相关设定</div><div class="tl-chips">${settingHtml}</div></div>` : ''}
+    ${t.section ? `<button class="tl-jump" onclick="closeModal('tlModal');scrollToSection('${t.section}')">📖 阅读本站已收录的这段剧情</button>` : ''}
+  `;
+  document.getElementById('tlModal').classList.add('show');
 }
 
 // ===== SCROLL TO SECTION =====
@@ -1757,7 +1901,7 @@ const abilityData = [
    q:"「……我很怕他测能力的时候把机器打坏。」\n——卢纳森特基地，特别行动部，录音来源“兰尼尔”",
    nt:"只能作用于半径0.8m内的目标，不指代弹丸在被加速后射出的范围。",
   },
-  {id:"ab2",n:"天平",h:"马萨卡（暴走）",c:"12.4",
+  {id:"ab2",n:"天平（解放阶段）",h:"马萨卡（解放阶段）",c:"12.4",
    s:[4,4,4,2,4,2],
    d:"移除连续多次释放「天平」的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。\n如果马萨卡在进入“暴走”的状态下仍然被击倒，那他将会陷入比正常假死更加长时间的昏迷。即便他能够赢下战斗，也会在十分钟之内快速耗尽体力晕倒。",
    nt:"只能作用于半径1.8m内的目标，不指代弹丸在被加速后射出的范围。",
@@ -1766,6 +1910,7 @@ const abilityData = [
    s:[3,4,2,2,3,2],
    d:"“储存太阳能”以操纵电能的能力。可以用以让自己的头发（尤其是呆毛）发光，也可以在短兵相接中用以麻痹对方来打出一套叹为观止的控制链。\n「司明」并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。其特殊的放电性质在某些时候也会派上用场。",
    q:"“虽然这个能力经过更合理的运用可能会大放异彩……但对马萨卡这种已经可以在基地里横着走的家伙来说，他想怎么用便随他去吧。”\n——卢纳森特基地，特别行动部，录音来源“粥娘”",
+   sp:1,
    nt:"前方4m的空间，可能因周围空间内导体的存在而延伸",
   },
   {id:"ab4",n:"流光",h:"云略/修瓦尔扎",c:"？",
@@ -1819,12 +1964,12 @@ const abilityData = [
   {id:"ab12",n:"挺好。",h:"斯帕里森",c:"",
    s:[0,0,0,0,0,0],
    d:"斯帕里森的心跳和外界的肢体运动都会为他提供一个抗性护盾，无形地环绕在自己身体的各个方向。当护盾被击破时，斯帕里森周围会爆出尖利的水刺，击退在他周围的人，并为他自己再次提供一层被打破之后不会再进行自卫的水膜。\n水膜被击碎后斯帕里森将彻底陷入无保护状态。但水膜存在时，护盾的回复速度会大大提升。\n在常规状态下的护盾是无法被肉眼看出来的，更多情况下表现为刀枪不入的身体。\n护盾被堆叠完成后将不会继续堆叠，且会长期存在下去，持续到被打破为止。护盾存在时将会大大提升斯帕里森在水下运动的速度和屏息时间。\n这一能力是沃克加德大炼金阵转化出的“神力”被斯帕里森吸收所得的形式。实际上，这是炼金阵提取出的一种稳定的指令之力，在经过一系列魔法工序之后得到了强化和提纯。\n尽管这种纯粹的指令之力不会造成辐射病，但运用炼金术带来的反噬同样也为斯帕里森提供了一层可怕的“诅咒”——他不能长久地在陆地上停留，否则在连续经历三次潮期之后，他就会立刻死亡。",
-   q:"“‘强运加持’的至福所归、‘大难不死’的天命之人……这就是我，而你只是试图挑战我的这么多人之中，最微不足道的那一个。”\n——《沃克加德史诗》 第356页 斯帕里森\n \n在本作品的大部分剧情流程中，斯帕里森进行战斗时往往不依靠其能力。他是一位曾是宝藏猎人的海盗之王，依靠其各种稀奇的宝物与秘术进行超乎意料的奇袭。\n下列是斯帕里森的部分宝物及宝物特有的超能力。宝物的超能力不属于指令之力：",
+   q:"——《沃克加德史诗》 第356页 斯帕里森\n \n在本作品的大部分剧情流程中，斯帕里森进行战斗时往往不依靠其能力。他是一位曾是宝藏猎人的海盗之王，依靠其各种稀奇的宝物与秘术进行超乎意料的奇袭。\n下列是斯帕里森的部分宝物及宝物特有的超能力。宝物的超能力不属于指令之力：",
   },
   {id:"ab13",n:"空屿",h:"斯帕里森",c:"9.7",
    s:[2,1,4,1,4,1],
    d:"斯帕里森的心跳和外界的肢体运动都会为他提供一个抗性护盾，无形地环绕在自己身体的各个方向。当护盾被击破时，斯帕里森周围会爆出尖利的水刺，击退在他周围的人，并为他自己再次提供一层被打破之后不会再进行自卫的水膜。\n水膜被击碎后斯帕里森将彻底陷入无保护状态。但水膜存在时，护盾的回复速度会大大提升。\n在常规状态下的护盾是无法被肉眼看出来的，更多情况下表现为刀枪不入的身体。\n护盾被堆叠完成后将不会继续堆叠，且会长期存在下去，持续到被打破为止。护盾存在时将会大大提升斯帕里森在水下运动的速度和屏息时间。\n这一能力是沃克加德大炼金阵转化出的“神力”被斯帕里森吸收所得的形式。实际上，这是炼金阵提取出的一种稳定的指令之力，在经过一系列魔法工序之后得到了强化和提纯。\n尽管这种纯粹的指令之力不会造成辐射病，但运用炼金术带来的反噬同样也为斯帕里森提供了一层可怕的“诅咒”——他不能长久地在陆地上停留，否则在连续经历三次潮期之后，他就会立刻死亡。",
-   q:"“‘强运加持’的至福所归、‘大难不死’的天命之人……这就是我，而你只是试图挑战我的这么多人之中，最微不足道的那一个。”\n——《沃克加德史诗》 第356页 斯帕里森\n \n在本作品的大部分剧情流程中，斯帕里森进行战斗时往往不依靠其能力。他是一位曾是宝藏猎人的海盗之王，依靠其各种稀奇的宝物与秘术进行超乎意料的奇袭。\n下列是斯帕里森的部分宝物及宝物特有的超能力。宝物的超能力不属于指令之力：",
+   q:"——《沃克加德史诗》 第356页 斯帕里森\n \n在本作品的大部分剧情流程中，斯帕里森进行战斗时往往不依靠其能力。他是一位曾是宝藏猎人的海盗之王，依靠其各种稀奇的宝物与秘术进行超乎意料的奇袭。\n下列是斯帕里森的部分宝物及宝物特有的超能力。宝物的超能力不属于指令之力：",
    nt:"只对自己有效",
   },
   {id:"ab14",n:"疗愈弦音",h:"威路普",c:"8.6",
@@ -2522,11 +2667,13 @@ function renderAbilityArchive() {
         }
         if (a.q) {
           const qParts = a.q.split('\n');
-          if (qParts.length > 1) {
-            html += '<div class="ability-quote"><span class="quote-text">' + escHtml(qParts[0]) + '</span><span class="quote-attribution">' + escHtml(qParts[1]) + '</span></div>';
-          } else {
-            html += '<div class="ability-quote">' + escHtml(a.q) + '</div>';
+          let quoteInner = qParts.length > 1
+            ? '<span class="quote-text">' + escHtml(qParts[0]) + '</span><span class="quote-attribution">' + escHtml(qParts[1]) + '</span>'
+            : escHtml(a.q);
+          if (a.sp) {
+            quoteInner = '<span class="spoiler-mark">（评价可能涉及剧透，点击查看）</span><span class="spoiler-content">' + quoteInner + '</span>';
           }
+          html += '<div class="ability-quote">' + quoteInner + '</div>';
         }
         if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
         html += '</div></div></div>';
@@ -2597,6 +2744,8 @@ function getCharAbilityHtml(charKey) {
 
 // Initialize ability archive
 renderAbilityArchive();
+// Initialize timeline overview
+renderTimelineOverview();
 
 </script>
 </body>

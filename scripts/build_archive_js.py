@@ -33,6 +33,11 @@ for a in abilities:
     holder = a['holder'].strip()
     crt = a['crt'].strip()
 
+    # Annotation #1: 马萨卡's 暴走-state 天平 is its 解放阶段 (release-stage) form
+    if holder == '马萨卡（暴走）':
+        name = '天平（解放阶段）'
+        holder = '马萨卡（解放阶段）'
+
     # Skip garbage entries
     if not name or len(name) < 1:
         continue
@@ -69,6 +74,17 @@ for a in abilities:
     quote = a.get('quote', '').strip()
     note = a.get('note', '').strip()
 
+    # Spoiler flag: 司明's evaluation quote reveals 马萨卡's true strength
+    spoiler = ('虽然这个能力经过更合理的运用' in quote)
+
+    # Annotation #10: remove 斯帕里森's '强运加持/大难不死' self-claim quote.
+    # The claim is wrapped in curly quotes “...”, then attribution follows.
+    if holder == '斯帕里森' and '强运加持' in quote:
+        open_q = quote.find('“')  # “
+        attrib = quote.find('——《')  # ——《
+        if open_q != -1 and attrib != -1 and open_q < attrib:
+            quote = quote[attrib:]
+
     # Clean desc: remove the quote that got embedded in desc
     if quote and desc.endswith(quote):
         desc = desc[:-len(quote)].strip()
@@ -84,6 +100,8 @@ for a in abilities:
     lines.append(f'   d:"{esc(desc)}",')
     if quote:
         lines.append(f'   q:"{esc(quote)}",')
+    if spoiler:
+        lines.append(f'   sp:1,')
     if note:
         lines.append(f'   nt:"{esc(note)}",')
     lines.append(f'  }},')

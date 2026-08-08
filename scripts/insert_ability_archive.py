@@ -122,11 +122,13 @@ function renderAbilityArchive() {
         }
         if (a.q) {
           const qParts = a.q.split('\\n');
-          if (qParts.length > 1) {
-            html += '<div class="ability-quote"><span class="quote-text">' + escHtml(qParts[0]) + '</span><span class="quote-attribution">' + escHtml(qParts[1]) + '</span></div>';
-          } else {
-            html += '<div class="ability-quote">' + escHtml(a.q) + '</div>';
+          let quoteInner = qParts.length > 1
+            ? '<span class="quote-text">' + escHtml(qParts[0]) + '</span><span class="quote-attribution">' + escHtml(qParts[1]) + '</span>'
+            : escHtml(a.q);
+          if (a.sp) {
+            quoteInner = '<span class="spoiler-mark">（评价可能涉及剧透，点击查看）</span><span class="spoiler-content">' + quoteInner + '</span>';
           }
+          html += '<div class="ability-quote">' + quoteInner + '</div>';
         }
         if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
         html += '</div></div></div>';

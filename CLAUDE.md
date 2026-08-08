@@ -51,8 +51,21 @@ E:\永恒流光\永恒流光\
 - 通过 `localStorage` 键 `lumen-theme` 持久化
 
 #### 3. 角色档案（`characters` 对象）
-- `openChar(key)` — 打开角色卡片弹窗，显示：姓名、称号、CRT等级、身份、性格、能力详情（含剧透内容）、核心羁绊、标志性台词、主要出场
-- 已收录角色：云略、礼奈、马萨卡、正义、亡灵兔、优碧卡、六八、克诺、莱克丝、粥娘、boundary、兰尼尔、梅纳德、康明德、道杰斯、鸿荧、斯帕里森
+- `openChar(key)` — 打开角色卡片弹窗，显示：姓名、称号、CRT等级、身份、性格、能力（可点击跳转至能力档案）、核心羁绊、标志性台词、主要出场
+- `getCharAbilityHtml(charKey)` — 根据角色key在 abilityData 中匹配对应的能力，生成可点击的能力名链接
+- 已收录角色：云略、礼奈、马萨卡、正义、亡灵兔、优碧卡、六八、克诺、莱克丝、粥娘、boundary、兰尼尔、梅纳德、康明德、道杰斯、鸿荧、斯帕里森、无名
+- **注意**：角色卡片中不再内联显示能力的详细描述，只显示能力名称作为链接，点击后跳转至能力档案板块
+
+#### 3.5 能力档案（`abilityData` 数组 + `abilityTimelines` 结构）
+- 从源文档 `永恒流光能力设定集（2026.6.10）` 解析生成，共 101 个能力条目
+- **数据源**：`data/ability_archive.js`（自动生成），通过 `scripts/extract_abilities.py` 解析源文档 → `scripts/build_archive_js.py` 转换为紧凑 JS → `scripts/insert_ability_archive.py` 插入 index.html
+- **数据结构**：每个能力包含 `{id, n(名称), h(持有者), c(CRT), s(6维统计数组), d(描述), q(引文), nt(范围备注)}`
+- **六维统计**：破坏力、速度、耐力、范围、狂热、防御（EX=5, A=4, B=3, C=2, D=1, 0=未知）
+- **组织方式**：按时间线和阵营组织（`abilityTimelines`），包含卢纳森特、沃克加德、霍因佩兹、洛琛顿、柯洛雯、芬奈法拉等时间线
+- `renderAbilityArchive()` — 渲染能力档案板块（导航栏 + 能力卡片）
+- `drawRadarChart(stats)` — 绘制 SVG 六维雷达图
+- `scrollToAbility(id)` / `scrollToFaction(firstId)` — 导航至特定能力/阵营
+- `abilityMap` — 按 ID 快速查找能力的映射表
 
 #### 4. 术语词典（`terms` 对象）
 - `openTerm(key)` — 打开术语定义弹窗
@@ -127,6 +140,18 @@ E:\永恒流光\永恒流光\
 **提交**: `8ac128a`
 - 审阅密码从 `1T1Gsdxsp!!` 改为 `1T1Gsdxsp!!!`
 
+### 第 6 次更新 — 能力档案板块
+**提交**: `4f9de48`
+- **新增**"能力档案"独立板块（`#abilities`），从头导航栏可直达
+- 从源文档 `永恒流光能力设定集（2026.6.10）` 解析出 101 个能力条目
+- **数据结构**：`abilityData` 数组（每个能力含6维数值统计）+ `abilityTimelines` 组织结构（按时间线→阵营分组）
+- **六维雷达图**：SVG 绘制，展示破坏力/速度/耐力/范围/狂热/防御（EX=5, A=4, B=3, C=2, D=1）
+- **界面布局**：能力名居中、描述首行缩进2字符、引文浅色字体、范围备注
+- **导航索引**：按时间线和阵营组织的快速跳转按钮
+- **角色卡片改造**：`openChar()` 中移除内联能力描述，改为可点击的能力名链接（通过 `getCharAbilityHtml()` 匹配 `abilityData`），点击跳转至能力档案板块
+- **解析工具链**：`scripts/extract_abilities.py`（解析源文档） → `scripts/build_archive_js.py`（生成 JS 数据） → `scripts/insert_ability_archive.py`（插入 index.html）
+- CSS 新增：`.ability-archive`, `.ability-nav-bar`, `.ability-nav-btn`, `.ability-card`, `.radar-chart-wrap`, `.ability-timeline-title`, `.ability-faction-title`
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：
@@ -154,9 +179,13 @@ git push origin main
 推送后网站自动部署到 https://valkido9.github.io/Lumen-Infinitum/（GitHub Pages 从 main 分支 `/` 根目录发布）。
 
 ### 注意事项：
-- 所有内容在单文件 `index.html` 中（~1700+ 行），CSS 在 `<style>` 中，JS 在 `<script>` 中
+- 所有内容在单文件 `index.html` 中（~2600+ 行，~140KB），CSS 在 `<style>` 中，JS 在 `<script>` 中
 - 不要拆分文件，保持单文件结构
-- CSS 变量定义在 `:root`（日间）和 `[data-theme="dark"]`（夜间）中
-- 角色数据在 JS 对象 `characters` 中，术语在 `terms` 中
-- 批注系统的密码常量 `REVIEW_PASSWORD` 在 JS 顶部
+- CSS 变量定义在 `:root`（日间）和 `.dark`（夜间）中
+- 角色数据在 JS 对象 `characters` 中，术语在 `terms` 中，能力数据在 `abilityData` 数组中
+- 能力档案的组织结构在 `abilityTimelines` 中，按时间线→阵营→能力ID组织
+- `abilityMap` 是按 ID 快速查找能力的映射表
+- 批注系统的密码常量 `REVIEW_PASSWORD` 在 JS 中
 - `.spoiler-content` 元素在 HTML 中的位置可能在 `.spoiler-mark` 之前（通过 `<br>` 分隔），查找时需双向搜索
+- 修改 `abilityData` 后需调用 `renderAbilityArchive()` 刷新视图
+- 修改 `characters` 数据中的 `abilityDetail` 只需保留基础描述，详细能力介绍在 `abilityData` 中

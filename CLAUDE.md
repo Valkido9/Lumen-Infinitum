@@ -96,6 +96,13 @@ E:\永恒流光\永恒流光\
 |---|---|
 | `lumen-theme` | 主题偏好（`'dark'` 或不存在） |
 | `lumen-annotations` | 批注数据 |
+| `lumen-annotations-backup` | 清除批注前自动备份的上一版本批注（`{time, data}`） |
+
+### 审阅模式辅助按钮
+- 审阅模式下，右下角会依次出现三个按钮：`📋 导出批注`（左140px）、`🗑 清除批注`（左260px）、`💾 备份到本地`（左380px）
+- `🗑 清除批注`：确认后先将当前批注**备份为本地文档**（自动下载 `.txt`）+ 写入 `lumen-annotations-backup`，再清空 `lumen-annotations`
+- `💾 备份到本地`：用 `showSaveFilePicker` 弹出系统保存对话框选择位置（Chrome/Edge），其它浏览器自动下载带时间戳的 `.txt` 文档
+- 备份文档文件名格式：`永恒流光-批注备份-YYYYMMDD-HHMMSS.txt`
 
 ## 更新历史
 

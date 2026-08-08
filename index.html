@@ -1642,9 +1642,10 @@ function enterReviewMode() {
     el.addEventListener('click', onElementClick);
   });
 
-  // Add export + clear buttons next to review toggle
+  // Add export / clear / backup buttons next to review toggle
   addExportButton();
   addClearButton();
+  addBackupButton();
 }
 
 function exitReviewMode() {
@@ -1665,6 +1666,7 @@ function exitReviewMode() {
   removeAllBadges();
   removeExportButton();
   removeClearButton();
+  removeBackupButton();
 
   getAnnotatableElements().forEach(el => {
     el.style.cursor = '';
@@ -1738,6 +1740,23 @@ function removeClearButton() {
   if (btn) btn.remove();
 }
 
+function addBackupButton() {
+  removeBackupButton();
+  const btn = document.createElement('button');
+  btn.id = 'backupAnnBtn';
+  btn.className = 'review-toggle';
+  btn.style.left = '380px';
+  btn.textContent = '💾 备份到本地';
+  btn.title = '把当前全部批注保存为本地文档（可选择保存位置）';
+  btn.addEventListener('click', backupToLocal);
+  document.body.appendChild(btn);
+}
+
+function removeBackupButton() {
+  const btn = document.getElementById('backupAnnBtn');
+  if (btn) btn.remove();
+}
+
 function backupAnnotations() {
   try {
     localStorage.setItem(ANN_BACKUP_KEY, JSON.stringify({
@@ -1748,6 +1767,83 @@ function backupAnnotations() {
   } catch (e) { return false; }
 }
 
+// ── Backup to a local file ──
+function buildBackupText() {
+  const anns = getAnnotations();
+  const allPaths = Object.keys(anns);
+  const entries = [];
+  let unresolved = 0, resolved = 0;
+  allPaths.forEach(path => {
+    (anns[path] || []).forEach(a => {
+      if (a.resolved) resolved++; else unresolved++;
+      const el = getElementByPath(path);
+      const snippet = el ? el.textContent.substring(0, 80) : '(未知位置)';
+      entries.push({ path, snippet, ...a });
+    });
+  });
+  let out = '// ===== 永恒流光 批注备份 =====\n';
+  out += `// 备份时间: ${new Date().toLocaleString('zh-CN')}\n`;
+  out += `// 共 ${entries.length} 条批注（未处理 ${unresolved} / 已处理 ${resolved}）\n`;
+  out += '// ==============================\n\n';
+  if (entries.length === 0) { out += '（暂无批注）\n'; return out; }
+  entries.forEach((a, i) => {
+    out += `【批注 #${i + 1}】${a.resolved ? '（已处理）' : '（未处理）'}\n`;
+    out += `  位置: "${a.snippet}..."\n`;
+    out += `  内容: ${a.text}\n`;
+    out += `  时间: ${a.time}\n`;
+    out += `  路径: ${a.path}\n`;
+    out += '\n';
+  });
+  return out;
+}
+
+function timestampedFileName() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `永恒流光-批注备份-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
+}
+
+function downloadAnnotationsFile() {
+  const blob = new Blob([buildBackupText()], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = timestampedFileName();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return true;
+}
+
+async function saveAnnotationsWithPicker() {
+  if (!window.showSaveFilePicker) return downloadAnnotationsFile();
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: timestampedFileName(),
+      types: [{ description: '文本文件', accept: { 'text/plain': ['.txt'] } }]
+    });
+    const writable = await handle.createWritable();
+    await writable.write(buildBackupText());
+    await writable.close();
+    return true;
+  } catch (e) {
+    if (e && e.name === 'AbortError') return false; // 用户取消保存
+    return downloadAnnotationsFile();
+  }
+}
+
+function backupToLocal() {
+  const anns = getAnnotations();
+  const total = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
+  if (total === 0) { alert('当前没有批注。'); return; }
+  if (window.showSaveFilePicker) {
+    saveAnnotationsWithPicker();
+  } else {
+    downloadAnnotationsFile();
+  }
+}
+
 function clearAllAnnotations() {
   const anns = getAnnotations();
   const total = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
@@ -1755,16 +1851,23 @@ function clearAllAnnotations() {
     alert('当前没有批注。');
     return;
   }
-  const ok = confirm(`确定要清除全部 ${total} 条批注吗？\n清除前会自动备份当前批注到本地存储。`);
+  const ok = confirm(`确定要清除全部 ${total} 条批注吗？\n清除前会自动把当前批注备份为本地文档，并存入浏览器存储。`);
   if (!ok) return;
   const backed = backupAnnotations();
+  const savedFile = downloadAnnotationsFile();
   saveAnnotations({});
   removeAllPopups();
   renderAllBadges();
   const hint = document.getElementById('reviewHint');
-  hint.textContent = backed
-    ? `🗑 已清除全部 ${total} 条批注，上一版本已备份（可查看 localStorage 键 "lumen-annotations-backup"）。`
-    : `🗑 已清除全部 ${total} 条批注。⚠️ 备份失败，无法恢复。`;
+  if (backed && savedFile) {
+    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（本地文档下载 + 浏览器存储）。`;
+  } else if (savedFile) {
+    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（本地文档）。⚠️ 浏览器存储备份失败。`;
+  } else if (backed) {
+    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（浏览器存储）。⚠️ 本地文档下载失败。`;
+  } else {
+    hint.textContent = `🗑 已清除全部 ${total} 条批注。⚠️ 备份失败，无法恢复。`;
+  }
   hint.classList.add('show');
   setTimeout(() => hint.classList.remove('show'), 5000);
 }

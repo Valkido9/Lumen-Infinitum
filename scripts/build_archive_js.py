@@ -10,7 +10,7 @@ with open('../data/abilities_parsed.json', 'r', encoding='utf-8') as f:
 stat_val = {'EX':5, 'A':4, 'B':3, 'C':2, 'D':1, 'S':5, '':0, '?':0}
 
 def esc(s):
-    return s.replace('\\', '\\\\').replace("'", "\\'").replace('\n', '\\n')
+    return s.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'").replace('\n', '\\n')
 
 # Group by timeline/faction based on order and naming patterns
 # We'll organize them manually since the document structure varies

@@ -560,99 +560,6 @@ body {
 .export-modal .export-box .export-btns button.copy { background: var(--accent); color: #fff; border-color: var(--accent); }
 .export-modal .export-box .export-btns button.cls { background: var(--bg); color: var(--text-dim); }
 
-/* ===== Ability Archive ===== */
-.ability-archive { margin: 40px 0; }
-.ability-nav-bar {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px;
-  padding: 16px; background: var(--bg-card); border-radius: var(--radius);
-  border: 1px solid var(--border-light);
-}
-.ability-nav-bar .tl-group { width: 100%; }
-.ability-nav-bar .tl-label {
-  font-size: 0.85em; font-weight: 700; color: var(--gold);
-  margin: 12px 0 6px; padding-left: 4px;
-}
-.ability-nav-bar .tl-label:first-child { margin-top: 0; }
-.ability-nav-btn {
-  display: inline-block; padding: 4px 12px; margin: 2px;
-  border-radius: 14px; font-size: 0.78em; cursor: pointer;
-  border: 1px solid var(--border); background: var(--bg);
-  color: var(--text-dim); transition: all 0.15s;
-  font-family: inherit; white-space: nowrap;
-}
-.ability-nav-btn:hover, .ability-nav-btn.active {
-  border-color: var(--accent); color: var(--accent); background: var(--accent-soft);
-}
-
-/* Ability section headers */
-.ability-timeline-title {
-  font-size: 1.3em; font-weight: 700; color: var(--gold);
-  margin: 36px 0 8px; padding-bottom: 8px;
-  border-bottom: 2px solid var(--border-light);
-}
-.ability-faction-title {
-  font-size: 1em; font-weight: 600; color: var(--text);
-  margin: 20px 0 12px; padding: 6px 14px;
-  background: var(--bg-card); border-left: 3px solid var(--accent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-
-/* Individual ability card */
-.ability-card {
-  background: var(--bg-card); border: 1px solid var(--border-light);
-  border-radius: var(--radius); padding: 20px 22px; margin: 14px 0;
-  transition: all 0.2s;
-}
-.ability-card:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
-.ability-card .ability-card-header {
-  display: flex; align-items: flex-start; gap: 18px;
-  flex-wrap: wrap;
-}
-.ability-card .ability-info { flex: 1; min-width: 240px; }
-.ability-card .ability-name {
-  text-align: center; font-size: 1.2em; font-weight: 700;
-  color: var(--accent); margin: 0 0 6px;
-}
-.ability-card .ability-meta {
-  text-align: center; font-size: 0.82em; color: var(--text-dim);
-  margin-bottom: 10px;
-}
-.ability-card .ability-meta span { margin: 0 6px; }
-.ability-card .ability-desc {
-  font-size: 0.9em; line-height: 1.8; color: var(--text);
-  text-indent: 2em; margin: 10px 0;
-}
-.ability-card .ability-quote {
-  font-size: 0.82em; color: var(--text-muted); font-style: italic;
-  margin-top: 10px; padding: 8px 14px;
-  border-left: 2px solid var(--border-light);
-  background: var(--bg);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-.ability-card .ability-note {
-  font-size: 0.78em; color: var(--text-muted); margin-top: 6px;
-}
-
-/* Radar chart */
-.radar-chart-wrap {
-  flex-shrink: 0; width: 150px; height: 150px;
-}
-.radar-chart-wrap svg { width: 100%; height: 100%; }
-.radar-chart-wrap .radar-bg { fill: none; stroke: var(--border); stroke-width: 1; }
-.radar-chart-wrap .radar-data { fill: rgba(88,166,255,0.25); stroke: var(--accent); stroke-width: 1.5; }
-.radar-chart-wrap .radar-label {
-  font-size: 9px; fill: var(--text-dim); text-anchor: middle;
-  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
-}
-.radar-chart-wrap .radar-dot { fill: var(--accent); }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .ability-card .ability-card-header { flex-direction: column; align-items: center; }
-  .ability-card .ability-name { font-size: 1.05em; }
-  .radar-chart-wrap { width: 120px; height: 120px; }
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .layout { flex-direction: column; }
@@ -701,6 +608,39 @@ body {
 @media (max-width: 768px) {
   .theme-toggle { right: 8px; width: 38px; height: 38px; font-size: 1em; }
 }
+
+/* ===== ABILITY ARCHIVE ===== */
+.ability-archive { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+.ability-nav-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 20px; align-items: center; }
+.ability-nav-bar .tl-label { width: 100%; font-size: 0.85em; color: var(--gold); margin: 8px 0 4px; font-weight: bold; }
+.ability-nav-btn { padding: 5px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); cursor: pointer; font-size: 0.8em; transition: all 0.2s; white-space: nowrap; }
+.ability-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ability-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: all 0.3s; display: flex; gap: 18px; align-items: flex-start; }
+.ability-card:hover { border-color: var(--accent2); }
+.ability-card-header { display: flex; gap: 18px; align-items: flex-start; flex-shrink: 0; }
+.ability-card .ability-name { font-size: 1.25em; color: var(--gold); font-weight: bold; margin-bottom: 6px; text-align: center; }
+.ability-card .ability-meta { font-size: 0.82em; color: var(--text-dim); display: flex; gap: 14px; flex-wrap: wrap; margin: 2px 0; }
+.ability-card .ability-desc { font-size: 0.92em; line-height: 1.7; color: var(--text); }
+.ability-card .ability-desc p { text-indent: 2em; margin: 4px 0; }
+.ability-card .ability-quote { font-size: 0.82em; color: var(--text-muted); font-style: italic; margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--bg); border-radius: 0 6px 6px 0; }
+.ability-card .ability-note { font-size: 0.78em; color: var(--text-muted); margin-top: 4px; }
+.ability-info { flex: 1; min-width: 0; }
+.radar-chart-wrap { flex-shrink: 0; width: 150px; height: 150px; }
+.radar-chart-wrap svg { width: 100%; height: 100%; }
+.radar-bg { fill: none; stroke: var(--border); stroke-width: 0.5; }
+.radar-data { fill: rgba(88,166,255,0.2); stroke: var(--accent); stroke-width: 1.2; }
+.radar-dot { fill: var(--accent); }
+.radar-label { fill: var(--text-muted); font-size: 9px; text-anchor: middle; }
+.ability-timeline-title { font-size: 1.1em; color: var(--accent); font-weight: bold; margin: 24px 0 8px; padding: 8px 14px; background: var(--bg); border-radius: 8px; border-left: 4px solid var(--accent); }
+.ability-faction-title { font-size: 1em; color: var(--accent3); font-weight: bold; margin: 14px 0 4px; padding-left: 12px; }
+@media (max-width: 768px) {
+  .ability-card { flex-direction: column; align-items: center; }
+  .ability-card-header { flex-direction: column; align-items: center; }
+  .ability-card .ability-name { text-align: center; }
+  .ability-card .ability-meta { justify-content: center; }
+  .ability-info { text-align: center; }
+  .radar-chart-wrap { width: 120px; height: 120px; }
+}
 </style>
 </head>
 <body>
@@ -745,9 +685,9 @@ body {
   <div class="logo">永恒流光<span>LUMEN INFINITUM</span></div>
   <nav>
     <a href="#story" class="active" onclick="scrollToSection('story')">故事主线</a>
-    <a href="#abilities" onclick="scrollToSection('abilities')">能力档案</a>
     <a href="#characters" onclick="scrollToSection('characters')">角色档案</a>
     <a href="#world" onclick="scrollToSection('world')">世界设定</a>
+    <a href="#abilities" onclick="scrollToSection('abilities')">能力档案</a>
   </nav>
 </header>
 
@@ -963,11 +903,6 @@ body {
     </div>
     <p style="text-align:center; color:var(--wokgard); font-weight:bold; margin:30px 0;">——沃克加德卷 · 持续更新中——</p>
 
-    <!-- ===== ABILITY ARCHIVE ===== -->
-    <h2 class="section-title" id="abilities" style="color:var(--accent);"><span class="icon">⚡</span>能力档案</h2>
-    <div class="ability-nav-bar" id="abilityNav"></div>
-    <div class="ability-archive" id="abilityArchive"></div>
-
     <!-- ===== CHARACTERS SECTION ===== -->
     <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色档案</h2>
     <div class="search-bar">
@@ -984,6 +919,11 @@ body {
       <button class="tab-btn" onclick="switchWorldTab('timelines', event)">时间线介绍</button>
     </div>
     <div id="worldTabContent"></div>
+
+    <!-- ===== ABILITY ARCHIVE SECTION ===== -->
+    <h2 class="section-title" id="abilities" style="color:var(--accent);"><span class="icon">⚡</span>能力档案</h2>
+    <div class="ability-nav-bar" id="abilityNav"></div>
+    <div class="ability-archive" id="abilityArchive"></div>
 
     <!-- Footer -->
     <div class="footer">
@@ -1892,7 +1832,7 @@ const abilityData = [
   },
   {id:"ab17",n:"唤起",h:"诺阿",c:"9.9",
    s:[1,4,2,5,1,3],
-   d:"被诺阿接触过的物品（或人）可以被标记为“被唤起物”（最多只能有一个标记，后期成长为三个）。\n诺阿拥有"被唤起物"处的自由听觉。后期成长为同时拥有听觉与视觉，甚至还能短暂操控"被唤起物"执行一次幅度不大的简单动作。\n诺阿可以让被标记的物品以60km/h的速度飞向自己半径3m内的任何一处地方，但是飞行过程中会绕开所有障碍物，且落地时也不会让"被唤起物"受到伤害。只要让"被唤起物"或者诺阿本人被关在密闭且无法逃脱的地方，诺阿就无法完成"唤起"的动作。\n如果四周处在完全闭塞的状态但障碍物可以被破坏，唤起会试图让被唤起物撞开路径上的阻挡物并尽量保护其在飞行过程中不受伤害。\n“好吧。至少你有一个不怕弄丢身份证的能力。”",
+   d:"被诺阿接触过的物品（或人）可以被标记为“被唤起物”（最多只能有一个标记，后期成长为三个）。\n诺阿拥有\"被唤起物\"处的自由听觉。后期成长为同时拥有听觉与视觉，甚至还能短暂操控\"被唤起物\"执行一次幅度不大的简单动作。\n诺阿可以让被标记的物品以60km/h的速度飞向自己半径3m内的任何一处地方，但是飞行过程中会绕开所有障碍物，且落地时也不会让\"被唤起物\"受到伤害。只要让\"被唤起物\"或者诺阿本人被关在密闭且无法逃脱的地方，诺阿就无法完成\"唤起\"的动作。\n如果四周处在完全闭塞的状态但障碍物可以被破坏，唤起会试图让被唤起物撞开路径上的阻挡物并尽量保护其在飞行过程中不受伤害。\n“好吧。至少你有一个不怕弄丢身份证的能力。”",
    q:"——《沃克加德史诗》 第67页 云略",
    nt:"能力半径至少覆盖整座城邦",
   },
@@ -1927,7 +1867,7 @@ const abilityData = [
   },
   {id:"ab23",n:"堕乐之园",h:"里昂",c:"12.3",
    s:[3,3,4,2,2,4],
-   d:"里昂具有驾驭“腐化”的能力。“腐化”可以侵染并萃取物体内部“古老的黑暗”，使其显现出极强的攻击性，变为受到里昂掌控的，呈现紫色外观的"腐化之地"。\n里昂在腐化之地上可以小幅度操纵地表形态，利用萃取出的扭曲物质打造各种坚硬且诡异的武器或防具，并通过制造尖刺和裂缝的方法来对站在腐化之地上的人造成伤害。当周围人的人精神或身体的扭曲程度增高时，腐化之地就会进入活跃状态。活跃状态下的腐化之地会尝试发射出大量孢子并进行蔓延。\n受到腐化武器攻击与吸入了过多腐化孢子的人，都会持续性地遭到腐化的侵染。里昂也可以对人体内部进行萃取，使其同样化为各种武器或者机械结构，对生命活动造成严重影响。\n里昂与腐化之地始终处于共生共荣的状态，两者谁都无法完全掌握对方。里昂自身具有极高的腐化抗性，其肉体亦与腐化术相性相合。但当他过为剧烈地解放腐化之地的力量时，其作为人类的理性认知也会遭到扭曲。\n里昂始终具有维持一小部分腐化之地的常态，通常情况下位于他的脚下，是开始蔓延的中心。在一场战斗结束之后，已经被蔓延的正常地块会缓慢恢复正常，收回到常态腐化之地的大小。",
+   d:"里昂具有驾驭“腐化”的能力。“腐化”可以侵染并萃取物体内部“古老的黑暗”，使其显现出极强的攻击性，变为受到里昂掌控的，呈现紫色外观的\"腐化之地\"。\n里昂在腐化之地上可以小幅度操纵地表形态，利用萃取出的扭曲物质打造各种坚硬且诡异的武器或防具，并通过制造尖刺和裂缝的方法来对站在腐化之地上的人造成伤害。当周围人的人精神或身体的扭曲程度增高时，腐化之地就会进入活跃状态。活跃状态下的腐化之地会尝试发射出大量孢子并进行蔓延。\n受到腐化武器攻击与吸入了过多腐化孢子的人，都会持续性地遭到腐化的侵染。里昂也可以对人体内部进行萃取，使其同样化为各种武器或者机械结构，对生命活动造成严重影响。\n里昂与腐化之地始终处于共生共荣的状态，两者谁都无法完全掌握对方。里昂自身具有极高的腐化抗性，其肉体亦与腐化术相性相合。但当他过为剧烈地解放腐化之地的力量时，其作为人类的理性认知也会遭到扭曲。\n里昂始终具有维持一小部分腐化之地的常态，通常情况下位于他的脚下，是开始蔓延的中心。在一场战斗结束之后，已经被蔓延的正常地块会缓慢恢复正常，收回到常态腐化之地的大小。",
    nt:"当周围没有腐化之地存在时，里昂的能力仅仅只存在于自己身体附近不超过1m的范围内。",
   },
   {id:"ab24",n:"真视魔瞳",h:"明风",c:"8.8",
@@ -1979,7 +1919,7 @@ const abilityData = [
   {id:"ab33",n:"骸骨之月",h:"芙萝妮",c:"7.9",
    s:[3,2,1,4,1,2],
    d:"操纵人体内的骨骼与血肉，使其不受控制地加速生长。当芙萝妮发动能力时，会对自己造成约40%的等效影响。能力可以同时作用在最多三个人身上。\n芙萝妮可以凭空在人体的骨骼上创造出骨刺，或是制造血肉的肿块与轻微的暂时性血栓。当芙萝妮通过这种方式直接对人体造成内伤时，「骸骨之月」的耐力将会极大幅度下降并在一定程度上加剧对芙萝妮的反噬(上升至60%左右)。\n芙萝妮在正常的持续战斗状态下往往会通过在对方皮肤表层附着骨骼并创造骨刺直接扎入的方法来造成伤害。",
-   nt:"芙萝妮在剧情中表现出的"被动无限再生"并非「骸骨之月」能力的一部分，详情请向下至第二章最终战部分查阅「永升之月」",
+   nt:"芙萝妮在剧情中表现出的\"被动无限再生\"并非「骸骨之月」能力的一部分，详情请向下至第二章最终战部分查阅「永升之月」",
   },
   {id:"ab34",n:"恶血天堂",h:"十七",c:"13.2",
    s:[4,4,2,4,4,4],
@@ -2074,12 +2014,12 @@ const abilityData = [
   },
   {id:"ab52",n:"劣化长终",h:"修瓦尔扎（第三章）",c:"？",
    s:[2,5,2,2,4,5],
-   d:"因阿芙忒乐尔斯特的「名实的分离」而被洗脑改造后，修瓦尔扎的能力相比其全盛期大大下降，被称为「劣化长终」。\n在扭转怀表上的发条后，修瓦尔扎下一次接触的物品将会变为"时间炸弹"，在其决定发动能力时爆炸，造成一次贯穿力极强的音波打击并停止范围内一切生命的活动12-20s。她也可以将时间停止的范围分摊到数个“时间炸弹”上，在多个不同的地方同时进行时间停止。\n修瓦尔扎可以在时间停止的范围内移动，且她的速度和力量在时间停止区域内将会被大大增强。\n从外面飞到时间停止范围内的弹射物会在进入的0.3秒内被凝滞住。\n时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。已经被释放出的一切能力形式在经过时间停止区时也会被强行滞留。\n修瓦尔扎在发动能力时依然会以“长终”作为施术号令，而不是“劣化长终”。\n注意：第二代时之秩序的云略可以在修瓦尔扎的时间停止范围内活动部分时间。",
+   d:"因阿芙忒乐尔斯特的「名实的分离」而被洗脑改造后，修瓦尔扎的能力相比其全盛期大大下降，被称为「劣化长终」。\n在扭转怀表上的发条后，修瓦尔扎下一次接触的物品将会变为\"时间炸弹\"，在其决定发动能力时爆炸，造成一次贯穿力极强的音波打击并停止范围内一切生命的活动12-20s。她也可以将时间停止的范围分摊到数个“时间炸弹”上，在多个不同的地方同时进行时间停止。\n修瓦尔扎可以在时间停止的范围内移动，且她的速度和力量在时间停止区域内将会被大大增强。\n从外面飞到时间停止范围内的弹射物会在进入的0.3秒内被凝滞住。\n时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。已经被释放出的一切能力形式在经过时间停止区时也会被强行滞留。\n修瓦尔扎在发动能力时依然会以“长终”作为施术号令，而不是“劣化长终”。\n注意：第二代时之秩序的云略可以在修瓦尔扎的时间停止范围内活动部分时间。",
    nt:"以投掷物为中心的12m*12m*12m的范围内",
   },
   {id:"ab53",n:"暗月淑女",h:"阿芙忒乐尔斯特",c:"13.1",
    s:[3,2,4,5,3,3],
-   d:"与沃克加德的里昂相似，阿芙忒具有驾驭"腐化术"的能力。腐化术可以侵染并萃取物体内部"古老的黑暗"，使其显现出极强的攻击性，变为受到阿芙忒掌控的，呈现深黑色外观的"腐化之地"。\n阿芙忒在腐化之地上可以自由操纵地表形态，并通过制造尖刺和裂缝的方法来对站在腐化之地上的人造成伤害。与里昂不同的是，比起直接使用腐化之地制造武器和防具，阿芙忒更倾向于在腐化之地上召唤出一系列“恶念造物”进行攻击。这些“恶念造物”包括数量众多的腐化植物，带刺触手与具有较低智能的怪物，能够轻易地组成一批庞大的军团。\n相比于里昂的「堕乐之园」，「暗月淑女」所创造出的腐化之地的范围将能轻易地达到前者的几十倍，也不会因为受到巨大的创伤而导致地块猛然倒退。在「暗月淑女」的范围内，所有的指令之力都会受到一定幅度的削弱，被攻击者本身的物理机能也会变得更加脆弱。阿芙忒甚至还能简易地操纵腐化之地中的自然景观，并通过种种方式强行限制被攻击者的机动性（如使目标失重）。\n「暗月淑女」并不会像「堕乐之园」一样自动进行蔓延，但当接触到指令之力时，「暗月淑女」蔓延的速度将达到前者的数倍。同时，阿芙忒可以自行操纵腐化之地的走向，甚至可以使其从已经覆盖的地皮上撤回，并指挥其向指令之力更加丰富的地区前进。\n当「暗月淑女」蔓延到较为成熟的阶段时，在其中的目标将会产生一系列的幻觉与认知失常行为，被称为“完全扭曲状态”。\n“如果放任她不管的话，那片奴役人心的大地很快就会吞食整个洛琛顿的。”",
+   d:"与沃克加德的里昂相似，阿芙忒具有驾驭\"腐化术\"的能力。腐化术可以侵染并萃取物体内部\"古老的黑暗\"，使其显现出极强的攻击性，变为受到阿芙忒掌控的，呈现深黑色外观的\"腐化之地\"。\n阿芙忒在腐化之地上可以自由操纵地表形态，并通过制造尖刺和裂缝的方法来对站在腐化之地上的人造成伤害。与里昂不同的是，比起直接使用腐化之地制造武器和防具，阿芙忒更倾向于在腐化之地上召唤出一系列“恶念造物”进行攻击。这些“恶念造物”包括数量众多的腐化植物，带刺触手与具有较低智能的怪物，能够轻易地组成一批庞大的军团。\n相比于里昂的「堕乐之园」，「暗月淑女」所创造出的腐化之地的范围将能轻易地达到前者的几十倍，也不会因为受到巨大的创伤而导致地块猛然倒退。在「暗月淑女」的范围内，所有的指令之力都会受到一定幅度的削弱，被攻击者本身的物理机能也会变得更加脆弱。阿芙忒甚至还能简易地操纵腐化之地中的自然景观，并通过种种方式强行限制被攻击者的机动性（如使目标失重）。\n「暗月淑女」并不会像「堕乐之园」一样自动进行蔓延，但当接触到指令之力时，「暗月淑女」蔓延的速度将达到前者的数倍。同时，阿芙忒可以自行操纵腐化之地的走向，甚至可以使其从已经覆盖的地皮上撤回，并指挥其向指令之力更加丰富的地区前进。\n当「暗月淑女」蔓延到较为成熟的阶段时，在其中的目标将会产生一系列的幻觉与认知失常行为，被称为“完全扭曲状态”。\n“如果放任她不管的话，那片奴役人心的大地很快就会吞食整个洛琛顿的。”",
    q:"——第三章最终战 艾沃",
    nt:"能力最初解放时为半径30m区域，理论距离无限",
   },
@@ -2097,7 +2037,7 @@ const abilityData = [
   },
   {id:"ab56",n:"装甲大师",h:"普兰奇昂",c:"10.5",
    s:[2,3,2,3,2,4],
-   d:"该能力平时表现为一副轻便而且精良的防弹背心，可以轻松阻挡各种轻型子弹的射击，甚至是火焰的烧灼。\n当普兰奇昂穿上"装甲大师"时，他就可以释放能力。“装甲大师”一共有三个能力，每个能力结束之后都会使装甲暂时变沉，并且进入10分钟的冷却期。\n使范围内普兰奇昂指定的人(最多10个)被套上一层没有重量且硬度极高的隐形装甲，持续3分钟，当普兰奇昂解除能力或者护甲被击穿时自动消失。被套上盔甲的人在盔甲快被击穿时可以听到自己的心跳。\n使范围内普兰奇昂指定的人(最多2个)被套上一层相当于自身10倍重量且硬度极高的隐形装甲。装甲持续10秒，当普兰奇昂解除能力或者护甲被击穿时自动消失。\n使范围内普兰奇昂指定的人(最多3个)身上的盔甲或衣服可以被自己所操控，可以让盔甲进行移动从而带动自己移动(包括飞行)，持续2分钟，当效果快要结束时，仍在天上飞行的目标会缓慢被扯至地面。\n三个技能不能同时开启，且共享同样的冷却时间。\n目前看来，似乎任何防弹背心都可以被普兰奇昂当作发动「装甲大师」的载体，而一旦这么做，此防弹背心的各方面性质都将被强化。",
+   d:"该能力平时表现为一副轻便而且精良的防弹背心，可以轻松阻挡各种轻型子弹的射击，甚至是火焰的烧灼。\n当普兰奇昂穿上\"装甲大师\"时，他就可以释放能力。“装甲大师”一共有三个能力，每个能力结束之后都会使装甲暂时变沉，并且进入10分钟的冷却期。\n使范围内普兰奇昂指定的人(最多10个)被套上一层没有重量且硬度极高的隐形装甲，持续3分钟，当普兰奇昂解除能力或者护甲被击穿时自动消失。被套上盔甲的人在盔甲快被击穿时可以听到自己的心跳。\n使范围内普兰奇昂指定的人(最多2个)被套上一层相当于自身10倍重量且硬度极高的隐形装甲。装甲持续10秒，当普兰奇昂解除能力或者护甲被击穿时自动消失。\n使范围内普兰奇昂指定的人(最多3个)身上的盔甲或衣服可以被自己所操控，可以让盔甲进行移动从而带动自己移动(包括飞行)，持续2分钟，当效果快要结束时，仍在天上飞行的目标会缓慢被扯至地面。\n三个技能不能同时开启，且共享同样的冷却时间。\n目前看来，似乎任何防弹背心都可以被普兰奇昂当作发动「装甲大师」的载体，而一旦这么做，此防弹背心的各方面性质都将被强化。",
    nt:"自己所站前方或后方半径8m的扇形",
   },
   {id:"ab57",n:"元始弹",h:"莱诺",c:"14.2",
@@ -2627,8 +2567,9 @@ function getCharAbilityHtml(charKey) {
   ).join('、') + '<br><span style="font-size:0.75em;color:var(--text-muted);">⬆ 点击能力名跳转至能力档案</span>';
 }
 
-// Initialize ability archive on page load
+// Initialize ability archive
 renderAbilityArchive();
+
 </script>
 </body>
 </html>

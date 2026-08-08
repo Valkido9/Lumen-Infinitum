@@ -182,6 +182,9 @@ function getCharAbilityHtml(charKey) {
     '<span class="char-link" onclick="scrollToAbility(\\'' + a.id + '\\')" title="点击跳转至能力档案查看完整详情">「' + escHtml(a.n) + '」</span>'
   ).join('、') + '<br><span style="font-size:0.75em;color:var(--text-muted);">⬆ 点击能力名跳转至能力档案</span>';
 }
+
+// Initialize ability archive
+renderAbilityArchive();
 '''
 
 # Find the insertion point: before </script>

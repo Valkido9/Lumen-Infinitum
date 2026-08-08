@@ -156,6 +156,52 @@ body {
 .sidebar .badge.prologue { background: rgba(88,166,255,0.15); color: var(--prologue); }
 .sidebar .badge.wokgard { background: rgba(247,129,102,0.15); color: var(--wokgard); }
 
+/* ===== Sidebar Multi-level Nav ===== */
+.header-left { display: flex; align-items: center; gap: 10px; }
+.side-group { margin: 2px 0 4px; }
+.side-group-head {
+  width: 100%; border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  font-family: inherit; font-size: 0.72em; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); text-align: left; padding: 14px 18px 6px;
+  transition: color 0.15s ease;
+}
+.side-group-head:hover { color: var(--text); }
+.side-group-head .sg-arrow { display: inline-block; font-size: 0.72em; width: 12px; transition: transform 0.2s ease; }
+.side-group.collapsed .sg-arrow { transform: rotate(-90deg); }
+.side-group.collapsed .side-group-body { display: none; }
+
+.side-vol-head {
+  width: 100%; border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  font-family: inherit; font-size: 0.84em; font-weight: 600;
+  color: var(--text-dim); text-align: left; padding: 8px 18px;
+  transition: color 0.15s ease;
+}
+.side-vol-head:hover { color: var(--text); }
+.side-vol-head .sv-arrow { display: inline-block; font-size: 0.66em; width: 12px; color: var(--text-muted); transition: transform 0.2s ease; }
+.side-vol.collapsed .sv-arrow { transform: rotate(-90deg); }
+.side-vol.collapsed .side-vol-body { display: none; }
+.side-vol-body { padding-bottom: 4px; }
+.side-empty { padding: 6px 18px 14px 30px; font-size: 0.8em; color: var(--text-muted); }
+
+/* ===== Mobile Menu ===== */
+.menu-btn {
+  display: none;
+  width: 38px; height: 38px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card); color: var(--text-dim);
+  font-size: 1.1em; line-height: 1; cursor: pointer;
+  align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+}
+.menu-btn:hover { color: var(--accent); border-color: var(--accent); }
+.side-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 950;
+  background: rgba(0,0,0,0.45);
+}
+
 /* ===== Main Content ===== */
 .main {
   flex: 1; padding: 36px 48px;
@@ -565,17 +611,21 @@ body {
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .layout { flex-direction: column; }
+  .menu-btn { display: inline-flex; }
+  .header { padding: 10px 14px; }
+  .header nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .header nav::-webkit-scrollbar { display: none; }
+  .header nav a { padding: 6px 9px; }
+  .header .logo span { display: none; }
   .sidebar {
-    width: 100%; min-width: auto; height: auto;
-    position: static; border-right: none; border-bottom: 1px solid var(--border);
-    display: flex; overflow-x: auto; padding: 8px 6px;
-    white-space: nowrap;
+    position: fixed; top: 54px; left: -285px; z-index: 1001;
+    width: 285px; height: calc(100vh - 54px);
+    padding: 12px 0; border-right: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    transition: left 0.25s ease;
   }
-  .sidebar h3 { display: none; }
-  .sidebar .chap-link {
-    white-space: nowrap; margin: 0 2px; padding: 7px 12px;
-    font-size: 0.8em; border-radius: var(--radius);
-  }
+  .sidebar.open { left: 0; }
+  .side-backdrop.show { display: block; }
   .main { padding: 20px 16px; max-width: 100%; }
   .hero { padding: 36px 12px 28px; }
   .hero h1 { font-size: 2em; letter-spacing: 8px; }
@@ -743,12 +793,16 @@ body {
 
 <!-- Header -->
 <header class="header">
-  <div class="logo">永恒流光<span>LUMEN INFINITUM</span></div>
+  <div class="header-left">
+    <button class="menu-btn" id="menuBtn" aria-label="打开目录" type="button">☰</button>
+    <div class="logo">永恒流光<span>LUMEN INFINITUM</span></div>
+  </div>
   <nav>
     <a href="#story" class="active" onclick="scrollToSection('story')">故事主线</a>
     <a href="#characters" onclick="scrollToSection('characters')">角色档案</a>
     <a href="#world" onclick="scrollToSection('world')">世界设定</a>
     <a href="#abilities" onclick="scrollToSection('abilities')">能力档案</a>
+    <a href="sidetory.html">时空遗闻</a>
   </nav>
 </header>
 
@@ -756,26 +810,64 @@ body {
 <div class="layout">
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
-    <h3>📖 序幕 · 异世的呼唤</h3>
-    <a href="#pro-ch1" class="chap-link active">第一章 礼奈的日常与云略降临</a>
-    <a href="#pro-ch2" class="chap-link">第二至四章 基地日常与能力展现</a>
-    <a href="#pro-ch3" class="chap-link">第五至七章 手杖之谜·粥娘实验室</a>
-    <a href="#pro-ch4" class="chap-link">第八至九章 正义·前司长的哀伤</a>
-    <a href="#pro-ch5" class="chap-link">第十至十一章 可乐之夜·马萨卡暴走</a>
-    <a href="#pro-ch6" class="chap-link">第十二章 沃克加德任务·新的征途</a>
-    <a href="#pro-ch7" class="chap-link">第十三至十六章 基地遇袭·燃烧的逃亡</a>
-    <a href="#pro-ep" class="chap-link">序幕终章 附魔师与妖狐的棋局</a>
-
-    <h3>⚓ 第一章 · 星兆之海</h3>
-    <a href="#wok-ch1" class="chap-link">开篇 迷雾商船·海盗登场</a>
-    <a href="#wok-ch2" class="chap-link">灵魂投影·新的身份</a>
-    <a href="#wok-ch3" class="chap-link">富家千金·通缉犯罗伊</a>
-    <a href="#wok-ch4" class="chap-link">褐浪酒吧·意外频发</a>
-    <a href="#wok-ch5" class="chap-link">船都之夜·优碧卡的悲剧</a>
-    <a href="#wok-ch6" class="chap-link">云略vs优碧卡·意外的羁绊</a>
-    <a href="#wok-ch7" class="chap-link">圆翼党地下基地·革命策源地</a>
-    <a href="#wok-ch8" class="chap-link">亡灵兔与六八·双面博弈</a>
+    <div class="side-group" id="g-main">
+      <button class="side-group-head" type="button"><span class="sg-arrow">▾</span>主线剧情 · 永恒流光</button>
+      <div class="side-group-body">
+        <div class="side-vol" id="vol-pro">
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>📖 序幕 · 异世的呼唤</button>
+          <div class="side-vol-body">
+            <a href="#pro-ch1" class="chap-link">第一章 礼奈的日常与云略降临</a>
+            <a href="#pro-ch2" class="chap-link">第二至四章 基地日常与能力展现</a>
+            <a href="#pro-ch3" class="chap-link">第五至七章 手杖之谜·粥娘实验室</a>
+            <a href="#pro-ch4" class="chap-link">第八至九章 正义·前司长的哀伤</a>
+            <a href="#pro-ch5" class="chap-link">第十至十一章 可乐之夜·马萨卡暴走</a>
+            <a href="#pro-ch6" class="chap-link">第十二章 沃克加德任务·新的征途</a>
+            <a href="#pro-ch7" class="chap-link">第十三至十六章 基地遇袭·燃烧的逃亡</a>
+            <a href="#pro-ep" class="chap-link">序幕终章 附魔师与妖狐的棋局</a>
+          </div>
+        </div>
+        <div class="side-vol" id="vol-wok">
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>⚓ 第一卷 · 星兆之海</button>
+          <div class="side-vol-body">
+            <a href="#wok-ch1" class="chap-link">第一章 迷雾商船·海盗登场</a>
+            <a href="#wok-ch2" class="chap-link">第二章 灵魂投影·新的身份</a>
+            <a href="#wok-ch3" class="chap-link">第三章 富家千金·通缉犯罗伊</a>
+            <a href="#wok-ch4" class="chap-link">第四章 褐浪酒吧·意外频发</a>
+            <a href="#wok-ch5" class="chap-link">第五章 船都之夜·优碧卡的悲剧</a>
+            <a href="#wok-ch6" class="chap-link">第六章 云略vs优碧卡·意外的羁绊</a>
+            <a href="#wok-ch7" class="chap-link">第七章 圆翼党地下基地·革命策源地</a>
+            <a href="#wok-ch8" class="chap-link">第八章 亡灵兔与六八·双面博弈</a>
+            <a href="#wok-ch9" class="chap-link">第九章 优碧卡的真相·流光永佑</a>
+            <a href="#wok-ch10" class="chap-link">第十章 船都·骑士与医生</a>
+            <a href="#wok-ch11" class="chap-link">第十一章 无海·黑旗的拦截</a>
+            <a href="#wok-ch12" class="chap-link">第十二章 亚因森特·海洋之心</a>
+            <a href="#wok-ch13" class="chap-link">第十三章 内城·执事领事卢卡森</a>
+            <a href="#wok-ch14" class="chap-link">第十四章 亡者归来·兔子的底牌</a>
+            <a href="#wok-ch15" class="chap-link">第十五章 生命院·潮汐死士</a>
+            <a href="#wok-ch16" class="chap-link">第十六章 内城潜行·生命院的棋盘</a>
+          </div>
+        </div>
+        <div class="side-vol collapsed" id="vol-v2">
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>🔱 第二卷 · 敬请期待</button>
+          <div class="side-vol-body"><div class="side-empty">本卷尚未发布</div></div>
+        </div>
+        <div class="side-vol collapsed" id="vol-v3">
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>✨ 第三卷 · 敬请期待</button>
+          <div class="side-vol-body"><div class="side-empty">本卷尚未发布</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="side-group collapsed" id="g-side">
+      <button class="side-group-head" type="button"><span class="sg-arrow">▾</span>SideStory · 时空遗闻</button>
+      <div class="side-group-body">
+        <a href="sidetory.html#char-bg" class="chap-link">👤 人物背景</a>
+        <a href="sidetory.html#prolog" class="chap-link">📜 前传</a>
+        <a href="sidetory.html#bonus" class="chap-link">🎁 番外</a>
+        <a href="sidetory.html#events" class="chap-link">⚡ 特殊事件</a>
+      </div>
+    </div>
   </aside>
+  <div class="side-backdrop" id="sideBackdrop"></div>
 
   <!-- Main Content -->
   <main class="main" id="main-content">
@@ -898,7 +990,7 @@ body {
     <!-- Ch12 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch6">第十二章 沃克加德任务 · 新的征途</h3>
 
-    <p>中央核心集结。在最高领导人<span class="term-link" onclick="openTerm('lainuo')">莱诺</span>的广播声中，第二代时之秩序接到了正式任务：前往<span class="term-link" onclick="openTerm('wokgard')">沃克加德时间线</span>——一颗海洋覆盖率超过95%的星球。目标：找到人称"海盗之王"的<span class="char-link" onclick="openChar('sipalisen')">波普里卡·斯帕里森</span>，获取他手中的<span class="term-link" onclick="openTerm('alchemy_array')">大炼金阵</span>碎片。这个古代文明的终极遗物可以将一种东西转化为等价的另一种东西——炼金术的最高成就。协同联络者是科研司新任司长<span class="char-link" onclick="openChar('kangmingde')">康明德</span>，一位年仅二十七岁的物理学教授。</p>
+    <p>中央核心集结。在最高领导人<span class="char-link" onclick="openChar('lainuo')">莱诺</span>的广播声中，第二代时之秩序接到了正式任务：前往<span class="term-link" onclick="openTerm('wokgard')">沃克加德时间线</span>——一颗海洋覆盖率超过95%的星球。目标：找到人称"海盗之王"的<span class="char-link" onclick="openChar('sipalisen')">波普里卡·斯帕里森</span>，获取他手中的<span class="term-link" onclick="openTerm('alchemy_array')">大炼金阵</span>碎片。这个古代文明的终极遗物可以将一种东西转化为等价的另一种东西——炼金术的最高成就。协同联络者是科研司新任司长<span class="char-link" onclick="openChar('kangmingde')">康明德</span>，一位年仅二十七岁的物理学教授。</p>
 
     <p>小队将采用<span class="term-link" onclick="openTerm('soul_projection')">「灵魂投影式折跃」</span>进入沃克加德——穿梭者取代目标时间线中与自己灵魂匹配的本地人的意识。礼奈→富家千金<strong>帕瓦蒂·罗伊</strong>；马萨卡→赏金猎人<strong>斐迪南·马斯克</strong>；克诺→平民<strong>本杰明·克里夫塔</strong>；亡灵兔→学士<strong>特伦特·提斯亚威尔</strong>。按照计划，云略不在传送名单中——她应该留在基地等待他们归来。但计划从来赶不上变化。</p>
 
@@ -926,12 +1018,12 @@ body {
     <p style="text-align:center; color:var(--gold); font-weight:bold; margin:30px 0;">——序幕「异世的呼唤」完结——</p>
 
     <!-- ===== WOKGARD SECTION ===== -->
-    <h2 class="section-title" id="wok-ch1"><span class="icon">⚓</span>第一章 · 星兆之海 —— 沃克加德卷</h2>
+    <h2 class="section-title" id="wok-ch1"><span class="icon">⚓</span>第一卷 · 星兆之海 —— 沃克加德卷</h2>
     <div class="chapter-body">
 
     <p>沃克加德，一颗被汪洋覆盖的星球。这里处于大航海时代，教皇国的统治如铁幕般笼罩着列岛，海盗团与赏金猎人割据四方。几千年前覆灭的古文明留下了强力遗物——<span class="term-link" onclick="openTerm('alchemy_array')">大炼金阵</span>，能将一种东西转化为等价的另一种东西，炼金术的最高成就。这，就是小队此行的世界。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;">开篇 迷雾商船 · 海盗登场</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;">第一章 迷雾商船 · 海盗登场</h3>
 
     <p>沃克加德卷以一场诡异的航行拉开序幕。商船在迷雾中挣扎了整整八天。船员一个接一个离奇死亡——身体"像是被什么东西凭空切成了两半"。吊灯在没有一丝风的船舱里狂舞不止。船长奥德里奇的精神已到崩溃边缘，他拔枪对准了大副。而大副脸上挂着神经质的微笑：</p>
 
@@ -939,26 +1031,26 @@ body {
       "海上没有风。"<br>
       "几天前就是这样了。海上没有风。"<br>
       "……没有风，我的灯居然还能晃成这个鬼样。"
-      <div class="quote-source">——大副与船长奥德里奇，第一章·开篇</div>
+      <div class="quote-source">——大副与船长奥德里奇，第一卷·第一章</div>
     </div>
 
     <p>一艘黑帆巨船破雾而出。身穿金属潜水服的巨人以一条铁臂将千斤重的船锚掷入船头——不是炮弹，是船锚。一把冰冷的枪抵上了奥德里奇的后脑。年轻而动听的声音在他的颅骨中响起："我名为<span class="char-link" onclick="openChar('meinade')">梅纳德·庞奇</span>，教皇城海域海盗的头领……欢迎来到沃克加德。"</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch2">灵魂投影 · 新的身份</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch2">第二章 灵魂投影 · 新的身份</h3>
 
     <p><span class="char-link" onclick="openChar('masaka')">马萨卡</span>在监狱中醒来——他的对应身份"斐迪南·马斯克"是个被关押的赏金猎人。一个小男孩偷面包被五个壮汉追打，马萨卡出手相救——然后一脚把小孩踹飞，只因为"谁都没法打扰我享受饭后水果"。这就是马萨卡：正义感和任性不可分割，善良与暴力共存于一身。</p>
 
     <p>而最令人意想不到的是——<span style="color:var(--accent2);">云略居然也跟着来了。</span>她没有"对应躯体"，只能以自己的身体出现。她的话沃克加德人完全听不懂，那根手杖让她连衣服都换不了。一个穿着现代校服、撑着一米九哥特手杖的中国女高中生，就这样突兀地出现在满是帆船和燧发枪的大航海世界里。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch3">富家千金 · 通缉犯罗伊</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch3">第三章 富家千金 · 通缉犯罗伊</h3>
 
     <p><span class="char-link" onclick="openChar('linai')">礼奈</span>在教堂医院中醒来，穿着沾满血的白色连衣裙，四周铺满了同她一样躺在烂床铺上的伤号——这里是专收濒死者的"重伤部"，进了这地方的人就不可能痊愈出院。鸟嘴面具的大夫误以为她需要锯掉一条腿，直到她掀开衣服证明双腿安然无恙，才被指望去仓库取回自己的随身行李。她很快醒悟：自己正以「灵魂投影式折跃」成为<strong>帕瓦蒂·罗伊</strong>——教皇城通缉的政治犯、反教皇组织<span class="term-link" onclick="openTerm('round_wing')">「圆翼党」</span>核心家族罗伊家的唯一幸存者，这"死了全家"的千金身份意外地好用。然而她并不知道，仓库门口的两个门卫早已凭那撮粉头发认出她来，正为了赏金掏出一把装好弹的燧发枪——枪响了。一团迷雾吞噬了火光。全身裹在黑衣中的<span class="char-link" onclick="openChar('boundary')">boundary</span>动用了他的能力<span class="term-link" onclick="openChar('boundary')">「孤尽幻怨」</span>：以自身为中心释放大量烟雾，把通往外界的一切声音尽数阻断——枪声、惊呼全都湮没在浓烟里，他在无声的黑暗中接近敌人，将两个门卫在片刻间悉数击倒。随后他打了个响指，雾气散去——可留在那里的并不是礼奈，只剩两个昏死的门卫和一堆烧焦的破布：早在烟幕与混乱之中，她已悄然溜走。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch4">褐浪酒吧 · 意外频发的集合</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch4">第四章 褐浪酒吧 · 意外频发的集合</h3>
 
     <p>四条支线交汇于一间名为"褐浪"的破旧酒吧。小队成员陆续聚集——然而<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>用秘密通讯器联络时，屏幕上显示的不是基地频道，而是<span style="color:var(--accent2);">珀利贝尔实业的通话专区</span>。这家跨时空巨型企业要求他在沃克加德提供情报，作为交换，对方承诺派出亲卫队队长<span class="char-link" onclick="openChar('liuba')">「永冻领域」</span>在暗中保护。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch5">船都之夜 · 优碧卡与六八</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch5">第五章 船都之夜 · 优碧卡与六八</h3>
 
     <p>船都的夜晚，三个黑帮分子拦住了一个体态娇小、披着破布长袍的少女。当他们扯下她的衣服时——暴露出来的不是血肉，而是<span style="color:var(--accent2);">断裂的机械臂、外露的电线和不断滴落的机油</span>。她的双眼瞬间变红，右臂展开高速旋转电锯，在眨眼之间将三人斩杀。<span class="char-link" onclick="openChar('youbika')">优碧卡（UPK-002）</span>——<span class="char-link" onclick="openChar('kangmingde')">康明德博士</span>制造的炼金仿生机器人，为了回到她的发明者身边，已在不同时间线间穿梭了三十二次，依靠捕杀能力使来维持能量。电量仅剩约二十天。</p>
 
@@ -966,38 +1058,168 @@ body {
 
     <div class="story-quote">
       "机器小姐……我奉劝你停止反抗，立刻投降。我不希望，在你身上展现出连我自己都无法控制的强大力量。"
-      <div class="quote-source">——「永冻领域」六八，第一章</div>
+      <div class="quote-source">——「永冻领域」六八，第一卷·第五章</div>
     </div>
 
     <p>优碧卡计算出存活率仅为<span style="color:var(--accent2); font-weight:bold;">8%</span>。她的选择：将电锯切入船体，把整艘船拦腰掰开，在木板碎裂与海水的咆哮中坠海逃脱。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch6">云略 vs 优碧卡 · 意外的羁绊</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch6">第六章 云略 vs 优碧卡 · 意外的羁绊</h3>
 
     <p>深夜的酒馆走廊中，云略正对着窗外的海出神——背后却毫无征兆地响起一句冰冷的电子音："……剩余目标，一人。"她刚要尖叫，一双马蹄铁般坚硬的鞋底已经从天而降，把她狠狠踹翻在地。双眼血红的机械少女从天花板上无声倒挂而下，纤细的右臂转出一把圆锯，只是后退几步，便毫不留情地朝着她的额头剁来。云略——一个没有超能力的普通高中生——全凭求生的本能挣脱卡住身位的墙壁，借手杖卡住墙壁凹槽架在半空，蹲身转体将优碧卡狠狠拍在墙上。</p>
 
     <div class="story-quote">
       "没在人山人海的食堂抢过饭……还敢试探我的身手？"
-      <div class="quote-source">——云略，第一章</div>
+      <div class="quote-source">——云略，第一卷·第六章</div>
     </div>
 
     <p>优碧卡随即一口咬住她的脖子——她的牙齿能抽取血液中的指令之力。这个谜团在克诺的检查中揭晓：这位仿生人身上找不到哪怕一块电池，也没有人为唤醒与应急关闭的开关，臂部的电路被意义不明地设计成类似血管的东西，两颗虎牙如同吸血鬼一般——亡灵兔一锤定音："这是炼金术作成的仿生人。"没有常规能源的她，只能靠捕杀能力使、抽干他们的血液，并将其转化为高纯度的指令之力来为自己充能——这正是她穿梭于各条时间线、不断杀戮的真正缘由。礼奈及时赶到，高温剑刃精准切断优碧卡的电锯手臂。在杂物间中，云略发现了一个惊人的事实：优碧卡的<span style="color:var(--accent2);">发声模块被装在了那条断臂里</span>。她无法说话。云略没有选择逃走或反击，而是重新连接了优碧卡的断臂并替她松了绑。两人的关系从这一刻开始从敌对转为互相理解。优碧卡随后协助云略追踪消失的亡灵兔，通过通风管道发现了他与六八的秘密会面。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch7">圆翼党地下基地 · 革命策源地</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch7">第七章 圆翼党地下基地 · 革命策源地</h3>
 
     <p>酒馆老板鲍勃大叔的真实身份令人大吃一惊——他是<span class="term-link" onclick="openTerm('round_wing')">圆翼党</span>的区域管理部长。他用一根撬棍打开机关：整面墙壁下沉，锁链齿轮牵动地板如棋盘般展开，露出隐藏在酒吧之下的庞大地下基地。海港主<span class="char-link" onclick="openChar('yiwanlaosi')">伊万劳斯</span>用犀利目光扫视众人——"那目光简直就是饱含着对这水世界彻头彻尾的憎恨"。赏金猎人<span class="char-link" onclick="openChar('K')">K</span>上午还差点和马萨卡火并，现在发现大家是同一战壕的战友。</p>
 
     <p>圆翼党给出的关键情报：<span class="char-link" onclick="openChar('sipalisen')">斯帕里森</span>并非海盗，而是销声匿迹近十年的宝藏猎人。而最近教皇城水域出现了一个划着"冰做的船"的蓝衣神秘人——正是<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>。</p>
 
-    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch8">亡灵兔与六八 · 双面博弈</h3>
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch8">第八章 亡灵兔与六八 · 双面博弈</h3>
 
     <p>深夜无人的酒馆中，亡灵兔与六八相对而坐。六八喝着瓶中的鲜奶，温和地解释自己的来意——他来到沃克加德并不是特地来接应亡灵兔的，只是在执行一项机密任务：捕获装载了珀利贝尔实业实验型"单体超空间穿梭系统"原型机的人造人——优碧卡。这台原型机多年前因实验事故遗失，如今竟被第三方改造升级成了高度稳定的完全体；而她为原型机充能的方式，是捕杀当前时间线的能力使，抽干他们的血液，并将其转化为高纯度的指令之力。亡灵兔在艰难权衡后抛出了自己的三个顾虑：这是绝对背叛组织的行为；他们从未见过这个人造人；卢纳森特基地内部正陷入完全的混乱，情报系统早已崩溃。六八却只是微笑着回应：</p>
 
     <div class="story-quote">
       "这不是为了那个满是虫豸的基地……而是为了我的朋友们。"
-      <div class="quote-source">——亡灵兔，第一章</div>
+      <div class="quote-source">——亡灵兔，第一卷·第八章</div>
     </div>
 
     <p>六八微微一笑，握住烛台的手涌起寒风——烛火没有熄灭，而是被冻结成了一朵剔透的冰晶，永远封存在摇曳的姿态之中。他起身告辞，却在门口忽然回头，那双蓝色的眼睛在月下闪着凛冽的光："明明是被汪洋覆盖的不毛之地……在这片狭小的大陆上，资源却像取之不尽、用之不竭一般，能够兴建起如此庞大的都城。你们卢纳森特基地在索求什么，我也许已经窥见了一些呢。"亡灵兔顿感全身激寒，仿佛一阵南极而来的暴风雪，吹得他险些睁不开眼睛。等他回过神来，酒馆里只剩下烛台上火苗形状的冰块，和那罐未拆封的鲜奶。</p>
+
+    <!-- ===== 第一卷 后续（注释 #9 补全） ===== -->
+    <!-- Ch9 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch9">第九章 优碧卡的真相 · 流光永佑</h3>
+
+    <p>云略从<span class="char-link" onclick="openChar('youbika')">优碧卡</span>的录像里把一切尽收眼底——那是她潜入通风管道时录下的画面：<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>与<span class="char-link" onclick="openChar('liuba')">「永冻领域」六八</span>在无人酒馆里的秘密会面。她终于明白，亡灵兔之所以总是神出鬼没，是因为他一直与基地外的势力——珀利贝尔实业——保持着秘密往来，而那家跨时空巨头正迫切地追捕眼前的机械少女。优碧卡提议立即上报队长、斩断这条联络线，云略却摇了摇头：凭第二代时之秩序现在的战斗力，根本无法与攻城级的「永冻领域」正面抗衡。更何况，亡灵兔一直谨慎地隐瞒着优碧卡的存在——他究竟是背叛了队伍，还是在用另一种方式保护着所有人？云略决定先把秘密压在心里。</p>
+
+    <p>就在这时，礼奈不请自来。与优碧卡打了个照面的她，手几乎瞬间搭上了剑柄——而优碧卡则高高举起仅剩的手臂与断臂，用那支残缺的发声模块，一字一顿地说道：</p>
+
+    <div class="story-quote">
+      "本机请求投降。"
+      <div class="quote-source">——优碧卡，第一卷·第九章</div>
+    </div>
+
+    <p>谁也不知道投降程序为何要求她以自身为轴心旋转三十到四十圈来证明自己没有携带武器——"这是编程时多打了个0吧？"礼奈被转得头晕眼花，只得无奈地放下武器。既然可用的筹码少得可怜，她最终决定给这个曾经的敌人一个机会："相信一个机器人，应该会是一件很可靠的事情。但是对于相信你这种，已经远远超过'机器'的机器人……我所能做的，竟然只是希望你不要辜负我的信任。"</p>
+
+    <p>计划的齿轮开始转动。礼奈与克诺定下方案：借助<span class="char-link" onclick="openChar('masaka')">马萨卡</span>的赏金猎人身份，从船坞搞到一艘船出海联络斯帕里森；优碧卡则被乔装成人类女孩，由马萨卡带去赏金猎人的档案室，以人造人独有的速度通读教皇城全部通缉犯的档案；礼奈与云略则在外城寻找一处合适的隐藏点。基地方面，情报司提供的斯帕里森定位在同一时间指向多个地点——那是一堆早已失效的废纸，康明德博士也一直处于离线状态。礼奈在地图上敲了敲："教皇城海域的海盗共主梅纳德与亚因森特，恰好在斯帕里森销声匿迹那年同时上位——除非，他们两个上面还有更高一级的老大。真正的海盗之王，就是斯帕里森！"前司长<span class="char-link" onclick="openChar('zhengyi')">正义</span>那句"斯帕里森是个海盗，这条情报绝对可靠"，成了全队唯一的信标。会议的最后，礼奈握拳举过头顶：</p>
+
+    <div class="story-quote">
+      "流光永佑，各位。"
+      <div class="quote-source">——礼奈，第一卷·第九章</div>
+    </div>
+
+    <!-- Ch10 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch10">第十章 船都 · 骑士与医生</h3>
+
+    <p>外城毒辣的烈日下，礼奈扎着丸子头、戴着草帽遮住那撮粉发，与云略并肩寻访据点的选址——却被一道从阴影中倒挂而下的黑影截住了去路。<span class="char-link" onclick="openChar('boundary')">boundary</span>的眼中射出一道可怕的光，只凭一句话便戳穿了礼奈的伪装：</p>
+
+    <div class="story-quote">
+      "别费劲了。你不是帕瓦蒂·罗伊。"
+      <div class="quote-source">——boundary，第一卷·第十章</div>
+    </div>
+
+    <p>罗伊有种看不见摸不着的贵族架子，而礼奈没有。既然身份被识破，礼奈索性摘下帽子自报家门——卢纳森特时间线保全基地，特别行动部"第二代时之秩序"队长，参上。boundary闭上眼："猜到了。但也没完全猜到。……圆翼党也就这样了。"他带两人去了一个地方——<span class="term-link" onclick="openTerm('chuandu')">船都</span>。</p>
+
+    <p>船都是漂在汪洋一角、由无数破船舱垒成的"难民营"，是教皇城永远不愿承认的地域——船都人没有公民权利，连交不交税都无关紧要。boundary在船都出生，大约也会在船都死去。他敲开一艘画满涂鸦的渔船：迎面先是一根精钢长枪，其后是海蓝卷发、甲胄斑驳的小骑士——<span class="char-link" onclick="openChar('gieniefa')">歌涅法</span>，贫民窟浪庄游击队队长；以及一个鬼魂般缩在宽大袖子后的栗发少女——<span class="char-link" onclick="openChar('liulupo')">琉璐珀</span>，船都的全科医生，"只是比起治病，更擅长潜入和催眠"。</p>
+
+    <p>歌涅法从箭袋般的背包里摸出一块螺旋状的鹦鹉螺化石——那是斯帕里森两年来接济船都时凭以验明身份的令牌。可灾难爆发以来，那位"大救星"再也没有出现过，没有救济的船都，简直就是人间地狱。而礼奈带来的消息让歌涅法的眼睛瞪得溜圆：斯帕里森，正是整个教皇城海域的海盗之王——梅纳德与亚因森特，都是他的麾下。"没理由啊。一个海盗，为什么会想着接济我们贫民窟呢？"</p>
+
+    <div class="story-quote">
+      "抹除灾难，救不了沃克加德；接济船都，救不了沃克加德；信圆翼党，救不了沃克加德……就算是那样，也救不了沃克加德。"
+      <div class="quote-source">——boundary，第一卷·第十章</div>
+    </div>
+
+    <p>boundary低垂下那双深渊般的眼睛。这个厌世的黑帮，却破天荒地递出了自己的手："不是为了你们所说的苍生百姓，单纯是为了我自己。"他决定入伙。计划就此敲定：今夜，全员从船都最外层的废港出海——借助马萨卡搞到的船，加上与斯帕里森联系最紧密的歌涅法领路。角落里，琉璐珀正与一个陌生男人低声交谈——那人托她转交一本古书，自称"里昂"，话音未落便消失在巡逻队的脚步声里。</p>
+
+    <!-- Ch11 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch11">第十一章 无海 · 黑旗的拦截</h3>
+
+    <p>午夜，废港。礼奈把洋装换成粗布衣，斗笠遮住显眼的发色——用一颗颜色相近的大桃子骗过圆翼党人的耳目，溜了出来。众人登上一艘狭长高耸的<span class="term-link" onclick="openTerm('feijianchuan')">飞剪船</span>，它本是富商逃避海盗的特快货船，如今流入黑市，成了赏金猎人团的稽查舰。三桅大帆在午夜黑金般的涌浪上破浪前行，掌舵的歌涅法轻声哼起澄澈如梦境的海歌。</p>
+
+    <p>海雾骤然凝固在半空，boundary收起了风帆："……到了。这里是，人们所说的<span class="term-link" onclick="openTerm('wuhai')">无海</span>。"一艘巨舰如山一般拦在船前，荡索如渔网般铺天盖地——教皇城海域海盗的头领<span class="char-link" onclick="openChar('meinade')">梅纳德·庞奇</span>出现在船舱口，枪指众人。直到歌涅法亮出那枚鹦鹉螺令牌，他的神情才微微变化——却也只是露出一个略显僵硬的笑容：</p>
+
+    <div class="story-quote">
+      "本海盗团就是负责接济船都的唯一供应商。而在我这个名义'海盗王'之上隐居幕后的'王上之王'斯帕里森，他在灾难爆发之后，同样不止一次催促本人加紧向船都发配物资。"<br>
+      "……但，歌涅法小姐，我也希望你知道——拒绝执行此项命令的，同样是我。"
+      <div class="quote-source">——梅纳德·庞奇，第一卷·第十一章</div>
+    </div>
+
+    <p>话音落处，枪声炸响，混战一触即发。克诺祭出一次性礼炮，漫天的节日彩带间，马萨卡的拳光把废纸化作漫天烟花；礼奈一声<span class="char-link" onclick="openChar('linai')">「双生烈阳」</span>，金光驱散迷雾，将荡索上的增援尽数掀落海中；优碧卡飞身扑出，把电锯架在了梅纳德头顶。就在海盗们即将溃败之际，梅纳德袖口却喷出铺天盖地的白色泡沫——<span class="term-link" onclick="openTerm('sensory_inhibitor')">感官抑制剂</span>。那是反能力使的毒剂，隔绝视野、封锁听觉，让能力使彻底沦为待宰的羔羊。一片惨白中，梅纳德的声音幽幽响起："我要奉行的命令，只剩下……杀光所有，知道'斯帕里森'存在的人。"话音未落，一直沉默的亡灵兔在能见度为零的浓雾里砰然射出最后一发镇静剂——有人应声倒地。迷雾散尽时，躺在地上的，是梅纳德本人。</p>
+
+    <!-- Ch12 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch12">第十二章 亚因森特 · 海洋之心</h3>
+
+    <p>可真正的绝望才刚刚登场。梅纳德的副手——两米余高的鱼叉手<span class="char-link" onclick="openChar('yayinsente')">亚因森特·埃德加</span>，自始至终没有露面。这个披着潜水重甲、藏在浑浊玻璃后的巨人，正是用一条铁臂就能掀翻战舰的传说。他在船舱二层静静等候着闯入的boundary，一语道破整盘棋局：黑旗舰落入教皇城之手，正是他自导自演的苦肉计——他要以此逼"无海之王"斯帕里森正面迎战教皇城，掀起战争。</p>
+
+    <div class="story-quote">
+      "既然得到了我的认可，那就必须彻底消亡。"
+      <div class="quote-source">——亚因森特·埃德加，第一卷·第十二章</div>
+    </div>
+
+    <p>海上的战斗化作三线绞杀。boundary的黑雾与亚因森特的巨剑在船舱内交错；马萨卡与优碧卡坠入水中，与鲨群般涌来的海盗贴身搏杀；歌涅法在残破的甲板上唤出星辰般的战马——<span class="char-link" onclick="openChar('gieniefa')">「幻冥灵骑」</span>，驮起云略，在船锚的横扫间驭火狂奔，长枪激流般贯穿巨人的板甲。最终，是礼奈在十二道贯穿潜水盔甲的光芒中刺出最后一剑，海上的巨人轰然倒地。</p>
+
+    <p>但亚因森特并未死去。呼吸孔处脱落的是他胸前的<span style="color:var(--accent2);">蓝色水晶</span>——如心脏般跳动的"海洋之心"。最后一记战鼓般的轰响里，十米高的浪头铺天盖地而来。这场势均力敌的交战，也惊动了海底的<span class="term-link" onclick="openTerm('haiwen_bodongyi')">海文波动仪</span>，把坐标传给了游弋在外的赏金猎人。优碧卡在冰冷的海水中捞起礼奈与boundary；亡灵兔被一片横空而来的冰霜卷走——那是<span class="char-link" onclick="openChar('liuba')">「永冻领域」</span>的出手；而马萨卡与精疲力竭的优碧卡，则在铺天盖地的影子绞杀下，落入了教皇城赏金猎人的手中。第二代时之秩序，四散在无海的怒涛里。</p>
+
+    <!-- Ch13 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch13">第十三章 内城 · 执事领事卢卡森</h3>
+
+    <p>马萨卡在一间点着油灯的病房里醒来。圆顶帽、厚重风衣、精心修剪的灰白络腮胡——内城军务部执事领事<span class="char-link" onclick="openChar('lukasen')">伦道夫·卢卡森</span>正以审视的目光端详着他。一夜之间，斐迪南·马斯克已成了刚刚拿下头号通缉犯亚因森特、终结都市传说的"传奇"赏金猎人。但这份恭维显然别有深意——卢卡森点破了他的底细：孤身驾快船闯进无海的赏金猎人，绝无可能事先不知道亚因森特的苦肉计。"告诉我，你知道多少波普里卡·斯帕里森的底细。"</p>
+
+    <p>马萨卡咬紧牙关装傻。卢卡森却不紧不慢地揭开谜底：海上三大法外势力——梅纳德的黑旗、夏洛蒂·洛帕的海上巫妖、以及深藏远海的巨舰潮涌居士号——全都匍匐在同一个帝王脚下。"整片海域真正的帝王，是那个名为斯帕里森的男人。不得不在几小时后，向整个国家宣战的男人。"他抛出了橄榄枝：加入军务部，做你风风光光的"传奇"。而拒绝的代价，是满屋从阴影中涌出的杀意——<span class="char-link" onclick="openChar('lukasen')">「白夜浪客」</span>，以双眼化作光源、用影子绞杀敌人的能力。油灯最多还能烧三十分钟。</p>
+
+    <div class="story-quote">
+      "这盏油灯，最多还能烧三十分钟。屋里没有光是什么样，我想你自己很清楚。希望咱们合作愉快。"
+      <div class="quote-source">——伦道夫·卢卡森，第一卷·第十三章</div>
+    </div>
+
+    <p>卢卡森锁门离去。而这位"莽夫"的选择，却让整艘军务部的战舰都付出了代价——他杀出重围，潜入牢房救出被影子折磨的优碧卡，在<span class="char-link" onclick="openChar('masaka')">「天平」</span>的光芒里一拳击碎了天花板。"不管是那团黑色的果冻，还是这片纸糊出来的墙……到底能不能挡住我拳头的力量。"两人沿着阴影的缝隙，向着亚因森特处刑的方向，步步深入内城。</p>
+
+    <!-- Ch14 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch14">第十四章 亡者归来 · 兔子的底牌</h3>
+
+    <p>战火漫天的午后，褐浪酒吧的地下基地里，亡灵兔意外地先一步归来——连他自己都头一回不太安稳地抽动了一下，才转身接住了飞奔而来的克诺与云略。这支队伍里最沉默的工程师，缓缓道出了一个足以动摇一切的事实：多年来，他一直是一个既不属于基地、也不属于任务时间线的第三方线人——<span style="color:var(--accent2);">珀利贝尔实业</span>。用组织的样本、人文的考察、资源的分布，交换"从未有任何减员"的庇护。而这次，珀利贝尔索要的价码是：关于斯帕里森的一切。</p>
+
+    <p>克诺如遭雷击："……这是，背叛。"而云略却在此时睁开眼，平静地抛出了自己的底牌："你和那个线人会面的那天晚上，通风管道里是优碧卡在偷听。……而这一切都是我在背后指挥。"她早已知道一切，却选择了隐瞒——为了不让这支在基地暧昧立场下风雨飘摇的队伍分崩离析。亡灵兔沉默良久，伸出手，握紧了胸前的第二代时之秩序队徽：</p>
+
+    <div class="story-quote">
+      "我早就不再信任基地了。但我还愿意相信这个队伍。"
+      <div class="quote-source">——亡灵兔，第一卷·第十四章</div>
+    </div>
+
+    <p>他说，这么做对基地没有好处，对珀利贝尔也没有好处——却能让第二代时之秩序绝处逢生。这支队伍曾在海啸中四散，如今又在废墟里重新拼合。通讯器接通了基地：<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>哭得上气不接下气，情报司前司长<span class="char-link" onclick="openChar('zhengyi')">正义</span>则带来了"康明德博士即将回归"的消息。克诺决定率队前往亚因森特的刑场——那是最接近斯帕里森的地方；云略则想出了一个让莱诺把沃克加德优先级提到最高的大胆说辞：一台来路不明的机械少女正在沃克加德横冲直撞，而制造它的组织，正是卢纳森特基地自己。与此同时，圆翼党党魁<span class="char-link" onclick="openChar('yiwanlaosi')">伊万劳斯</span>站在吧台之上，向整个外城宣告：革命的时刻到了。</p>
+
+    <!-- Ch15 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch15">第十五章 生命院 · 潮汐死士</h3>
+
+    <p>刑场设在内外城交界的生命院。马萨卡与优碧卡穿过满是趁火打劫者的街道，在生命院后门撞见了一个把自己裹在粗麻布里的怪人——海水的死士。他的能力以自身为中心置换出大片海水，以水域凝成护盾，再以护盾上的水刺贯穿敌人——"发动攻击制造水域，利用水域制造护盾，打破护盾发动攻击"的潮汐绞杀。优碧卡判定：来者非同一般。而那怪人却答非所问，如同宣读判决一般吐出一句话：</p>
+
+    <div class="story-quote">
+      "赏金猎人。我的委托只是'赦除'……把所有的后路全部阻断，在他人不该出现的地方，把他们全部灭口。"
+      <div class="quote-source">——海水能力使，第一卷·第十五章</div>
+    </div>
+
+    <p>海水漫过马萨卡的腰际，四周的墙壁渗出水滴，他几乎要被这水牢彻底吞没。直到他发现了一个破绽——落在自己身上的水滴竟会飞速蒸发。他随即明白：<span class="char-link" onclick="openChar('masaka')">「天平」</span>操纵时间流速，让触碰海水的一切在其影响下加速蒸发。他借「天平」完成毫秒级的起身，一拳贯穿水幕，把满身烧伤的死士击倒在地。死士却掀起潮水遁上阁楼，留下一个阴冷的承诺："这次我因为失手败给了你，那么下次我就一定要把你碎尸万端。"</p>
+
+    <p>可当马萨卡追出生命院，迎接他的却是满街的尸体——龅牙小子和这条街上的所有人，都被一击洞穿，横尸当场。这条街先于亚因森特的处刑，遭到了彻底的屠杀。整条街道上只剩下一种残忍的干净。</p>
+
+    <!-- Ch16 -->
+    <h3 style="color:var(--wokgard); margin:32px 0 12px;" id="wok-ch16">第十六章 内城潜行 · 生命院的棋盘</h3>
+
+    <p>革命如野火般烧遍全城。歌涅法与琉璐珀要回船都稳定局势，临别前，琉璐珀在云略耳边低语："如果你们真的很想到内城去，但没法跨过那群禁卫和巡游骑士的封锁的话……拿上这个东西，到教条院的地下走廊去找一个古怪的男人。"她塞给云略一只缠着纱布的小瓶子，上面用墨汁写着"Leon"。歌涅法挥舞着长枪，笑容明媚地挥手道别——肯定还会再见的。</p>
+
+    <p>而在内城军务部的瞭望塔上，浑身伤痕的礼奈睁开了眼。boundary守着这个他亲手从海里捞回的"队长"，听她一遍遍追问：为什么没有抛下她独自逃走。礼奈的回答简单得近乎执拗："我不能容忍任何一个，被我算作'队员'的人在我面前死去。"boundary则给出一个黑帮的坦白：他帮他们，也许只是为了他自己——"你们甚至都不知道你们面对的是什么。解决沃克加德的问题所需要的力量，早就已经超过这片海洋的极限了。"可即便如此，他依然选择走下这座塔，带着她穿越内城的重重封锁，向生命院逼近。</p>
+
+    <p>礼奈在正午的烈日下仰望那座由金银堆砌的极致王城，终于拼凑出整盘棋局：教皇城没有在海上设防，是因为他们知道斯帕里森的存在；而斯帕里森按兵不动，则是因为他同样知道教皇城有人知道他的存在。既然亚因森特笃定他会现身，那么斯帕里森一定已经以某种方式潜入了教皇城的内部——"他可能现在已身在内城，甚至身在生命院这两层包围圈的内部，和我们处在同一境地。"沿着他的路线，就能找到他。boundary蹲下身，掀起生命院后庭的一口井盖：底下洞开的，是一座四通八达、宛如基地交通网络般复杂的管道迷宫。</p>
+
+    <div class="story-quote">
+      "如果那神出鬼没的船长真要独身救出他的手下……这就是他们，最后的活路。"
+      <div class="quote-source">——boundary，第一卷·第十六章</div>
+    </div>
 
     </div>
     <p style="text-align:center; color:var(--wokgard); font-weight:bold; margin:30px 0;">——沃克加德卷 · 持续更新中——</p>
@@ -1261,6 +1483,122 @@ const characters = {
     quotes: ['"不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"', '"我的存在不能在基地里公之于众……如果你要来找我，可以去我们刚才相遇的地方，高喊那个我曾用过的名字——\'Q总\'。"'],
     appearances: ['序章第九章：礼奈的三十秒记忆中', '序章第十六章：中央核心遇袭时以"黑十字"身份出现'],
     abilityDetail: '具体能力未知。十一年前凭借一己之力终结了席卷世界的"大浩劫"。目前似乎在暗中为基地效力，但基地方面不愿公开这个事实。粥娘的判断："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"'
+  },
+  yiwanlaosi: {
+    name: '伊万劳斯', title: '海港主 · 圆翼党领袖', avatar: 'M', avatarText: '伊',
+    crt: '?', ability: '未知',
+    identity: '沃克加德海港主，圆翼党领袖',
+    personality: '目光犀利——"那目光简直就是饱含着对这水世界彻头彻尾的憎恨"。在褐浪酒吧之下统率圆翼党地下基地，暗中推动推翻教皇统治的革命。当外城的战火燃起时，他站在吧台之上，向整个外城宣告：革命的时刻到了。',
+    bonds: [
+      { with: '圆翼党', type: '领袖', desc: '统率隐藏于褐浪酒吧之下的圆翼党地下基地。' },
+      { with: '鲍勃', type: '同志', desc: '酒馆老板鲍勃是圆翼党的区域管理部长，为其管理暗中的联络。' }
+    ],
+    quotes: ['"革命的时刻到了。"'],
+    appearances: ['第一章：在圆翼党地下基地与众会面', '第一章：向外城宣告革命开始'],
+    abilityDetail: '具体能力未知。作为海港主掌控着沃克加德的海港命脉，是圆翼党反抗教皇统治的精神支柱。'
+  },
+  gieniefa: {
+    name: '歌涅法', title: '浪庄游击队队长 · 海蓝骑士', avatar: 'F', avatarText: '歌',
+    crt: '8.8', ability: '幻冥灵骑',
+    identity: '船都贫民窟浪庄游击队队长',
+    personality: '海蓝卷发、甲胄斑驳的小骑士，元气而豪爽。挥舞精钢长枪，守护船都的孩子们，调解贫民窟的各种矛盾，偶尔也整顿整顿从陆上下来的坏人。珍视那枚斯帕里森用以接济船都的鹦鹉螺令牌。',
+    bonds: [
+      { with: 'boundary', type: '同志', desc: '同为圆翼党成员，在船都并肩战斗。' },
+      { with: '斯帕里森', type: '恩人', desc: '斯帕里森两年来持续接济船都，在她心中是船都的大救星。' },
+      { with: '琉璐珀', type: '战友', desc: '同为船都出身，一个在前线冲锋，一个在后方行医。' }
+    ],
+    quotes: ['"我是贫民窟浪庄游击队的队长，歌涅法！引导这片区域的孩子，调节船都内部的各种矛盾……偶尔也整顿整顿陆地上下来的那些坏人。欢迎几位来到我们的基地！"', '"我的天呐！！小马保力！"'],
+    appearances: ['第一卷：第十章在船都登场，加入第二代时之秩序', '第一卷：无海之战中以「幻冥灵骑」驰骋战场'],
+    abilityDetail: '「幻冥灵骑」（CRT-8.8）：幻化出一匹半透明的蓝色战马，骑乘时力量与反应力小幅提升。常以折叠式长枪作战，骑乘时展开长枪发起冲刺。战马依存于她的意志存在，重伤时会自动消散。'
+  },
+  liulupo: {
+    name: '琉璐珀', title: '船都全科医生', avatar: 'F', avatarText: '琉',
+    crt: '?', ability: '潜入 · 催眠',
+    identity: '船都的全科医生',
+    personality: '栗色长发，常如鬼魂般缩在宽大袖子的后头。表面上医术高超，实际上"只是比起治病，更擅长潜入和催眠"。心思缜密，临别时曾塞给云略一瓶写着"Leon"的小瓶，指点她前往教条院地下走廊寻找一个古怪的男人。',
+    bonds: [
+      { with: '歌涅法', type: '战友', desc: '同为船都出身，一个在前线冲锋，一个在后方行医。' },
+      { with: '云略', type: '指点', desc: '临别时赠予写着"Leon"的小瓶，为云略指明潜入内城之路。' },
+      { with: '里昂', type: '秘密联络', desc: '受里昂所托转交一本古书，两人之间似有秘密往来。' }
+    ],
+    quotes: ['"我叫琉璐珀，船都的全科医生。只是比起治病，更擅长潜入和催眠罢了。"'],
+    appearances: ['第一卷：第十章在船都登场', '第一卷：第十六章与云略分别，留下内城的线索'],
+    abilityDetail: '并非觉醒时光机能力的战斗型能力使。擅长潜入、催眠与高超的医术。与里昂保持秘密联络，似乎掌握着通往内城的特殊途径。'
+  },
+  meinade: {
+    name: '梅纳德·庞奇', title: '教皇城海域海盗首领', avatar: 'M', avatarText: '梅',
+    crt: '?', ability: '感官抑制剂（器械）',
+    identity: '教皇城海域海盗的头领，斯帕里森麾下',
+    personality: '年轻而动听的嗓音，身手矫健。看似桀骜不驯的海盗头领，实则对"王上之王"斯帕里森忠心耿耿。为了封口，不惜向歌涅法痛下杀手——"拒绝执行此项命令的，同样是我"。',
+    bonds: [
+      { with: '斯帕里森', type: '效忠', desc: '名义上的"海盗王"，实则将斯帕里森奉为"王上之王"。' },
+      { with: '亚因森特', type: '同僚', desc: '同属斯帕里森麾下，亚因森特是他的副手。' }
+    ],
+    quotes: ['"本海盗团就是负责接济船都的唯一供应商。"', '"拒绝执行此项命令的，同样是我。"'],
+    appearances: ['第一卷：第一章破雾登船，认出歌涅法的鹦鹉螺令牌', '第一卷：第十一章在无海拦截第二代时之秩序'],
+    abilityDetail: '无明确的时光机能力记载。惯用铺天盖地的白色泡沫——感官抑制剂，隔绝视野、封锁听觉的反能力使毒剂，令能力使沦为待宰的羔羊。'
+  },
+  yayinsente: {
+    name: '亚因森特·埃德加', title: '鱼叉手 · 无海巨舰副手', avatar: 'M', avatarText: '亚',
+    crt: '?', ability: '未知',
+    identity: '梅纳德·庞奇的副手，两米余高的鱼叉手',
+    personality: '披潜水重甲、藏身浑浊玻璃之后的巨人，一条铁臂便能掀翻战舰。心机深沉——自导自演"黑旗舰落入教皇城之手"的苦肉计，只为逼斯帕里森正面迎战教皇城。',
+    bonds: [
+      { with: '梅纳德', type: '同僚', desc: '同属斯帕里森麾下，是梅纳德的得力副手。' },
+      { with: '斯帕里森', type: '目标', desc: '以苦肉计逼迫"无海之王"斯帕里森现身。' }
+    ],
+    quotes: ['"既然得到了我的认可，那就必须彻底消亡。"'],
+    appearances: ['第一卷：第十二章在黑旗舰上与第二代时之秩序决战'],
+    abilityDetail: '披潜水重甲、以一条铁臂作战的巨人，具体能力细节待补。胸前的蓝色水晶"海洋之心"如心脏般跳动，脱落时掀起了十米高的海啸。'
+  },
+  lukasen: {
+    name: '伦道夫·卢卡森', title: '内城军务部执事领事', avatar: 'M', avatarText: '卢',
+    crt: '11.9', ability: '白夜浪客',
+    identity: '内城军务部执事领事，教会武装力量核心',
+    personality: '圆顶帽、厚重风衣、精心修剪的灰白络腮胡，一副绅士做派。洞悉马萨卡的底细，以利诱与杀意并施，欲将其收入麾下。"窃用者"——「白夜浪客」本非属于他的力量。',
+    bonds: [
+      { with: '马萨卡', type: '拉拢对象', desc: '点破其"传奇"赏金猎人的底细，欲以军务部之职收编。' },
+      { with: '亚因森特', type: '处刑', desc: '主持对头号通缉犯亚因森特的处刑。' }
+    ],
+    quotes: ['"这盏油灯，最多还能烧三十分钟。屋里没有光是什么样，我想你自己很清楚。希望咱们合作愉快。"'],
+    appearances: ['第一卷：第十三章在军务部病房审问马萨卡'],
+    abilityDetail: '「白夜浪客」（CRT-11.9）：以双眼化作光源，用影子绞杀敌人的能力。'
+  },
+  liang: {
+    name: '里昂', title: '「堕乐之园」· 神秘的借书人', avatar: 'M', avatarText: '里',
+    crt: '12.3', ability: '堕乐之园',
+    identity: '神秘来客，与琉璐珀有秘密往来',
+    personality: '行踪诡秘。托琉璐珀转交一本古书，话音未落便消失在巡逻队的脚步声里——"不能在这里久留"。掌握的「堕乐之园」令周围的腐化之地如影随形。',
+    bonds: [
+      { with: '琉璐珀', type: '秘密联络', desc: '托她转交古书，似与她约定暗中相见。' },
+      { with: '云略', type: '线索', desc: '云略手持"Leon"之瓶，循他的足迹潜入教条院地下。' }
+    ],
+    quotes: ['"不能在这里久留。我看见巡逻队了。"'],
+    appearances: ['第一卷：第十章在船都露一面后离去', '第一卷：第十六章被云略循迹追踪'],
+    abilityDetail: '「堕乐之园」（CRT-12.3）：驾驭"腐化"侵染并萃取物体内部的"古老的黑暗"，使其化为受他掌控的"腐化之地"。'
+  },
+  lannier: {
+    name: '兰尼尔', title: '言语辐射病患者', avatar: 'M', avatarText: '兰',
+    crt: '?', ability: '言语辐射',
+    identity: '受言语辐射病困扰的少年，圣标联合的收治对象',
+    personality: '面色苍白、手足无措的黑发少年。患有一种特殊的"言语辐射病"——每说一个字，周围的人都会感到强烈的压迫与慌乱。被粥娘收治在圣标联合，与正义（贾斯汀）关系亲近，总想劝这位前司长别再酗酒。',
+    bonds: [
+      { with: '正义（贾斯汀）', type: '守望', desc: '在圣标联合相伴，总想劝他别再酗酒。' },
+      { with: '粥娘', type: '收治', desc: '粥娘为他提供治疗与庇护。' }
+    ],
+    quotes: ['"……他说话让人感觉……特别不舒服……"'],
+    appearances: ['序幕：在圣标联合登场'],
+    abilityDetail: '患"言语辐射病"——每说一个字，周围的人都会感到强烈的压迫与慌乱。'
+  },
+  lainuo: {
+    name: '莱诺', title: '卢纳森特基地最高领导人', avatar: 'M', avatarText: '莱',
+    crt: 'N/A', ability: '无',
+    identity: '卢纳森特基地最高领导人',
+    personality: '以广播声号令基地的最高领导人。在中央核心集结时，亲自向第二代时之秩序下达前往沃克加德时间线的正式任务。',
+    bonds: [],
+    quotes: [],
+    appearances: ['序幕：在中央核心向第二代时之秩序下达沃克加德任务'],
+    abilityDetail: '非能力使。卢纳森特基地的最高领导人。'
   }
 };
 
@@ -1280,7 +1618,17 @@ const terms = {
   memory: { name: '周期性失忆', content: '协议能力使在签署"二次保密协议"后接受的记忆删除的副作用。礼奈每天早上醒来都会忘掉所有东西——包括性格。马萨卡虽然也是协议能力使，但似乎没有出现并发症。' },
   cola: { name: '可乐', content: '柯洛雯时间线的新品饮料，在沃克加德也有售卖。黑色冒泡的液体，被马萨卡称为"可笑"，被酒吧小子称为"极为致命的化学品，有着强大的成瘾性"（开玩笑）。云略评价："喝起来像是可口可乐和百事可乐的一比一混合。"' },
   ear_translator: { name: '耳译装置', content: '卢纳森特基地的微型实时翻译设备。植入耳道后可将听到的语言实时翻译为使用者的母语。有不同型号——礼奈的型号支持电话和MP3扩展（亡灵兔不推荐）。需要配合视网膜手术才能阅读文字。' },
-  leader_pun: { name: '「礼队」', content: '马萨卡对礼奈的称呼，谐音英文 Leader（领导者/队长）。礼奈觉得这是一个糟糕的双关——但并没有阻止他这样叫。实际上，每天早上忘记一切的她，或许并不讨厌这个每天都有人重新称呼她的方式。' }
+  leader_pun: { name: '「礼队」', content: '马萨卡对礼奈的称呼，谐音英文 Leader（领导者/队长）。礼奈觉得这是一个糟糕的双关——但并没有阻止他这样叫。实际上，每天早上忘记一切的她，或许并不讨厌这个每天都有人重新称呼她的方式。' },
+  chuandu: { name: '船都', content: '漂在沃克加德汪洋一角、由无数破船舱垒成的"难民营"，是教皇城永远不愿承认的地域。船都人没有公民权利，连交不交税都无关紧要。斯帕里森两年来持续接济船都，是船都人心中的"大救星"。boundary在船都出生，大约也会在船都死去。' },
+  wuhai: { name: '无海', content: '教皇城海域中的一片死海。海雾在此凝固，仿佛被世界遗忘的角落。海盗的巨舰藏匿于此——无海之上，教皇城的律法鞭长莫及。' },
+  haiwen_bodongyi: { name: '海文波动仪', content: '沉睡在沃克加德海底的古代遗物，能够探测并传递海洋中的剧烈波动。它与战况之间的共鸣，会把坐标传给游弋在外的赏金猎人。' },
+  langzhuang: { name: '浪庄', content: '船都贫民窟中的区域，由歌涅法率领的游击队维护秩序，扶助需要帮助的孩子。' },
+  feijianchuan: { name: '飞剪船', content: '狭长高耸的三桅快船，本是富商逃避海盗的特快货船，如今多流入黑市，成为赏金猎人团的稽查舰。' },
+  sensory_inhibitor: { name: '感官抑制剂', content: '反能力使的毒剂。以铺天盖地的白色泡沫隔绝视野、封锁听觉，令身处其中的能力使彻底沦为待宰的羔羊。梅纳德·庞奇惯用此物封口。' },
+  abnormal_traveler: { name: '异常穿越者', content: '从其他时间线意外落入本时间线的穿越者。云略便是其中之一——她不属于基地所在的世界，她的出现本身就是时间裂缝存在的证明。' },
+  speech_radiation: { name: '言语辐射病', content: '一种特殊的病症。患者每说一个字，周围的人都会感到强烈的压迫与慌乱。兰尼尔便受此病困扰，被粥娘收治在圣标联合。' },
+  memory_drug: { name: '记忆分离药剂', content: '苛志室技术相关的药剂，能够诱发签署保密协议前被压抑的黑暗记忆。莱克丝为学习苛志室技术而存放。' },
+  twilight_breaker: { name: '「暮蓝隙行」', content: '蓝色狼耳的神秘能力使。黑炎能够侵蚀空间本身，将触及的一切瞬间湮灭。曾与正义交手，凭借「曼菲斯菲的审判日」的金色铆钉才勉强逼退他。' }
 };
 
 // ===== BUILD CHARACTER CARDS =====
@@ -1543,6 +1891,33 @@ function toggleTheme() {
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
 }
+
+// ===== SIDEBAR: MULTI-LEVEL COLLAPSE =====
+document.querySelectorAll('.side-group-head').forEach(function(h) {
+  h.addEventListener('click', function() {
+    h.parentElement.classList.toggle('collapsed');
+  });
+});
+document.querySelectorAll('.side-vol-head').forEach(function(h) {
+  h.addEventListener('click', function() {
+    h.parentElement.classList.toggle('collapsed');
+  });
+});
+
+// ===== SIDEBAR: MOBILE DRAWER =====
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sideBackdrop').classList.add('show');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sideBackdrop').classList.remove('show');
+}
+document.getElementById('menuBtn').addEventListener('click', openMobileSidebar);
+document.getElementById('sideBackdrop').addEventListener('click', closeMobileSidebar);
+document.querySelectorAll('.sidebar .chap-link').forEach(function(a) {
+  a.addEventListener('click', closeMobileSidebar);
+});
 
 // ===== INIT =====
 initTheme();

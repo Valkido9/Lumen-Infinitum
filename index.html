@@ -432,6 +432,8 @@ body {
 .review-toggle.active {
   background: var(--accent2); color: #fff; border-color: var(--accent2);
 }
+.review-toggle.danger { border-color: var(--accent2); color: var(--accent2); }
+.review-toggle.danger:hover { background: var(--accent2); color: #fff; }
 .review-hint {
   position: fixed; left: 20px; bottom: 62px; z-index: 1100;
   font-size: 0.75em; color: var(--text-muted);
@@ -1553,6 +1555,7 @@ document.addEventListener('click', function(e) {
 // After applying, clear 'lumen-annotations' in localStorage.
 // ───────────────────────────────
 const ANN_STORAGE_KEY = 'lumen-annotations';
+const ANN_BACKUP_KEY = 'lumen-annotations-backup';
 const REVIEW_PASSWORD = '1T1Gsdxsp!!!';
 let reviewModeActive = false;
 let activePopups = [];
@@ -1639,8 +1642,9 @@ function enterReviewMode() {
     el.addEventListener('click', onElementClick);
   });
 
-  // Add export button next to review toggle
+  // Add export + clear buttons next to review toggle
   addExportButton();
+  addClearButton();
 }
 
 function exitReviewMode() {
@@ -1660,6 +1664,7 @@ function exitReviewMode() {
   removeAllPopups();
   removeAllBadges();
   removeExportButton();
+  removeClearButton();
 
   getAnnotatableElements().forEach(el => {
     el.style.cursor = '';
@@ -1713,6 +1718,55 @@ function addExportButton() {
 function removeExportButton() {
   const btn = document.getElementById('exportBtn');
   if (btn) btn.remove();
+}
+
+// ── Clear-all button (with auto backup) ──
+function addClearButton() {
+  removeClearButton();
+  const btn = document.createElement('button');
+  btn.id = 'clearAnnBtn';
+  btn.className = 'review-toggle danger';
+  btn.style.left = '260px';
+  btn.textContent = '🗑 清除批注';
+  btn.title = '备份当前全部批注到本地，然后一键清除';
+  btn.addEventListener('click', clearAllAnnotations);
+  document.body.appendChild(btn);
+}
+
+function removeClearButton() {
+  const btn = document.getElementById('clearAnnBtn');
+  if (btn) btn.remove();
+}
+
+function backupAnnotations() {
+  try {
+    localStorage.setItem(ANN_BACKUP_KEY, JSON.stringify({
+      time: new Date().toLocaleString('zh-CN'),
+      data: getAnnotations()
+    }));
+    return true;
+  } catch (e) { return false; }
+}
+
+function clearAllAnnotations() {
+  const anns = getAnnotations();
+  const total = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
+  if (total === 0) {
+    alert('当前没有批注。');
+    return;
+  }
+  const ok = confirm(`确定要清除全部 ${total} 条批注吗？\n清除前会自动备份当前批注到本地存储。`);
+  if (!ok) return;
+  const backed = backupAnnotations();
+  saveAnnotations({});
+  removeAllPopups();
+  renderAllBadges();
+  const hint = document.getElementById('reviewHint');
+  hint.textContent = backed
+    ? `🗑 已清除全部 ${total} 条批注，上一版本已备份（可查看 localStorage 键 "lumen-annotations-backup"）。`
+    : `🗑 已清除全部 ${total} 条批注。⚠️ 备份失败，无法恢复。`;
+  hint.classList.add('show');
+  setTimeout(() => hint.classList.remove('show'), 5000);
 }
 
 // ── Annotation Popup ──
@@ -1977,7 +2031,7 @@ const abilityData = [
   {id:"ab12",n:"空屿",h:"斯帕里森",c:"9.7",
    s:[2,1,4,1,4,1],
    d:"斯帕里森的心跳和外界的肢体运动都会为他提供一个抗性护盾，无形地环绕在自己身体的各个方向。当护盾被击破时，斯帕里森周围会爆出尖利的水刺，击退在他周围的人，并为他自己再次提供一层被打破之后不会再进行自卫的水膜。\n水膜被击碎后斯帕里森将彻底陷入无保护状态。但水膜存在时，护盾的回复速度会大大提升。\n在常规状态下的护盾是无法被肉眼看出来的，更多情况下表现为刀枪不入的身体。\n护盾被堆叠完成后将不会继续堆叠，且会长期存在下去，持续到被打破为止。护盾存在时将会大大提升斯帕里森在水下运动的速度和屏息时间。\n这一能力是沃克加德大炼金阵转化出的“神力”被斯帕里森吸收所得的形式。实际上，这是炼金阵提取出的一种稳定的指令之力，在经过一系列魔法工序之后得到了强化和提纯。\n尽管这种纯粹的指令之力不会造成辐射病，但运用炼金术带来的反噬同样也为斯帕里森提供了一层可怕的“诅咒”——他不能长久地在陆地上停留，否则在连续经历三次潮期之后，他就会立刻死亡。",
-   q:"——《沃克加德史诗》 第356页 斯帕里森",nt:"只对自己有效",
+   q:"“‘强运加持’的至福所归、‘大难不死’的天命之人……这就是我，而你只是试图挑战我的这么多人之中，最微不足道的那一个。”\n——《沃克加德史诗》 第356页 斯帕里森",nt:"只对自己有效",
   },
   {id:"ab13",n:"疗愈弦音",h:"威路普",c:"8.6",
    s:[2,2,2,4,1,1],

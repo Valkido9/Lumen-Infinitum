@@ -82,8 +82,18 @@ while i < len(lines):
         for j in range(desc_start, min(desc_start + 40, len(lines))):
             dl = lines[j].strip()
             # Stop conditions
-            if re.match(r'^【.+】$', dl) or re.match(r'^「.+」$', dl):
+            if re.match(r'^【.+】$', dl):
                 break
+            if re.match(r'^「.+」$', dl):
+                # Only break if next line(s) contain 持有者 (new ability header)
+                # Otherwise it's an evaluation quote using「」brackets
+                is_header = False
+                for check_j in range(j+1, min(j+4, len(lines))):
+                    if re.match(r'^持有者[：:]', lines[check_j].strip()):
+                        is_header = True
+                        break
+                if is_header:
+                    break
             if re.match(r'^持有者[：:]', dl) and desc_lines:
                 break
             if dl == '能力：' or dl == '能力:':
@@ -113,8 +123,18 @@ while i < len(lines):
     # Extract quote (lines starting with —— at end of desc)
     desc_parts = desc.rsplit('\n——', 1)
     if len(desc_parts) > 1:
-        desc = desc_parts[0].strip()
+        before_attr = desc_parts[0].strip()
         quote = '——' + desc_parts[1].strip()
+        # Check if the line immediately before —— is a quoted evaluation ("" or 「」)
+        before_lines = before_attr.split('\n')
+        if before_lines:
+            last_before = before_lines[-1].strip()
+            # Match "text" (curly U+201C/U+201D) or "text" (ASCII) or 「text」
+            if re.match(r'^[“「"].+[”」"]$', last_before):
+                quote = last_before + '\n' + quote
+                before_lines = before_lines[:-1]
+                before_attr = '\n'.join(before_lines).strip()
+        desc = before_attr
     elif desc.startswith('——'):
         # Quote at the beginning
         quote = desc
@@ -128,7 +148,7 @@ while i < len(lines):
             if not range_note:
                 range_note = dl.lstrip('*').strip()
             continue
-        if dl.startswith('"') and len(dl) < 120:
+        if (dl.startswith('"') or dl.startswith('“') or dl.startswith('「')) and len(dl) < 120:
             # Check if this is an evaluation quote
             if not quote and ('——' in dl or '录音来源' in dl):
                 quote = dl
@@ -136,9 +156,9 @@ while i < len(lines):
         desc_lines_clean.append(dl)
 
     desc = '\n'.join(desc_lines_clean).strip()
-    # Remove standalone quotes from desc
-    desc = re.sub(r'\n[""][^""]+[""](?:\n|$)', '', desc).strip()
-    desc = re.sub(r'^[""][^""]+[""]$', '', desc).strip()
+    # Remove standalone quotes from desc (handle curly quotes + corner brackets)
+    desc = re.sub(r'\n["“「][^"”」]+["”」](?:\n|$)', '', desc).strip()
+    desc = re.sub(r'^["“「][^"”」]+["”」]$', '', desc).strip()
 
     # Skip if no meaningful description or not an ability
     # Filter out misidentified quotes

@@ -30,7 +30,7 @@ const abilityMap = {};
 abilityData.forEach(a => { abilityMap[a.id] = a; });
 
 function drawRadarChart(stats) {
-  const size = 150, cx = 75, cy = 75, r = 58, levels = 5;
+  const size = 200, cx = 100, cy = 100, r = 78, levels = 5;
   let svg = '<svg viewBox="0 0 ' + size + ' ' + size + '">';
   // Background grid
   for (let l = 1; l <= levels; l++) {
@@ -61,14 +61,14 @@ function drawRadarChart(stats) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
     const v = Math.max(0.3, stats[i] || 0);
     const d = (r / levels) * v;
-    svg += '<circle cx="' + (cx + d * Math.cos(a)).toFixed(1) + '" cy="' + (cy + d * Math.sin(a)).toFixed(1) + '" r="2.5" class="radar-dot"/>';
+    svg += '<circle cx="' + (cx + d * Math.cos(a)).toFixed(1) + '" cy="' + (cy + d * Math.sin(a)).toFixed(1) + '" r="3" class="radar-dot"/>';
   }
   // Labels
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    const lr = r + 15;
+    const lr = r + 16;
     const lx = cx + lr * Math.cos(a);
-    const ly = cy + lr * Math.sin(a) + 3;
+    const ly = cy + lr * Math.sin(a) + 4;
     svg += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label">' + RADAR_LABELS[i] + '</text>';
   }
   svg += '</svg>';
@@ -102,21 +102,32 @@ function renderAbilityArchive() {
       f.abIds.forEach(id => {
         const a = abilityMap[id];
         if (!a) return;
-        const statStr = a.s.map((v, i) => statLabels[i] + '-' + (grades[v] || '?')).join(' ');
+        const statStr = a.s.map((v, i) => statLabels[i] + '-' + (grades[v] || '?')).join('  ');
         let html = '<div class="ability-card" id="ab-' + a.id + '">';
-        html += '<div class="ability-card-header">';
-        html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s) + '</div>';
-        html += '<div class="ability-info">';
+        // Card top: name + meta bar
+        html += '<div class="ability-card-top">';
         html += '<div class="ability-name">「' + escHtml(a.n) + '」</div>';
-        html += '<div class="ability-meta"><span>👤 ' + escHtml(a.h) + '</span>';
+        html += '<div class="ability-meta-bar">';
+        html += '<span>👤 ' + escHtml(a.h) + '</span>';
         if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
-        html += '</div>';
-        html += '<div class="ability-meta" style="font-size:0.75em;color:var(--text-muted);">' + statStr + '</div>';
+        html += '<span class="ability-stats">' + statStr + '</span>';
+        html += '</div></div>';
+        // Card body: radar chart (left) + content (right)
+        html += '<div class="ability-card-body">';
+        html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s) + '</div>';
+        html += '<div class="ability-content">';
         if (a.d) {
           const paras = a.d.split('\\n').filter(p => p.trim());
-          html += '<div class="ability-desc">' + paras.map(p => '<p style="text-indent:2em;margin:4px 0;">' + escHtml(p.trim()) + '</p>').join('') + '</div>';
+          html += '<div class="ability-desc">' + paras.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
         }
-        if (a.q) html += '<div class="ability-quote">' + escHtml(a.q) + '</div>';
+        if (a.q) {
+          const qParts = a.q.split('\\n');
+          if (qParts.length > 1) {
+            html += '<div class="ability-quote"><span class="quote-text">' + escHtml(qParts[0]) + '</span><span class="quote-attribution">' + escHtml(qParts[1]) + '</span></div>';
+          } else {
+            html += '<div class="ability-quote">' + escHtml(a.q) + '</div>';
+          }
+        }
         if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
         html += '</div></div></div>';
         archiveHTML += html;

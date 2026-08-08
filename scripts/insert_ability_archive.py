@@ -24,6 +24,7 @@ ability_data = '\n'.join(data_lines)
 # The rendering functions
 rendering_js = '''
 // ===== ABILITY ARCHIVE RENDERING =====
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 const RADAR_LABELS = ['破坏力', '速度', '耐力', '范围', '狂热', '防御'];
 const abilityMap = {};
 abilityData.forEach(a => { abilityMap[a.id] = a; });

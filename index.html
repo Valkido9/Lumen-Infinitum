@@ -396,6 +396,48 @@ body {
   margin-top: 48px;
 }
 
+/* ===== Spoiler Toggle ===== */
+.spoiler-mark {
+  display: inline-block; font-size: 0.75em; padding: 2px 8px;
+  border-radius: 10px; background: var(--accent2-soft); color: var(--accent2);
+  cursor: pointer; font-weight: 500; vertical-align: middle;
+  user-select: none; transition: all 0.2s;
+}
+.spoiler-mark:hover { opacity: 0.8; }
+.spoiler-content { display: none; }
+.spoiler-content.show { display: inline; }
+.spoiler-content.show.block { display: block; }
+
+/* ===== Review Mode ===== */
+.review-toggle {
+  position: fixed; left: 20px; bottom: 20px; z-index: 1100;
+  padding: 8px 16px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  cursor: pointer; font-size: 0.85em; font-weight: 500;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+.review-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.review-toggle.active {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.review-hint {
+  position: fixed; left: 20px; bottom: 62px; z-index: 1100;
+  font-size: 0.75em; color: var(--text-muted);
+  pointer-events: none; opacity: 0; transition: opacity 0.3s;
+}
+.review-hint.show { opacity: 1; }
+.review-edited {
+  outline: 2px dashed var(--accent) !important;
+  outline-offset: 4px;
+  background: var(--accent-soft) !important;
+  border-radius: 4px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .layout { flex-direction: column; }
@@ -450,6 +492,10 @@ body {
 
 <!-- Theme Toggle -->
 <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()">☀️</button>
+
+<!-- Review Mode Toggle -->
+<button class="review-toggle" id="reviewToggle" title="审阅模式：直接在浏览器中编辑文字" onclick="toggleReviewMode()">📝 审阅模式</button>
+<div class="review-hint" id="reviewHint">💡 点击文字即可编辑。修改后的文字已自动保存。</div>
 
 <!-- Header -->
 <header class="header">
@@ -534,9 +580,9 @@ body {
     <!-- Ch5-7 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch3">第五至七章 手杖之谜 · 粥娘实验室</h3>
 
-    <p>云略背后的那根手杖成了第二代时之秩序的头号难题。克诺动用链锯，马萨卡使出浑身蛮力——甚至发动了<span class="term-link" onclick="openTerm('balance')">「天平」</span>操控时间流速——手杖只转动了极其微小的角度。全力一拳的余波把整个房间搅得人仰马翻。<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>，队伍里极度理性、从不信任指令之力的工程师，通过精密实验推算出了手杖的CRT抗性数据，但依然没能找到取下它的方法。云略只能双手撑着这根金属杆，像撑着一把永远合不上的伞。</p>
+    <p>云略背后的那根手杖成了第二代时之秩序的头号难题。克诺动用链锯，手杖纹丝不动——链锯反而像扔垃圾一样被从手杖上缄默地甩了出去。<span class="char-link" onclick="openChar('wanglingtu')">亡灵兔</span>通过精密实验推算出手杖对指令之力的排斥力高达"九点三千格每度"——这意味着常规手段对它毫无作用。只有马萨卡使出全力发动能力后，手杖才转动了极其微小的角度（一圈有余），成为唯一能对它产生影响的尝试。然而即使如此，也依然没能找到将云略与它分离的方法——这根手杖死死地粘在她背后，简直像长在她身上一样。因为背后这根蠢棍子，云略无法正常换衣服（只能把外套反着朝前穿，像个滑稽的太空人），过门框时会被卡住，起身时棍子会猛然戳向天花板，走路时更会时不时跌上一跤。她只能靠在这根一米九长的金属杆上，像靠着一把永远合不上的伞。</p>
 
-    <p>在<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>的建议下，礼奈带着云略前往圣标联合实验组，见到了<span class="char-link" onclick="openChar('zhouniang')">粥娘</span>——一位戴着兔耳帽的活泼科学家（能力「狂乱的鸡尾酒」，CRT-8.4）。在粥娘的实验室中，礼奈喝下了一种特殊的显影液——它让她观看了一段被<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>删除的记忆。这段仅存三十秒的记忆，揭示了礼奈的导师：代号<span class="char-link" onclick="openChar('wuming')">「无名」</span>（又名"BBQ"），十一年前以一己之力终结了惊天浩劫的传奇能力使。在圆形特训室中，无名戴着棒球帽、披着漆黑风衣，旋转短剑以残影般的速度砍向礼奈。礼奈瞬移至其身后，高温刀刃划破无名后领——但无名以无法捕捉的速度转身，顺势冲拳将她击飞。</p>
+    <p>在<span class="char-link" onclick="openChar('laikesi')">莱克丝</span>的建议下，礼奈带着云略前往圣标联合实验组——礼奈此行另有目的：她每天早晨都会丧失所有记忆，而粥娘正是基地中处理记忆删除后遗症的专家，她配置的显影液可以帮助礼奈读取被<span class="term-link" onclick="openTerm('kezhi_room')">苛志室</span>删除的记忆。两人见到了<span class="char-link" onclick="openChar('zhouniang')">粥娘</span>——一位戴着兔耳帽、精力旺盛的活泼科学家（能力「狂乱的鸡尾酒」，CRT-8.4），她"确实很擅长处理基地记忆删除的后遗症，也在指令之力研究这方面颇有建树"。在粥娘的实验室中，礼奈喝下了一种特殊的显影液——它让她观看了一段被苛志室删除的记忆。这段仅存三十秒的记忆，揭示了礼奈的导师：代号<span class="char-link" onclick="openChar('wuming')">「无名」</span>（又名"BBQ"），十一年前以一己之力终结了惊天浩劫的传奇能力使。在圆形特训室中，无名戴着棒球帽、披着漆黑风衣，旋转短剑以残影般的速度砍向礼奈。礼奈瞬移至其身后，高温刀刃划破无名后领——但无名以无法捕捉的速度转身，顺势冲拳将她击飞。</p>
 
     <div class="story-quote">
       "不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"
@@ -726,7 +772,7 @@ const characters = {
     ],
     quotes: ['"奇变偶不变，符号看象限。"', '"这个世界是不是除了我都是能力使啊？"', '"我的存在价值约等于零。"'],
     appearances: ['序章第一章：从天而降，在电梯废墟中被发现', '序章第五至七章：手杖困扰，粥娘实验室', '序章第十三至十六章：基地遇袭，与正义的逃亡', '第一章：在沃克加德被误传送，与优碧卡搏斗并建立羁绊', '第一章：圆翼党地下基地中逐渐融入队伍'],
-    abilityDetail: '「流光」（CRT-?）：源自修瓦尔扎「长终」之力的削弱态。扭转怀表发条后，接触物品变为"时间炸弹"，爆炸后停止范围内所有生命体活动3-8秒。优先级最高，可打断一切时光机能力。粥娘的机器无法测出CRT数值。'
+    abilityDetail: '「流光」（CRT-?）：<span class="spoiler-content">修瓦尔扎曾有能力「长终」的一个削弱态，具有其部分力量。扭转怀表上的发条后，云略下一次接触的物品将会变为"时间炸弹"，在云略决定发动能力时爆炸，造成一次分贝巨大的音波打击并停止范围内一切生命体的活动能力3-8秒。云略如果在爆炸范围内，也会受到时间停止的影响。时间停止范围内正在运动的物体会在能力启动后的0.3秒内被凝滞住。时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你真的释放能力了吗？为什么这机器读不出来CRT的数值？"——粥娘</em>'
   },
   linai: {
     name: '礼奈（铃）', title: '「失语的烈阳」· 队长', avatar: 'F', avatarText: '礼',
@@ -741,7 +787,7 @@ const characters = {
     ],
     quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"（马萨卡对她的问候）', '"第二代时之秩序，从来就不是一个需要隐蔽的组织。"', '"特工？看着电梯墙上这个甚至有点瘦弱的女性，她费解过去的自己到底是有多么不理智。"'],
     appearances: ['序章全部章节', '第一章：作为帕瓦蒂·罗伊在沃克加德行动'],
-    abilityDetail: '「双生烈阳」（CRT-10.8，特种级）：短距离瞬间移动（落点必须比脚下温度更高），瞬移成功后下一次攻击附带高温燃烧效果。可从高处释放"焚风"——一道缓慢推进的高温火幕，造成无差别杀伤。可通过持续升高体温缩短冷却时间。不能携带他人瞬移。'
+    abilityDetail: '「双生烈阳」（CRT-10.8）：<span class="spoiler-content">可以进行一次瞬间移动，要求瞬移的落点必须比自己脚下地面的温度更高。如果瞬移成功，礼奈将可以使自己的下次攻击附带高温燃烧效果。攻击的温度会随着攻击的频率与次数不断上升。升温到一定阶段后礼奈可以刮出温度极高的热浪，并暂时缩小自己的碰撞体积，能够在人群中飞速穿梭。当礼奈从较高地形向较低地形发动俯冲时，她还可以释放"焚风"——一道由火焰组成、向下缓慢推进的高温幕墙，造成无差别杀伤，用以击退敌人或者保护自己。「双生烈阳」不能够使礼奈携带其他人进行瞬移。礼奈可以通过持续升高体温以极大程度地缩短每次发动能力间的冷却。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"机制简单的能力最好用了。"——粥娘</em>'
   },
   masaka: {
     name: '马萨卡', title: '「金色的判官」· 双能力使', avatar: 'M', avatarText: '马',
@@ -755,7 +801,7 @@ const characters = {
     ],
     quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"', '"这玩意不吃不喝，连遛弯都不用，可好养了。"（指他的武器"小凝"）', '"……看来你这家伙就是典狱长了！告诉我你把他关到了什么地方……"（暴走状态）'],
     appearances: ['序章第一章：电梯坠落中展现能力', '序章第十一章：暴走事件', '第一章：监狱记忆、酒馆集合、圆翼党基地'],
-    abilityDetail: '「天平」（CRT-11.1，高危级）：操控范围内指定区域的时间流速，从而加快或减缓物体运动状态。可加速交通工具、弹射物与肢体挥动来增加破坏力，也可减速威胁目标。暴走状态（CRT-12.4）：移除体力限制，作用范围和目标数量随释放次数增加。\n「司明」（CRT-9.4）：储存太阳能以操控电能，主要用于照明和麻痹对手。'
+    abilityDetail: '「天平」（CRT-11.1，高危级）：<span class="spoiler-mark">（可能涉及剧透）</span><span class="spoiler-content">在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期（前三卷）常被认为是"操纵动能的能力"。马萨卡可以加速交通工具、弹射物弹道与肢体的挥动来增加破坏力，也可以减速身边会对自己造成威胁的目标。每次加速都会消耗体力，连续多次加速会严重影响身体机能甚至出现假死现象，但一次足够睡眠后即可恢复正常。只要物体在半径0.8米范围内，加速时不需要直接接触物体。</span>\n暴走状态（CRT-12.4）：<span class="spoiler-content">移除连续多次释放的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。被击倒后会陷入比正常假死更长时间的昏迷；即使赢下战斗，也会在十分钟内快速耗尽体力晕倒。</span>\n「司明」（CRT-9.4）：储存太阳能以操控电能。可以让头发（尤其是呆毛）发光，也可以在短兵相接中麻痹对方。并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。'
   },
   zhengyi: {
     name: '正义（贾斯汀）', title: '情报司前司长', avatar: 'M', avatarText: '正',
@@ -769,7 +815,7 @@ const characters = {
     ],
     quotes: ['"道歉是解决不了任何问题的。"', '"我真不知道其他的能力使为什么要在打架的时候胡言乱语，这让他们简直蠢得像是日保院送的大塑料袋。"', '"你在着急什么？这不过只是一场大火而已。"'],
     appearances: ['序章第八章：在圣标联合首次登场', '序章第十四至十六章：带领云略穿越燃烧的基地'],
-    abilityDetail: '「空间断层」（CRT-11.5，高危级）：在以自己为原点默念坐标后，可立刻交换任意两个2m³的空间。理论上可直接削除空间致人死地，但正义从不这样使用。每次使用后进入10秒缓冲期（易损乏力），连续使用会引发半径6米内的空间切裂重组。'
+    abilityDetail: '「空间断层」（CRT-11.5，高危级）：<span class="spoiler-content">在以自己为坐标轴原点并默念一个坐标后，可以立刻拉取坐标处2m×2m×2m的空间并使其与正义面前1m处2m×2m×2m的空间交换。正义操纵「空间断层」进行攻击时往往会以制造地形破坏为主要攻击手段，同时也会以挪移重型物体的方式对自身进行保护。该技能的运用上下限相当广泛——理论上可以直接通过削除空间使目标身体分裂并当场死亡，但正义从来都不会用能力来直接对敌人发动攻击。每次使用能力后正义都会进入10秒钟的缓冲期，期间变得易损且乏力。若在缓冲期再次使用能力，则以他为中心、半径6米内的空间将被以长条状切裂并重组，之后虚弱时间变为1分钟且无法再使用能力。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你不会愿意看见别人的脑浆在你面前爆开的。不说残忍与否，至少很恶心。"——未署名录音6331</em>'
   },
   youbika: {
     name: '优碧卡（UPK-002）', title: '炼金仿生人偶', avatar: 'O', avatarText: '优',
@@ -810,7 +856,7 @@ const characters = {
     ],
     quotes: ['"我不希望，在你身上展现出连我自己都无法控制的强大力量。"', '"有戒心是好事。很高兴能看到你这么操心自己的组织。"'],
     appearances: ['第一章：船都之战，与优碧卡的对决', '第一章：酒馆夜色中与亡灵兔的秘密会面'],
-    abilityDetail: '操控极低温的攻城级能力（CRT估计14-18）。可瞬间凝结黑色冰墙，冻结火焰，在水面上制造可站立的冰面。长剑被冰霜覆盖后可释放冰刺进行远程攻击。具体CRT和能力细节尚未完全公开。'
+    abilityDetail: '常态阶段-「永冻领域」（CRT-13.7）：<span class="spoiler-content">以自己为球心控制周围空气的温度。常规状态下最低温度可达零下120至零下200摄氏度，降温所需时间为10秒，范围为半径七米。可使用以下攻击方式：操控被凝华的水蒸气覆盖的物体环绕自身进行保护；把冻结范围转移到武器上（半径五米，最低零下90至零下150摄氏度）；通过快速升温降温制造热浪；冻结朝自己飞来的弩箭和弹药并随机弹射回各个方向；把冻结的水蒸气作为子弹发射；制造简易冰墙。当周围空气水蒸气被全部凝结时降温会停止。</span><br>解放阶段-「永冻领域·温度坍缩」（CRT-14.8）：<span class="spoiler-content">降温极限下降到接近零下273.15摄氏度。温度坍缩的指令一旦下行，温度将在0.5秒内暴跌至零下273摄氏度以下，再缓慢地无限接近绝对零度。可冻结氮气形成护盾，操纵被冷冻物体（正常情况为五倍体重），使气压极速增大将物体压碎。关闭能力后气压会剧烈失衡并带着温度爆炸，使周围逼近真空。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span>'
   },
   kangmingde: {
     name: '康明德', title: '科研司司长', avatar: 'M', avatarText: '康',
@@ -845,7 +891,7 @@ const characters = {
     ],
     quotes: ['"我很高兴能认识你，云略。"', '"应到四人，实到四人……某种意义上来说，咱们已经可以开始行动了。"'],
     appearances: ['序章第三章起：为云略安装耳译', '第一章：沃克加德行动中负责联络和检查优碧卡'],
-    abilityDetail: '「灵魂之桥」（CRT-8.9）：使目标和自己的肉体失去实体进入"幽灵状态"，持续5秒（只对自己时15秒），期间免疫一切攻击且可穿墙。冷却120分钟。如果能力解除时目标在障碍物中，会被回弹至安全位置。'
+    abilityDetail: '「灵魂之桥」（CRT-8.9）：<span class="spoiler-content">使目标和自己的肉体失去实体，进入"幽灵状态"。在此期间一切物体都会直接穿过两人，以此来达到让两人免疫一切攻击的效果。这也意味着处在幽灵状态下的人可以在墙壁之间穿梭。「灵魂之桥」持续五秒，冷却时间为120分钟。如果能力的目标只有克诺自己，那么时间将会被大幅度延长至15秒。持续时间结束后，"桥上之人"的躯体会立刻在当前自己所处的位置重现。如果在能力解除时目标在障碍物之中，会被回弹至一个有充足空间的落点。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"非常朴素的援助能力，简直就是为了保护队友而生的呢！"——粥娘</em>'
   },
   laikesi: {
     name: '莱克丝', title: '「浴缸之神」· 文书', avatar: 'F', avatarText: '莱',
@@ -859,6 +905,20 @@ const characters = {
     quotes: ['"我真是对你们这群能力使羡慕嫉妒恨……"', '"谁——谁呀？一天两次不算特别夸张吧？！"', '"如果你想死得像块炸鸡一样……"'],
     appearances: ['序章第六章起：作为文书登场', '序章第十三章：与云略在火海中逃生'],
     abilityDetail: '非能力使。第二代时之秩序年龄最小的成员。负责文书工作，同时在努力学习苛志室药物护理员的知识。对记忆分离药剂等化学品有一定了解。'
+  },
+  zhouniang: {
+    name: '粥娘', title: '「狂乱的鸡尾酒」· 圣标联合药学家', avatar: 'F', avatarText: '粥',
+    crt: '8.4', ability: '狂乱的鸡尾酒',
+    identity: '圣标联合实验组唯一成员，全能的科学家兼药学家',
+    personality: '戴着兔耳帽、精力极其旺盛的年轻女科学家。来自卢纳森特奎斯塔尔的圣奈特莉堡（因此有着战斗民族般的矫健身手）。热情开朗，爱开玩笑——"那这根棍子，一定就是异常穿越者了吧？"在科研上极度认真，敢于和苛志室打交道以获取被删除的记忆档案。不仅擅长处理基地记忆删除的后遗症，在指令之力研究方面也颇有建树。',
+    bonds: [
+      { with: '礼奈', type: '医患/合作', desc: '为礼奈配置显影液以读取被删除的记忆，帮助她面对失忆症。' },
+      { with: '兰尼尔', type: '收治', desc: '收治了患有特殊"言语辐射病"的兰尼尔，为他提供治疗和庇护。' },
+      { with: '正义', type: '同事', desc: '与正义同在圣标联合工作，对这位前司长的古怪性格早已习以为常。' }
+    ],
+    quotes: ['"哎呀，陋室没来得及好好收拾收拾，真是十分不好意思……"', '"玩笑话，玩笑话！"', '"这玩意可见不得光……来——喝了它，把这段保密程度极高的记忆过他个一遍。"'],
+    appearances: ['序章第七至九章：为礼奈配置显影液，揭示无名（BBQ）的记忆'],
+    abilityDetail: '「狂乱的鸡尾酒」（CRT-8.4）：随时可以进行一次"调酒"，使自己瓶中的蒸馏水立刻变为一罐高温的鸡尾酒。如果鸡尾酒自然降回常温则会变回蒸馏水。喝下或被打中的人如果不是攻击目标则只是普通鸡尾酒；如果是敌人，液滴会展现出强大的腐蚀性，像毒蛇一样主动钻入目标身体。被鸡尾酒制造出的伤口无法用常规手段治愈，只能止血并等待自愈。可通过切除更大伤口来解除负面影响——这一治疗方法被粥娘本人称作"醒酒"。'
   },
   boundary: {
     name: 'boundary', title: '「孤尽幻怨」· 圆翼党骨干', avatar: 'M', avatarText: 'B',
@@ -1102,6 +1162,126 @@ function toggleTheme() {
 initTheme();
 buildCharCards();
 switchWorldTab('terms', null);
+
+// ===== SPOILER TOGGLE =====
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('spoiler-mark')) {
+    const next = e.target.nextElementSibling;
+    if (next && next.classList.contains('spoiler-content')) {
+      next.classList.toggle('show');
+      if (next.tagName === 'DIV' || next.tagName === 'P') next.classList.toggle('block');
+      e.target.textContent = next.classList.contains('show') ? '（收起剧透）' : '（可能涉及剧透）';
+    }
+  }
+});
+
+// ===== REVIEW MODE =====
+const REVIEW_STORAGE_KEY = 'lumen-review-edits';
+const REVIEW_FLAG_KEY = 'lumen-review-has-edits';
+let reviewModeActive = false;
+
+function getEditableElements() {
+  return document.querySelectorAll('#main-content p, #main-content h3, #main-content .story-quote, #main-content .card-desc, #main-content .rel-desc, #main-content .info-value, #main-content .footer');
+}
+
+function getElementPath(el) {
+  const parent = el.closest('#main-content');
+  if (!parent) return null;
+  const all = Array.from(parent.querySelectorAll('p, h3, .story-quote, .card-desc, .rel-desc, .info-value, .footer'));
+  return 'el-' + all.indexOf(el);
+}
+
+function saveEdit(el) {
+  const path = getElementPath(el);
+  if (path === null) return;
+  const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
+  edits[path] = el.innerHTML;
+  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(edits));
+  localStorage.setItem(REVIEW_FLAG_KEY, 'true');
+}
+
+function applyStoredEdits(silent) {
+  const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
+  const elements = Array.from(getEditableElements());
+  let applied = 0;
+  elements.forEach((el, i) => {
+    const path = 'el-' + i;
+    if (edits[path] && edits[path] !== el.innerHTML) {
+      el.innerHTML = edits[path];
+      if (!silent) {
+        el.classList.add('review-edited');
+      }
+      applied++;
+    }
+  });
+  if (!silent && applied === 0) {
+    const hint = document.getElementById('reviewHint');
+    if (hint) { hint.textContent = '📭 没有检测到待审阅的修改。'; hint.classList.add('show'); setTimeout(() => hint.classList.remove('show'), 3000); }
+  }
+  return applied;
+}
+
+function clearReviewMarks() {
+  document.querySelectorAll('.review-edited').forEach(el => el.classList.remove('review-edited'));
+  localStorage.removeItem(REVIEW_FLAG_KEY);
+}
+
+function toggleReviewMode() {
+  reviewModeActive = !reviewModeActive;
+  const btn = document.getElementById('reviewToggle');
+  const hint = document.getElementById('reviewHint');
+  const elements = getEditableElements();
+
+  if (reviewModeActive) {
+    btn.classList.add('active');
+    btn.textContent = '✅ 退出审阅';
+    hint.classList.add('show');
+    hint.textContent = '💡 点击任意文字段落即可编辑。修改会自动保存到浏览器。';
+
+    elements.forEach(el => {
+      el.contentEditable = 'true';
+      el.addEventListener('input', function() { saveEdit(el); });
+      el.style.cursor = 'text';
+    });
+
+    const applied = applyStoredEdits(false);
+    if (applied > 0) {
+      hint.textContent = `📌 已加载 ${applied} 处之前的修改（虚线标记）。退出审阅后将清除标记。`;
+    }
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = '📝 审阅模式';
+    hint.textContent = '✅ 修改已保存。审阅标记已清除。';
+    hint.classList.add('show');
+    setTimeout(() => hint.classList.remove('show'), 3000);
+
+    elements.forEach(el => {
+      el.contentEditable = 'false';
+      el.style.cursor = '';
+    });
+
+    clearReviewMarks();
+  }
+}
+
+// On page load: apply stored edits silently (no marks) if they exist
+(function initReviewMode() {
+  const hasEdits = localStorage.getItem(REVIEW_FLAG_KEY);
+  if (hasEdits === 'true') {
+    const edits = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}');
+    const elements = Array.from(getEditableElements());
+    let applied = 0;
+    elements.forEach((el, i) => {
+      const path = 'el-' + i;
+      if (edits[path] && edits[path] !== el.innerHTML) {
+        el.innerHTML = edits[path];
+        applied++;
+      }
+    });
+    // Clear the flag so marks don't show on next load (review marks removed)
+    localStorage.removeItem(REVIEW_FLAG_KEY);
+  }
+})();
 </script>
 </body>
 </html>

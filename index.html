@@ -434,6 +434,46 @@ body {
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 .tab-btn:hover { color: var(--text); }
 
+/* ===== Org structure (行政结构) in world tabs ===== */
+.org-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 22px; margin-top: 16px;
+}
+.org-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.org-icon { font-size: 1.3em; }
+.org-name { font-size: 1.15em; font-weight: 700; }
+.org-desc { font-size: 0.9em; color: var(--text-muted); margin-bottom: 14px; }
+.org-groups { display: flex; flex-direction: column; gap: 8px; }
+.org-group {
+  display: flex; align-items: baseline; gap: 12px;
+  font-size: 0.92em; line-height: 1.6;
+}
+.org-group-label {
+  flex: 0 0 auto; font-weight: 600; color: var(--gold);
+  min-width: 4.5em;
+}
+.org-group-items { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.org-item { display: inline-flex; align-items: baseline; gap: 4px; }
+.org-item em { font-style: normal; color: var(--accent); font-weight: 600; }
+.org-note {
+  margin-top: 12px; padding: 8px 12px;
+  background: var(--bg, transparent); border-left: 3px solid var(--border-light);
+  font-size: 0.85em; color: var(--text-dim);
+}
+.org-arms {
+  margin-top: 14px; border-top: 1px dashed var(--border-light); padding-top: 12px;
+}
+.org-arms-title { font-size: 0.88em; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.5px; }
+.org-arm-row {
+  display: grid; grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 8px; padding: 5px 0; font-size: 0.88em;
+  border-bottom: 1px solid var(--border-light);
+}
+.org-arm-row:last-child { border-bottom: none; }
+.org-arm-dept { color: var(--gold); font-weight: 500; }
+.org-arm-ctrl { color: var(--text); }
+.org-arm-name { color: var(--accent); }
+
 /* ===== Table in world tabs ===== */
 .ability-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em; }
 .ability-table th {
@@ -1306,6 +1346,7 @@ body {
     <h2 class="section-title" id="world" style="color:var(--accent);"><span class="icon">🌐</span>世界设定</h2>
     <div class="tabs" id="worldTabs">
       <button class="tab-btn active" onclick="switchWorldTab('terms', event)">名词解释</button>
+      <button class="tab-btn" onclick="switchWorldTab('org', event)">行政结构</button>
     </div>
     <div id="worldTabContent"></div>
 
@@ -1863,7 +1904,82 @@ function switchWorldTab(tab, e) {
         </tr>
       `).join('')}</tbody>
     </table>`;
+  } else if (tab === 'org') {
+    renderOrgStructure(content);
   }
+}
+
+// ===== ORG STRUCTURE (行政结构) =====
+function renderOrgStructure(content) {
+  const orgs = [
+    {
+      name: '卢纳森特基地',
+      icon: '🛡️',
+      desc: '卢纳森特时间线保全组织，别名"卢纳森特基地"，总部位于卢纳森特联盟辖区内。',
+      groups: [
+        { label: '三室', items: [['中控室','莱诺'], ['机要室','本尼艾诺'], ['苛志室','SA']] },
+        { label: '两院', items: [['日保院','杏子'], ['检察院','奇比']] },
+        { label: '四司', items: [['情报司','正义'], ['科研司','Twikyo'], ['镇暴司','普兰奇昂'], ['财政司','仟咩']] },
+        { label: '中央核心', items: [['正长官','零与薇奥拉'], ['副长官','郁兴'], ['外交部','Fish']] },
+        { label: '直属部门', items: [['兵部','—'], ['特别行动部','—']] },
+      ],
+      note: '除了上文提到的人以外，部门领导组的所有人都不是能力使。',
+      arms: {
+        title: '各部门对应的独特武装',
+        rows: [
+          ['苛志室','SA','神智法庭'],
+          ['日保院','杏子','急援运载飞艇'],
+          ['检察院','奇比','褐钟'],
+          ['情报司','正义','信使'],
+          ['科研司','Twikyo','空间技师'],
+          ['镇暴司','普兰奇昂','黑十字'],
+          ['中央核心','郁兴','幽魂'],
+        ]
+      }
+    },
+    {
+      name: '珀利贝尔实业',
+      icon: '🏭',
+      desc: '霍因佩兹时间线上的跨时空巨企，简称为PBC。围绕其总部"无尽之塔"建立起了公司城。',
+      groups: [
+        { label: '两队', items: [['特训队','拉伊法'], ['亲卫队','六八']] },
+        { label: '四部', items: [['医疗部','艾廖莎'], ['研发部','弧虹'], ['相位部','格林尼治'], ['镇暴部','雨鸢']] },
+        { label: '两署', items: [['资源署','多利普'], ['日务署','艾薰']] },
+        { label: '一厅', items: [['理事厅','亡神']] },
+      ],
+      note: '除了上文提到的亲卫队队长六八与特训队队长拉伊法之外，部门领导组的所有人都不是能力使。',
+      arms: null
+    }
+  ];
+
+  content.innerHTML = orgs.map(org => `
+    <div class="org-card">
+      <div class="org-header">
+        <span class="org-icon">${org.icon}</span>
+        <span class="org-name">${org.name}</span>
+      </div>
+      <div class="org-desc">${org.desc}</div>
+      <div class="org-groups">
+        ${org.groups.map(g => `
+          <div class="org-group">
+            <span class="org-group-label">${g.label}</span>
+            <span class="org-group-items">${g.items.map(it => `<span class="org-item">${it[0]}<em>${it[1]}</em></span>`).join('')}</span>
+          </div>
+        `).join('')}
+      </div>
+      ${org.note ? `<div class="org-note">${org.note}</div>` : ''}
+      ${org.arms ? `<div class="org-arms">
+        <div class="org-arms-title">${org.arms.title}</div>
+        ${org.arms.rows.map(r => `
+          <div class="org-arm-row">
+            <span class="org-arm-dept">${r[0]}</span>
+            <span class="org-arm-ctrl">${r[1]}</span>
+            <span class="org-arm-name">${r[2]}</span>
+          </div>
+        `).join('')}
+      </div>` : ''}
+    </div>
+  `).join('');
 }
 
 // ===== TIMELINE OVERVIEW =====

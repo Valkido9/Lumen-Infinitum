@@ -91,9 +91,9 @@ for a in abilities:
     if stage == '解放阶段' and '阶段' not in name:
         # mark liberation-stage abilities (name keeps distinct 解放-stage naming)
         name = name + '（解放阶段）'
-    # 无名（本尼艾诺）解放阶段：名字为纯空白（原文档以「         」指代，观测不到能力真名）
+    # 无名（本尼艾诺）解放阶段：名字为纯空白（原文档以「         」指代，观测不到能力真名；用全角空格填充，避免HTML折叠，约五个字宽度）
     if holder == '本尼艾诺' and stage == '解放阶段':
-        name = ' '
+        name = '　　　　　'
 
     key = f"{name}|{holder}"
     if key in seen:

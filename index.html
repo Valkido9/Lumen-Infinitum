@@ -726,8 +726,12 @@ body {
 .ability-admin .ability-admin-tag { display: block; font-size: 0.78em; font-weight: bold; color: var(--accent2); margin-bottom: 6px; }
 .ability-admin p { font-size: 0.9em; line-height: 1.75; color: var(--text); margin: 4px 0; }
 
-.radar-chart-wrap { flex-shrink: 0; width: 180px; height: 180px; }
-.radar-chart-wrap svg { width: 100%; height: 100%; }
+.radar-chart-wrap { position: relative; flex-shrink: 0; width: 180px; height: 40px; overflow: hidden; border: 1px dashed var(--border); border-radius: 10px; transition: height 0.8s cubic-bezier(0.22,1,0.36,1), border-color 0.4s; }
+.radar-chart-wrap svg { width: 100%; height: 100%; opacity: 0; transform: scale(0.4); transform-origin: center; transition: opacity 0.7s ease 0.05s, transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+.radar-hint { position: absolute; top: 0; left: 0; right: 0; height: 40px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.8em; color: var(--text-dim); background: var(--bg-card); border-radius: 10px; transition: opacity 0.35s; z-index: 2; }
+.radar-chart-wrap:hover, .radar-chart-wrap.radar-open { height: 180px; border-style: solid; border-color: var(--accent); }
+.radar-chart-wrap:hover .radar-hint, .radar-chart-wrap.radar-open .radar-hint { opacity: 0; pointer-events: none; }
+.radar-chart-wrap:hover svg, .radar-chart-wrap.radar-open svg { opacity: 1; transform: scale(1); }
 .radar-bg { fill: none; stroke: var(--border); stroke-width: 0.5; }
 .radar-data { fill: rgba(88,166,255,0.15); stroke: var(--accent); stroke-width: 1.5; }
 .radar-dot { fill: var(--accent); }
@@ -740,7 +744,8 @@ body {
   .ability-card { padding: 14px; }
   .ability-card-body { flex-direction: column; align-items: center; }
   .ability-meta-bar { gap: 10px; }
-  .radar-chart-wrap { width: 150px; height: 150px; }
+  .radar-chart-wrap { width: 150px; height: 40px; }
+  .radar-chart-wrap:hover, .radar-chart-wrap.radar-open { height: 150px; }
   .ability-content { text-align: left; }
 }
 
@@ -3312,6 +3317,20 @@ function drawRadarChart(stats, isZpn) {
   return svg;
 }
 
+// 雷达图滚动触发展开：读者翻到对应能力卡片时自动展开六维雷达（展开后保持，避免反复收起/展开抖动）
+let radarObserver = null;
+function setupRadarReveal() {
+  if (radarObserver) radarObserver.disconnect();
+  const wraps = document.querySelectorAll('.radar-chart-wrap');
+  if (!wraps.length) return;
+  radarObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) en.target.classList.add('radar-open');
+    });
+  }, { threshold: 0.3 });
+  wraps.forEach(function (w) { radarObserver.observe(w); });
+}
+
 function renderAbilityArchive() {
   const nav = document.getElementById('abilityNav');
   const archive = document.getElementById('abilityArchive');
@@ -3349,6 +3368,7 @@ function renderAbilityArchive() {
     list.forEach(a => { archiveHTML += buildAbilityCard(a); });
   }
   archive.innerHTML = archiveHTML;
+  setupRadarReveal();
 }
 
 function buildAbilityCard(a) {
@@ -3378,7 +3398,7 @@ function buildAbilityCard(a) {
   if (a.zn) html += '<div class="zpn-note">' + escHtml(a.zn) + '</div>';
   // Card body: radar chart (left) + content (right)
   html += '<div class="ability-card-body">';
-  html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
+  html += '<div class="radar-chart-wrap"><div class="radar-hint">✦ 六维雷达图</div>' + drawRadarChart(a.s, isZpn) + '</div>';
   html += '<div class="ability-content">';
   if (a.d) {
     const paras = a.d.split('\n').filter(p => p.trim());

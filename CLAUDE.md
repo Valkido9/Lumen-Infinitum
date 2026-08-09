@@ -56,15 +56,17 @@ E:\永恒流光\永恒流光\
 - 已收录角色：云略、礼奈、马萨卡、正义、亡灵兔、优碧卡、六八、克诺、莱克丝、粥娘、boundary、兰尼尔、梅纳德、康明德、道杰斯、鸿荧、斯帕里森、无名
 - **注意**：角色卡片中不再内联显示能力的详细描述，只显示能力名称作为链接，点击后跳转至能力档案板块
 
-#### 3.5 能力档案（`abilityData` 数组 + `abilityTimelines` 结构）
-- 从源文档 `永恒流光能力设定集（2026.6.10）` 解析生成，共 101 个能力条目
+#### 3.5 能力档案（`abilityData` 数组 + 标签筛选系统）
+- 从源文档 `永恒流光能力设定集（2026.6.10）` 解析生成，共 121 个能力条目
 - **数据源**：`data/ability_archive.js`（自动生成），通过 `scripts/extract_abilities.py` 解析源文档 → `scripts/build_archive_js.py` 转换为紧凑 JS → `scripts/insert_ability_archive.py` 插入 index.html
-- **数据结构**：每个能力包含 `{id, n(名称), h(持有者), c(CRT), s(6维统计数组), d(描述), q(引文), nt(范围备注)}`
+- **数据结构**：每个能力包含 `{id, tg(标签串), n(名称), h(持有者), c(CRT), s(6维统计数组), d(描述), q(引文), nt(范围备注), zn(镇压院区), qb(管理员)}`
+- **标签字段 `tg`**：`"阵营1|阵营2, 时间线, 院区, 卷目"` —— 逗号分隔 4 段，多个阵营用 `|` 分隔；`parseTg(a)` 解析为 `{camps, tl, ward, vol}`
 - **六维统计**：破坏力、速度、耐力、范围、狂热、防御（EX=5, A=4, B=3, C=2, D=1, 0=未知）
-- **组织方式**：按时间线和阵营组织（`abilityTimelines`），包含卢纳森特、沃克加德、霍因佩兹、洛琛顿、柯洛雯、芬奈法拉等时间线
-- `renderAbilityArchive()` — 渲染能力档案板块（导航栏 + 能力卡片）
+- **筛选交互**：`abilityTags`（4 类标签词表：阵营/时间线/院区/初登场卷目）+ `abilityFilter`（当前选择状态，空数组=该行不限）+ `matchesFilter(a)`（每行内多选 OR，跨行 AND）+ `renderFilterBars()`（渲染 4 行筛选条）+ `setAbilityFilter(cat, val)`（切换选择，`val=''` 清空该行）
+- **13 院区**：内部四区（真理/救赎/赦除/机遇）、外部四区（生命/均衡/重构/解放）、终端四区（绝望/希冀/决意/勇气，反能力型，CRT 常为负并设 `zn`）、永恒院（中央时间控制）；院区标签按设定集院区特质分配
+- `renderAbilityArchive()` — 渲染能力档案板块（筛选条 + 扁平能力卡片列表，无匹配时显示空态提示）
 - `drawRadarChart(stats)` — 绘制 SVG 六维雷达图
-- `scrollToAbility(id)` / `scrollToFaction(firstId)` — 导航至特定能力/阵营
+- `scrollToAbility(id)` — 从角色卡片/正文跳转至特定能力卡片
 - `abilityMap` — 按 ID 快速查找能力的映射表
 
 #### 4. 术语词典（`terms` 对象）
@@ -159,6 +161,21 @@ E:\永恒流光\永恒流光\
 - **解析工具链**：`scripts/extract_abilities.py`（解析源文档） → `scripts/build_archive_js.py`（生成 JS 数据） → `scripts/insert_ability_archive.py`（插入 index.html）
 - CSS 新增：`.ability-archive`, `.ability-nav-bar`, `.ability-nav-btn`, `.ability-card`, `.radar-chart-wrap`, `.ability-timeline-title`, `.ability-faction-title`
 
+### 第 7 次更新 — 能力档案标签筛选系统 + 补全遗漏能力
+**提交**: `a8dc1dc`
+- **筛选重构**：放弃时间线→阵营层级分类（`abilityTimelines`/`factionOf`/`scrollToFaction` 已删除），改为**按标签筛选**
+  - 每个能力新增 `tg` 字段：`"阵营1|阵营2, 时间线, 院区, 卷目"`
+  - 4 类标签：阵营（可多个，`|` 分隔）、时间线、院区、初登场卷目
+  - 筛选交互：每行内多选 OR，跨行 AND；`renderFilterBars()` 渲染 4 行筛选条；`setAbilityFilter(cat, val)` 切换选择，`val=''` 清空该行；无匹配时显示空态
+  - 能力卡片 meta 栏改为显示 阵营+院区 chips
+- **院区标签**：按《永恒流光设定集2025.4.28》院区特质为全部 121 个能力分配院区（内部四区/外部四区/终端四区/永恒院）
+- **补全 3 个遗漏能力**（均为能力设定集源文档中已存在但之前未收录）：
+  - `ab117` 幻血之梦（达克多，十七前传）
+  - `ab119` 真视魔瞳（明风，亲卫队/霍因佩兹）
+  - `ab120` 施术单元合奏模块（麦克罗斯，牧人/洛琛顿）
+- CSS：新增 `.tag-filter-bar`, `.tag-filter-label`, `.tag-filter-btn`, `.ability-empty`；移除 `.tl-label`, `.ability-timeline-title`, `.ability-faction-title`
+- 一次性注入脚本：`scripts/add_ability_tags.py`（含全部 abID→tg 映射表，可作标签分配参考）
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：
@@ -190,7 +207,7 @@ git push origin main
 - 不要拆分文件，保持单文件结构
 - CSS 变量定义在 `:root`（日间）和 `.dark`（夜间）中
 - 角色数据在 JS 对象 `characters` 中，术语在 `terms` 中，能力数据在 `abilityData` 数组中
-- 能力档案的组织结构在 `abilityTimelines` 中，按时间线→阵营→能力ID组织
+- 能力档案的筛选依赖 `tg` 标签（阵营/时间线/院区/卷目）；新增能力时需确保 `tg` 的各值都在 `abilityTags.*.values` 词表中，否则筛选不到
 - `abilityMap` 是按 ID 快速查找能力的映射表
 - 批注系统的密码常量 `REVIEW_PASSWORD` 在 JS 中
 - `.spoiler-content` 元素在 HTML 中的位置可能在 `.spoiler-mark` 之前（通过 `<br>` 分隔），查找时需双向搜索

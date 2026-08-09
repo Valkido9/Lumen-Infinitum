@@ -728,10 +728,7 @@ body {
 
 .radar-chart-wrap { flex-shrink: 0; width: 180px; height: 180px; }
 .radar-chart-wrap svg { width: 100%; height: 100%; }
-/* 雷达数据展开动效：默认各值=0（数据多边形缩放为0，收敛于中心一点），读者翻到该能力时展开到真实数值 */
-.radar-g { transform-box: view-box; transform-origin: 100px 100px; transform: scale(0); opacity: 0; transition: transform 0.9s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease; }
-.radar-chart-wrap.radar-open .radar-g { transform: scale(1); opacity: 1; }
-.radar-chart-wrap:hover .radar-g { transform: scale(1); opacity: 1; }
+/* 数据多边形从"各值=0"展开由 SVG <animate> 驱动（见 drawRadarChart），骨架网格/轴线/标签不参与、始终常显 */
 .radar-bg { fill: none; stroke: var(--border); stroke-width: 0.5; }
 .radar-data { fill: rgba(88,166,255,0.15); stroke: var(--accent); stroke-width: 1.5; }
 .radar-dot { fill: var(--accent); }
@@ -3287,7 +3284,7 @@ function drawRadarChart(stats, isZpn) {
     svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
   }
   // Data polygon: A(4) -> edge (r), EX(5) -> 1.25r (bursts out past the rim)
-  // 数据多边形 + 顶点圆点包在 <g class="radar-g"> 中，由 CSS 从 scale(0)（各值=0的中心点）展开到真实数值
+  // 数据多边形 + 顶点圆点用 SVG <animate> 从"各值=0"（所有顶点收敛于中心）展开到真实数值；骨架网格/轴线/标签常显
   const dataCls = isZpn ? 'radar-data-zpn' : 'radar-data';
   const dotCls  = isZpn ? 'radar-dot-zpn' : 'radar-dot';
   let dpts = [];
@@ -3297,16 +3294,24 @@ function drawRadarChart(stats, isZpn) {
     const d = (r / levels) * v;
     dpts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
   }
-  svg += '<g class="radar-g">';
-  svg += '<polygon points="' + dpts.join(' ') + '" class="' + dataCls + '"/>';
-  // Dots
+  const zeroStr = Array(6).fill(cx + ',' + cy).join(' '); // 各值=0：全部顶点在中心一点
+  const realStr = dpts.join(' ');
+  const ANIM = 'dur="0.9s" begin="indefinite" fill="freeze" calcMode="linear"';
+  svg += '<polygon class="' + dataCls + '">';
+  svg += '<animate attributeName="points" values="' + zeroStr + ';' + realStr + '" keyTimes="0;1" ' + ANIM + '/>';
+  svg += '</polygon>';
+  // Dots（从中心滑出到各自位置）
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
     const v = Math.max(0.25, stats[i] || 0);
     const d = (r / levels) * v;
-    svg += '<circle cx="' + (cx + d * Math.cos(a)).toFixed(1) + '" cy="' + (cy + d * Math.sin(a)).toFixed(1) + '" r="3" class="' + dotCls + '"/>';
+    const px = (cx + d * Math.cos(a)).toFixed(1);
+    const py = (cy + d * Math.sin(a)).toFixed(1);
+    svg += '<circle r="3" class="' + dotCls + '">';
+    svg += '<animate attributeName="cx" values="' + cx + ';' + px + '" keyTimes="0;1" ' + ANIM + '/>';
+    svg += '<animate attributeName="cy" values="' + cy + ';' + py + '" keyTimes="0;1" ' + ANIM + '/>';
+    svg += '</circle>';
   }
-  svg += '</g>';
   // Labels
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
@@ -3319,18 +3324,24 @@ function drawRadarChart(stats, isZpn) {
   return svg;
 }
 
-// 雷达图数据展开：读者翻到对应能力卡片时，数据多边形从"各值=0"展开到真实数值（展开后保持，避免反复收起/展开抖动）
+// 雷达图数据展开：读者翻到对应能力卡片时，数据多边形从"各值=0"展开到真实数值（fill=freeze 展开后保持）
 let radarObserver = null;
 function setupRadarReveal() {
   if (radarObserver) radarObserver.disconnect();
   const wraps = document.querySelectorAll('.radar-chart-wrap');
   if (!wraps.length) return;
+  function reveal(wrap) {
+    wrap.querySelectorAll('animate').forEach(function (a) { a.beginElement(); });
+  }
   radarObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
-      if (en.isIntersecting) en.target.classList.add('radar-open');
+      if (en.isIntersecting) reveal(en.target);
     });
   }, { threshold: 0.15 });
-  wraps.forEach(function (w) { radarObserver.observe(w); });
+  wraps.forEach(function (w) {
+    radarObserver.observe(w);
+    w.addEventListener('mouseenter', function () { reveal(w); }); // 桌面 hover 临时预览
+  });
 }
 
 function renderAbilityArchive() {

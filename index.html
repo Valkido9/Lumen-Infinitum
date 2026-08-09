@@ -680,12 +680,19 @@ body {
 .ability-nav-btn { padding: 6px 16px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); cursor: pointer; font-size: 0.82em; transition: all 0.2s; white-space: nowrap; }
 .ability-nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--bg); }
 
+.ability-sort-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 4px; align-items: center; }
+.ability-sort-label { font-size: 0.82em; color: var(--text-muted); margin-right: 4px; }
+.ability-sort-btn { padding: 5px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); cursor: pointer; font-size: 0.78em; transition: all 0.2s; white-space: nowrap; }
+.ability-sort-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ability-sort-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
 .ability-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; transition: all 0.3s; }
 .ability-card:hover { border-color: var(--accent2); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
 .ability-card-top { text-align: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
 .ability-card .ability-name { font-size: 1.35em; color: var(--gold); font-weight: bold; margin-bottom: 8px; }
 .ability-meta-bar { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 0.85em; color: var(--text-dim); }
 .ability-meta-bar .ability-stats { font-size: 0.8em; color: var(--text-muted); }
+.ability-meta-bar .ability-faction-tag { display: inline-block; color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; padding: 1px 8px; font-size: 0.8em; line-height: 1.5; }
 
 .ability-card-body { display: flex; gap: 28px; align-items: flex-start; }
 .ability-content { flex: 1; min-width: 0; overflow-wrap: break-word; word-break: break-word; }
@@ -698,7 +705,7 @@ body {
 
 .ability-note { font-size: 0.8em; color: var(--text-muted); margin-top: 10px; padding-left: 4px; }
 
-/* 攻城级 (siege-tier, max CRT > 14): red card frame + badge */
+/* 攻城级 (siege-tier, max CRT >= 14): red card frame + badge */
 .ability-card-siege { border: 2px solid var(--accent2); box-shadow: 0 0 14px rgba(233,70,90,0.18); }
 .ability-card-siege:hover { border-color: var(--accent2); box-shadow: 0 2px 14px rgba(233,70,90,0.28); }
 .siege-badge { display: inline-block; margin-left: 8px; padding: 2px 10px; font-size: 0.68em; font-weight: bold; color: #fff; background: var(--accent2); border-radius: 10px; vertical-align: middle; }
@@ -1303,6 +1310,12 @@ body {
     <!-- ===== ABILITY ARCHIVE SECTION ===== -->
     <h2 class="section-title" id="abilities" style="color:var(--accent);"><span class="icon">⚡</span>能力档案</h2>
     <div class="ability-nav-bar" id="abilityNav"></div>
+    <div class="ability-sort-bar" id="abilitySortBar">
+      <span class="ability-sort-label">排序：</span>
+      <button class="ability-sort-btn active" data-sort="order" onclick="setAbilitySort('order')">按出场顺序</button>
+      <button class="ability-sort-btn" data-sort="crtAsc" onclick="setAbilitySort('crtAsc')">按CRT高低 · 正序</button>
+      <button class="ability-sort-btn" data-sort="crtDesc" onclick="setAbilitySort('crtDesc')">按CRT高低 · 倒序</button>
+    </div>
     <div class="ability-archive" id="abilityArchive"></div>
 
     <!-- Footer -->
@@ -2555,7 +2568,7 @@ const abilityData = [
    d:"在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。\n因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期常被认为是“操纵动能的能力”。\n马萨卡可以加速交通工具，弹射物弹道与肢体的挥动（奔跑，劈砍）来增加自己的破坏力，也可以减速身边会对自己造成威胁的目标，从而起到保护作用。\n每次加速都会消耗马萨卡的体力。连续多次的加速会严重影响马萨卡的身体机能，甚至出现假死的现象，但是在一次足够的睡眠之后就可以立刻恢复正常。\n只要物体在半径0.8米的范围内，那么马萨卡在加速物体时就不需要直接用手接触物体。\n马萨卡进入“里人格”（即“监狱人格”）后，将不再能释放自己的另一个能力「司明」，但「天平」的强度会被极大幅度加强。",
    q:"「……我很怕他测能力的时候把机器打坏。」\n——卢纳森特基地，特别行动部，录音来源“兰尼尔”",nt:"只能作用于半径0.8m内的目标，不指代弹丸在被加速后射出的范围。",
   },
-  {id:"ab2",n:"天平（解放阶段）",h:"马萨卡（解放阶段）",c:"12.4",
+  {id:"ab2",n:"天平",h:"马萨卡",c:"12.4",
    s:[4,4,4,2,4,2],
    d:"移除连续多次释放「天平」的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。\n如果马萨卡在进入“暴走”的状态下仍然被击倒，那他将会陷入比正常假死更加长时间的昏迷。即便他能够赢下战斗，也会在十分钟之内快速耗尽体力晕倒。",
    nt:"只能作用于半径1.8m内的目标，不指代弹丸在被加速后射出的范围。",st:"解放阶段",
@@ -2665,7 +2678,7 @@ const abilityData = [
    d:"以自己为球心控制周围空气的温度，分为常规状态与温度坍缩状态。\n常规状态下最低温度能达到零下120至零下200摄氏度，降温所需时间为10秒，范围为半径七米。周围的空间距离六八越近，温度便越低。\n常规状态下，六八可以使用如下攻击方式：\n1.操控被凝华的水蒸气覆盖的物体环绕在自身周围以保护自己，但是不能把它们弹射出去。\n2.把冻结范围转移到以武器为圆心的另一个点上，但是范围会缩短为半径五米，冻结的最低温度也会变为零下90摄氏度到零下150摄氏度。\n3.通过快速升温降温制造热浪攻击敌人，对低防护单位效果显著。\n4.冻结朝自己飞来的弩箭和弹药，并以温度上升30摄氏度左右为代价把飞射物随机弹射回各个方向。\n5.可以把冻结的水蒸气作为子弹发射出去。\n6.制造一层简易的冰墙，越靠近能力中心体积越大。\n当周围空气的水蒸气被全部凝结时，常规状态的降温会很快停止，并使周围的环境逐渐回暖。为了进行持久作战，六八必须保证周围有充足的水蒸气。",
    nt:"常规状态下的范围为半径五到七米的球形空间",
   },
-  {id:"ab24",n:"永冻领域·温度坍缩（解放阶段）",h:"六八",c:"14.8",
+  {id:"ab24",n:"永冻领域·温度坍缩",h:"六八",c:"14.8",
    s:[4,5,3,2,4,5],
    d:"解放状态需要六八在开启正常状态并且降温到最低温度后开始吟唱。吟唱结束后，能力范围会被缩短为半径三米，但降温极限也会下降到接近零下273.15摄氏度。\n此时他可以把周围的温度快速逼近绝对零度。这一过程被称为「温度坍缩」，「温度坍缩」的指令一旦下行，温度将会在0.5秒之内暴跌至零下273摄氏度以下，再缓慢地无限接近绝对零度。\n“温度坍缩”属于决战型法术，在关闭能力之前，六八将不再能主动使温度上升。在“温度坍缩”发动之后，以下能力会变得可用：\n1.连同水蒸气一起冻结空气中占大多数成分的氮气，并把它环绕自己旋转，形成一层护盾。与常规阶段不同的是，护盾被打破后，六八可以把碎片状的氮气固体和冰霜一起发射出去，护盾的强度取决于周围空气被冻结的程度和温度。\n值得注意的是，六八如果开启「温度坍缩」，那么氧气也会被一起冻结，护盾的强度将会被成倍强化，但是自己可能短时间内无法呼吸。\n2.被冷冻氮气和冰霜覆盖的物体将可以被六八操纵。六八能操纵物体的重量取决于周围空气被冻结的程度和温度，正常情况为五倍体重，如果开启「温度坍缩」，那么六八能操纵物体的重力将在短暂时间内暴增，以指数增长最终达到自身体重的数十万倍。\n3.六八在「温度坍缩」模式下让气压极速增大。子弹、障碍物、箭矢甚至是人将会被捏碎压扁。在六八关闭永冻领域后，气压会剧烈失衡并带着温度爆炸，使周围逼近真空，为半径十二米内的敌人施加易碎效果。\n在「温度坍缩」释放过程中的全程且结束之后，六八的身旁都会开启一个轻量化的常规状态降温。这能帮助六八平衡气压、免疫低温并且携带一部分氧气。\n六八在温度坍缩结束后的五分钟内无法再次释放温度坍缩，但常规阶段不受影响。",
    nt:"「永冻领域·温度坍缩」的范围为以自己为中心半径三米的球体。",st:"解放阶段",
@@ -2730,7 +2743,7 @@ const abilityData = [
    d:"当周围存在电源时可以为能力进行充能，吸收一部分电能来进行攻击。当郭放进行攻击时，她将等效于一个电源。\n当郭放的能力处在已充能的状态时，她可以在掌心处凝滞出高压的电弧，从手中抽出并向前鞭挞。单次攻击时电鞭的长度越长，在发动下次攻击之前所需要的再准备时间就越长。\n当郭放的攻击遇到导体时会向前延伸一段距离。当郭放释放能力时，她附近被导入大地的电流将可在牺牲体能为前提的情况下被重新引导到她的身体内，实现持续性的作战。\n雷錾电挫的力量使得郭放对电击有着良好的抗性，但闪电依然会在她身上留下烧焦的痕迹。\n郭放在不进行主动攻击时身边会存在一个可见的电场区域，时不时会有电光在其中闪烁。进入该电场的人如果使得郭放产生“敌意”则可能遭到攻击，肢体会暂时性地麻木。在进行主动攻击时，电场将会被强化且变得更容易被看见。",
    nt:"前方4m",
   },
-  {id:"ab37",n:"龙刀千伏（解放阶段）",h:"郭放",c:"11.7",
+  {id:"ab37",n:"龙刀千伏",h:"郭放",c:"11.7",
    s:[4,4,1,2,2,2],
    d:"在接受了高压电的充能之后，郭放将有机会解放进阶能力「龙刀千伏」。在展开进阶能力后，她手中的雷电将会变为一把长期存在的雷电唐刀，可以供她进行持续性作战。唐刀切割出的剑气将会有高压闪电残留，往往会形成龙的形状并跟随郭放的下一步攻击旋转。\n电龙飞舞经过的地方会留下电弧对周围进行电击。当电龙离开郭放的能力范围时会逐渐瓦解。",
    nt:"半径6m",st:"解放阶段",
@@ -2780,7 +2793,7 @@ const abilityData = [
    d:"若罗莫带有攻击意图地挥动某物体，则被接触到的目标会立刻失去对于此次攻击的记忆，包括物体与罗莫本人的移动过程。\n此外，罗莫可以将一件质量不超过自身四分之一的物体认定为「忘念碑」，使除自己外的其他人对于它的记忆逐渐消失。同一时刻只能作用于一件物体。\n「忘念」的合理发动可以在敌人之中制造大范围的恐慌，除此之外，在情报侦察与重要物品保护之中也会起到很好的效果。",
    nt:"罗莫的剑盾可攻击到的范围",
   },
-  {id:"ab47",n:"无色之绿（解放阶段）",h:"罗莫",c:"11.8",
+  {id:"ab47",n:"无色之绿",h:"罗莫",c:"11.8",
    s:[4,3,2,4,3,4],
    d:"对能力范围内的任意一个物体和自己施加「信息收束」，在失去来自他人的直接观测后迅速移除范围内所有人关于被施加者的记忆及信息。即便罗莫在这之后的任何行动让对方对自己的存在再次产生认识，对方也会在极短的时间内再次忘记一切。\n若持续时间超过1分钟，则会对所有有关罗莫的信息产生渐强的「信息收束」的效果。「无色之绿」如果长时间发动，罗莫也会渐渐对自己的记忆产生遗忘。",
    nt:"周围20m左右的不规则空间",st:"解放阶段",
@@ -2855,7 +2868,7 @@ const abilityData = [
    d:"（该能力为“神器技能”，表现为能力使用者对一把特殊武器的独特驾驭力。不是该能力使的人使用这把武器时，此武器难以展现出全部潜能；当该能力使离开了这把武器时，能力使也将失去几乎所有能力。）\n获得驾驭“创世之耀”的能力。该武器外观为一把白色石英大剑，上面镶有少量宝石和鎏金作为点缀。\n只要创世之耀不在万杰特的手中，他可以伸出手并将其召唤到自己身边。创世之耀会尽可能飞跃或击破一切障碍就位；当创世之耀落到他的手中时，万杰特的周身将立即爆出一阵热浪，掀翻或烧净强加于万杰特身上的束缚、限制以至于正在擒住他的敌人的肢体。万杰特身上已经出血的伤口将会立刻在火焰烧灼的作用下结痂并止血。\n当万杰特手持创世之耀时，他将会获得以下能力：\n1.自己的每次攻击都会不断升温，让创世之耀的剑风爆发出火焰，达到较高温度后不再提升。\n2.当万杰特进行连续攻击且温度足够高时，每三次攻击都会使整把创世之耀燃烧起来，并把周围最多两名位于温度较低地点的目标强行瞬移到刀下。完成此次攻击之后，创世之耀的刀身温度将会下降。\n3.消耗少量温度进行一次腾跃，对脚下进行一次高温重击，并暂时解除因为多次攻击而带来的劳累感，但一段时间过后劳累感将会回归并加重。\n4.消耗大量温度向四周刮出一道火幕。类似于礼奈，但风力更强且可以自由控制温度以保护队友，偏向于防御效果。\n5.消耗大量温度并将创世之耀的尖端展开，形成类似于镭射枪的构造，随后对尖端所指的地点发射高温射线，射线的温度随距离而衰减，在100m外不再能造成严重的伤害。",
    nt:"该能力的大部分攻击都会被限制在6m以内。除此之外，最远攻击为距离100m，最远召唤距离为400m",
   },
-  {id:"ab62",n:"日昳散（解放阶段）",h:"万杰特",c:"14.0",
+  {id:"ab62",n:"日昳散",h:"万杰特",c:"14.0",
    s:[4,2,2,3,5,5],
    d:"立刻切断身体的痛觉和听觉并点燃创世之耀，使创世之耀的温度重新上升至最大值。\n释放「日昳散」后，万杰特将获得爆发性的移动速度，并可以在冲刺的尽头起跳并对地面进行下砸。点燃大剑后，万杰特在接下来的22秒内发动的一切攻击都将被视作是常态阶段下的第三次攻击，强行将周围的三名敌人瞬移至剑锋下，并逐渐丧失自己的所有感官。\n无论这22秒钟内万杰特受到了什么样的伤害，哪怕已经被判定为生理性死亡，他也依然可以控制自己的身体继续进行战斗；22秒钟后，创世之耀将会再次进行一次爆炸并将万杰特重置为毫发无损的状态。\n「日昳散」结束后，创世之耀在五分钟内无法再释放任何能力，相当于一把普通的大剑。",
    nt:"所有近战攻击的攻击范围都将被扩大到为6m左右，且强制瞬移的范围将被扩大到10m",st:"解放阶段",
@@ -2950,7 +2963,7 @@ const abilityData = [
    d:"初次发动后，塞赫穆斯将会立刻打破「元首的冠冕」，并向四面八方进行一次震击，强行定身半径55m内CRT低于12的能力使，并瞬间使所有非能力使陷入心脏骤停状态。\n完成第一次震击之后，“斩杀区”和“延伸区”将会以塞赫穆斯为中心形成。随后，「元首的冠冕」将会进入再充能，并周期性地释放脉冲，将延伸区内的所有个体不断地拉入斩杀区中，拉力强度与拉力作用目标CRT强度成反比。\n一旦有四个个体被成功拉入斩杀区，塞赫穆斯将可以释放「悲号绝寂」，制造一层类似于「元首的冠冕」的护盾，包裹住延伸区内的所有个体。护盾会不断收缩，与个体接触时，如果耐久度仍未低于75%，则会将被包裹者碾碎；如果低于75%但没有破碎，则会引发贴身的爆炸。\n护盾如果被打破，则会同等地削弱「元首的冠冕」一部分耐久。这导致「永续国度」之下，「元首的冠冕」将会更容易被击碎。\n「元首的冠冕」首次在「永续国度」中被击破时，塞赫穆斯将会立刻扩大“斩杀区”与“延伸区”的范围，在自己的身边再次创造出一层由金色光芒划定的“存档区”，进入能力的第二阶段：\n【“肆虐吧，肆虐吧……如同那灾荒踏足。\n积满虚伪荣耀的国度，昭示世界罪恶的重复。\n文明已存在了多久，又会在何时落幕？\n如那日出，如那日落，衰败与死亡在岁月中永生不辍。”】\n此后，一层黑色的“循环结界”会在比延伸区还要靠外的新区域“影响区”最外侧刷新并向内推进，记录推进时碰到的一切事物的状况，达到存档区最外侧时消失。每次推进都会导致“循环结界”的推进方向进行改变，在“由外到内”和“由内到外”之间切换。完成一次推进在二阶段初期大概需要45秒。\n任何一次推进完成后，塞赫穆斯都可以每隔15秒使存档区以外的区域进行“回档”，随机调用已被记录的45秒内任意一秒钟的状况，但不会影响他人的记忆和存档区内的状况。\n在二阶段，塞赫穆斯的「悲号绝寂」速度更快，更加强大，而且能够在斩杀区的范围内使用威力巨大的黑影长矛。如果有人死在了「永续国度」存档区外，影响区内的空间，那他有可能会被「塞赫穆斯」的能力复活；但「永续国度」的真正威胁是对进攻塞赫穆斯者的强制位移和绝对不会受到影响的塞赫穆斯本人，使得他可以轻易地击杀对方的核心战斗力。\n当「元首的冠冕」再次被击碎时，塞赫穆斯将会进入第三阶段。\n【“又当何时……该日沉入西方？”】\n在进入第三阶段后，延伸区的半径将会被进一步扩大，且不断延伸，直到达到能力的最大值。存档的推进速度会高达恐怖的12秒一次，且读档将在不改变塞赫穆斯位置的情况下完全恢复他上一次存档时的身体状况。\n在第三阶段，每次读档生效后，被读档者的记忆也将被一起暂时重置，持续至少6秒钟。被拖入斩杀区的人会立刻受到等同于「永续国度」一阶段展开时的同等效果 。\n注意：\n*在第三阶段后，存档区的范围将会大于斩杀区。\n*调用存档的作用范围在影响区以内。\n*施加拉力的作用范围在延伸区以内。",
    nt:"从内到外分为“存档区”，“斩杀区”，“延伸区”与“影响区”四个同心圆。在「永续国度」展开的第一阶段到第三阶段，四个区域的范围分别为半径（X/12m/55m/X）【“X”代表当前阶段不存在】，（8m/20m/92m/135m），（15m/12m/135m/235m）。",
   },
-  {id:"ab81",n:"无名（解放阶段）",h:"本尼艾诺",c:"(-18)",
+  {id:"ab81",n:"无名",h:"本尼艾诺",c:"(-18)",
    s:[5,5,5,3,5,5],
    d:"「无名」的解放阶段。\n在正常情况下，任何人观测该能力的相关数据都不会得到任何结果，只能以「无名」作为对该能力的指代。\n在发动「无名」的一瞬间，能力的作用目标将会听到该能力的真名；如果作用目标在承受接下来一击后仍旧存活，其将不会记得与该能力真名相关的一切信息。\n随后，其95%的指令之力将会被本尼艾诺吸收，作为他蓄势打击的能量；\n在蓄势完毕后，本尼艾诺将会将链枷向前打出，在造成毁灭性伤害的同时再次湮灭该目标所属的整个院区约70%的指令之力与和该园区相邻的其他两个院区的50%的指令之力，立刻触发当前院区【熔毁】。【熔毁】的持续时长约为16小时。\n完成蓄力打击后，以打击的落点为中心，所有的电磁波形式将坍缩到该点，使得周遭的温度、声音与亮度全部堆叠在一处，形成如同中子星般极亮、极热的，外观酷似球体的存在；几秒后，一道惊人的指令之力辐射将会自球体向外爆发，向四面八方释放所有已经吸收的指令之力。 \n【熔毁】：院区熔毁期间，整个时间线空间范围内，属于此院区的所有能力使将失去全部能力。",
    nt:"半径10m。由于本尼艾诺是在塞赫穆斯的能力范围内展开的此能力，因此归纳电磁波形式以及指令之力冲击的实际范围无法测量。仅根据强度估算，极限半径可达20千米。",zn:"该能力为“镇压院区”能力，遵循特殊的CRT计算原则与能力面板。",st:"解放阶段",
@@ -2999,7 +3012,7 @@ const abilityData = [
    d:"希娅是异怪古老血脉“德拉贡”的最后一名后裔。她与生俱来的能力「光影龙蜥」可以使她在巨龙形态与人形态之间自由转换。\n希娅可以自主控制身体的巨龙化程度。在不主动变身时，希娅的龙化程度将会稳定在10％左右。\n在此形态下，希娅除了龙尾龙角以及少量的鳞片，与正常的人类少女没有任何区别；与此同时，能力将会为其赋予一部分特殊的力量：\n「光子逆鳞」：希娅可以将身体覆盖上鳞片，使其生理承受力得到显著提升。当希娅决定发动攻击时，鳞片会在短暂的闪烁后会爆射出与鳞片数量相同的光线冲击波，对瞄准地点进行打击。\n鳞片往往会覆盖在希娅的手中以便于瞄准，在龙化程度升高后也可以通过全身覆盖鳞片进行无差别打击。\n鳞片在发射光线后会变得黯淡，进入冷却状态；光能可以加速鳞片的充能。\n希娅的龙鳞在黑夜不仅可以照明，而且也有发热供暖的作用。\n「炽影喷涌」：希娅在经过漫长的蓄力后呼出一道漆黑的龙息。龙息在造成冲击和灼伤的同时会不断蚕食目标的生命，留下烧焦发黑的痕迹。花草树木会呈现枯萎状，而被攻击的人体如果不能短时间内处理伤口，龙息的侵蚀会迅速地蔓延到全身的所有部位，持续一段时间后才会消失。\n当希娅进一步推进变身进程时，她的两个分支能力将会得到显著增强。\n巨龙化程度大于40％时，希娅将长出翅膀和龙爪。翅膀上的鳞片可以与「光子逆鳞」相搭配，龙爪里的角质也会像鳞片具有发热的特征。龙爪最高可加温到600℃左右，可以帮希娅击穿一部分装甲及金属。然而，在进入该阶段后，希娅的变化速度将会大大减慢，除非她在某些情况下进入能力的“解放阶段”：",
    nt:"「光子逆鳞」的最远扫射距离为约8m，随着巨龙化程度的升高而扩大到15m左右；「炽影喷涌」的冲击距离大约为3m，在常态阶段下，巨龙化程度的提升只会影响其侵蚀伤害。",
   },
-  {id:"ab91",n:"光影龙蜥（解放阶段）",h:"希娅",c:"14.5",
+  {id:"ab91",n:"光影龙蜥",h:"希娅",c:"14.5",
    s:[5,4,4,3,4,4],
    d:"解除对于血脉的限制。使变化进程加速到常态阶段的数百倍。\n70％时，希娅的身躯将会变得十分庞大，四肢将会完全变为龙形，弹跳力和力量将会飞升，同时肉体强度会大大得到提升；\n100％时，希娅则会化为真身，变成真正的「光影龙蜥」。巨龙整体呈白色，翅膀为黑色，全身都会覆盖着纹路如眼睛的银色鳞片；「炽影喷涌」与「光子逆鳞」威力将会发挥到极致，且周围的一切爆炸和火焰都会为希娅的能力进行充能。最终，希娅的体表温度会来到1000℃左右，浑身的银色鳞片会呈现镭射状，如同太阳一般点亮黑暗；整个场地的所有空气也都会被高热的热浪扭曲。",
    nt:"「光子逆鳞」的扫射距离将达到24m；「炽影喷涌」的冲击距离在解放阶段的范围大约为6m，龙化程度只会影响其侵蚀伤害和滞留时间。",st:"解放阶段",
@@ -3029,7 +3042,7 @@ const abilityData = [
    d:"契尔文孙曾经也是异怪古老血脉“德拉贡”的族裔之一。但是他在追随侍奉“苍镰诡神”艾克森期间，逐渐放弃了对自己种族的认知，并对自己进行了大量半机械改造和义体升级，进而严重影响了自己的原生能力「暗影龙蜥」。但他仍具有操纵自身巨龙化程度的能力。\n契尔文孙可以被动控制身体的巨龙化程度。在正常情况下，契尔文孙的巨龙化程度将会稳定在40%左右；这意味着与「光影龙蜥」希娅相比，他的全身在常态下就已经覆盖大量的鳞片，同时长出了翅膀和龙爪。但是，契尔文孙的龙爪和翅膀都已经经过了彻底的金属改造，无法再释放出原有「暗影龙蜥」的任何能力，它们的杀伤力不计入「暗影龙蜥」的CRT和数据评价机制中。\n下面介绍契尔文孙对自身的改造升级：\n龙爪：\n为关节和骨骼都进行了全金属强化和液压升级，以获得超越常人极限的握力；\n原掌心处释放「光子逆鳞」的鳞片热量中心被替换为高效能激光炮发射器，射程最远可达到50m；\n手臂内部加装了便携式榴弹发射器，可用于发射小型炸弹；\n外部用于抓挠的坚硬角质层被进一步强化，同时在必要时可以喷射出高温等离子气体，从而形成类似于光剑的效果。\n龙翼：\n对龙翼的整体进行了材料改造，提高其物理性能的同时加大了翼宽和翅膀厚度，能够抵挡机枪射击和中高强度的爆炸；\n在翅膀末端加装了喷气式辅助起飞设备，加快飞行速度。\n在翅膀的根部加装了重型双管机炮，可以对前方进行火力覆盖。\n契尔文孙无法主动控制变身进程，当龙翼或龙爪中任何一个严重受损时，变身进度将会被推进25%左右。但由于在龙化程度较高的情况下能力与人体改造的兼容性较差，龙化程度越高，契尔文孙的身体内部结构裸露程度就会越大，同时就越有可能超载当前所有的可使用武器。\n65%时，契尔文孙的体型将会更加庞大，胸口处将会启用自动锁定的热能武器，对周围进行打击；\n90%时，契尔文孙的体型将逼近德拉贡形态，其两只龙爪将会与自身切断，变形为重型机枪炮塔，并自动寻找范围内目标。\n当胸口热能武器核心被严重受损时，契尔文孙将会自动进入解放阶段。",
    nt:"「暗影龙蜥」引发的变化所能触及到的范围为契尔文孙周围1-3m内。",
   },
-  {id:"ab97",n:"暗影龙蜥（解放阶段）",h:"契尔文孙",c:"13.3",
+  {id:"ab97",n:"暗影龙蜥",h:"契尔文孙",c:"13.3",
    s:[4,2,4,3,2,4],
    d:"完全变为巨龙形态。\n巨龙的通体覆盖着坚硬厚重的钢铁盔甲和最后一个重型武器槽，加装了具有极高能量的「天龙轨道炮」。契尔文孙受到的大部分伤害都会按比例转化为「天龙轨道炮」的能源，并能在决定时刻激活以向前发动毁灭性横扫。\n在巨龙形态下，契尔文孙将能够以极快的速度冲撞。在冲撞过程中，其身体碰撞到的所有物品都会被直接“数据化”，自动被转换成可供「时代猎手」附着的数据；当数据总量足够大时，契尔文孙就可以将自己的所有智能意识和武器的AI设置全部上传，并立刻使用「天龙轨道炮」的能量将自身完全解构为原子再重新组装，形成一个全新的契尔文孙——这导致，他在理论上是不可能被完全杀死的。",
    nt:"「暗影龙蜥」的完全态保留了原种族的能力「炽影喷涌」，其范围大约为8-10m。",st:"解放阶段",
@@ -3054,7 +3067,7 @@ const abilityData = [
    d:"操纵沙土。\n如果周围没有沙土，格莱斯可以缓慢将非生命物质瓦解崩碎。也可在有足够沙土的情况下进行固结操作，形成坚硬的物体。",
    nt:"半径25米",
   },
-  {id:"ab102",n:"坚塔晶相（解放阶段）",h:"格莱斯",c:"13.7",
+  {id:"ab102",n:"坚塔晶相",h:"格莱斯",c:"13.7",
    s:[1,1,4,5,4,4],
    d:"处于极端情况下，将原本「深黯赞歌」的全部攻击力转化为沙构体结构强度，所形成的“防御性”能力。\n其实质上是格莱斯对原本能力性质达到高度理解后强行修改能力的作用模式所形成的特殊状态。\n「坚塔晶相」状态下的格莱斯舍弃了攻击性。其制造的“沙构体”具有远超一般材料与能力的物理强度。除非拥有超越常理的力量或者格莱斯主动撤销能力，否则沙构体不会解散。\n当沙构体承受过多的损耗时，格莱斯能够通过注入任意形式的能量来为其加固修复。",
    nt:"半径10km",st:"解放阶段",
@@ -3118,7 +3131,7 @@ const abilityData = [
    d:"接触一个人后，令其暂时失去痛觉。失去痛觉的时间为30秒到5分钟不等，取决于作用对象的心率。",
    nt:"仅对接触者有效",
   },
-  {id:"ab115",n:"乐土（解放阶段）",h:"海拉克利斯",c:"14.4",
+  {id:"ab115",n:"乐土",h:"海拉克利斯",c:"14.4",
    s:[3,4,4,5,4,3],
    d:"引导射程范围内的能量，使之按照自己的意愿流动变换。\n直接接触到这些能量的生物，会强制进入名为“进化”的过程：\n该过程会造成严重的种族转变，或可诞生全新的种族。\n若不击杀本体，即使离开能力范围，能量转换和物种转换也不会停止。而当本体被击杀时，处于范围外的被转换者将永久性处于转换间期，无法消除影响。",
    nt:"至少可达到一座城邦的范围",st:"解放阶段",
@@ -3209,8 +3222,34 @@ const abilityTimelines = [
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 const RADAR_LABELS = ['破坏力', '速度', '耐力', '范围', '狂热', '防御'];
 const ZPN_LABELS   = ['侵蚀力', '速度', '耐力', '范围', '理智', '防御'];
+const statLabels = ['破坏力', '速度', '耐力', '范围', '狂热', '防御'];
+const grades = ['', 'D', 'C', 'B', 'A', 'EX'];
 const abilityMap = {};
 abilityData.forEach(a => { abilityMap[a.id] = a; });
+
+// 排序模式：order = 按出场顺序（默认）/ crtAsc = 按CRT正序 / crtDesc = 按CRT倒序
+let abilitySort = 'order';
+
+// 阵营归属索引（用于排序模式的扁平列表中标注每个能力的所属阵营）
+const factionOf = {};
+abilityTimelines.forEach(tl => {
+  tl.factions.forEach(f => {
+    f.abIds.forEach(id => { factionOf[id] = f.name; });
+  });
+});
+
+// CRT 绝对值：镇压院区能力为负值，参与高低排序时按绝对值比较
+function crtAbs(a) {
+  return Math.abs(maxCrt(a.c));
+}
+
+function setAbilitySort(mode) {
+  abilitySort = mode;
+  document.querySelectorAll('.ability-sort-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-sort') === mode);
+  });
+  renderAbilityArchive();
+}
 
 // Highest numeric value in a CRT string (handles "(-15.8)", "15.4/16.1", "16.7")
 function maxCrt(c) {
@@ -3285,75 +3324,86 @@ function renderAbilityArchive() {
 
   // Build archive
   let archiveHTML = '';
-  const grades = ['', 'D', 'C', 'B', 'A', 'EX'];
-  const statLabels = ['破坏力', '速度', '耐力', '范围', '狂热', '防御'];
-
-  abilityTimelines.forEach(tl => {
-    archiveHTML += '<div class="ability-timeline-title">' + escHtml(tl.name) + '</div>';
-    tl.factions.forEach(f => {
-      archiveHTML += '<div class="ability-faction-title" id="faction-' + f.abIds[0] + '">' + escHtml(f.name) + '</div>';
-      f.abIds.forEach(id => {
-        const a = abilityMap[id];
-        if (!a) return;
-        const isZpn = !!a.zn;                     // 镇压院区 (suppression-zone) ability
-        const siege = !isZpn && maxCrt(a.c) > 14; // 攻城级 (siege-tier) -> red frame
-        const labels = isZpn ? ZPN_LABELS : statLabels;
-        const statStr = a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
-        let cls = 'ability-card';
-        if (isZpn) cls += ' ability-card-zpn';
-        if (siege) cls += ' ability-card-siege';
-        let html = '<div class="' + cls + '" id="ab-' + a.id + '">';
-        // Card top: name + badges + meta bar
-        html += '<div class="ability-card-top">';
-        html += '<div class="ability-name">「' + escHtml(a.n) + '」';
-        if (a.st) html += '<span class="release-badge">解放阶段</span>';
-        if (isZpn) html += '<span class="zpn-badge">镇压院区</span>';
-        if (siege) html += '<span class="siege-badge">攻城级</span>';
-        html += '</div>';
-        html += '<div class="ability-meta-bar">';
-        html += '<span>👤 ' + escHtml(a.h) + '</span>';
-        if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
-        html += '<span class="ability-stats">' + statStr + '</span>';
-        html += '</div></div>';
-        // 镇压院区 note at the start of the card body
-        if (a.zn) html += '<div class="zpn-note">' + escHtml(a.zn) + '</div>';
-        // Card body: radar chart (left) + content (right)
-        html += '<div class="ability-card-body">';
-        html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
-        html += '<div class="ability-content">';
-        if (a.d) {
-          const paras = a.d.split('\n').filter(p => p.trim());
-          html += '<div class="ability-desc">' + paras.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
-        }
-        if (a.q) {
-          const qLines = a.q.split('\n');
-          const quoteTexts = [];
-          const quoteAttrs = [];
-          qLines.forEach(function (ln) {
-            const t = ln.trim();
-            if (!t) return;
-            if (t.indexOf('——') === 0) quoteAttrs.push(t);
-            else quoteTexts.push(t);
-          });
-          let quoteInner = '';
-          if (quoteTexts.length) quoteInner += '<span class="quote-text">' + quoteTexts.map(escHtml).join('<br>') + '</span>';
-          if (quoteAttrs.length) quoteInner += '<span class="quote-attribution">' + quoteAttrs.map(escHtml).join('<br>') + '</span>';
-          if (a.sp) {
-            quoteInner = '<span class="spoiler-mark">（评价可能涉及剧透，点击查看）</span><span class="spoiler-content">' + quoteInner + '</span>';
-          }
-          html += '<div class="ability-quote">' + quoteInner + '</div>';
-        }
-        if (a.qb) {
-          const qbLines = a.qb.split('\n').filter(p => p.trim());
-          html += '<div class="ability-admin"><span class="ability-admin-tag">⚠ 管理员</span>' + qbLines.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
-        }
-        if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
-        html += '</div></div></div>';
-        archiveHTML += html;
+  if (abilitySort === 'order') {
+    // 按出场顺序（默认）：时间线 → 阵营分组渲染
+    abilityTimelines.forEach(tl => {
+      archiveHTML += '<div class="ability-timeline-title">' + escHtml(tl.name) + '</div>';
+      tl.factions.forEach(f => {
+        archiveHTML += '<div class="ability-faction-title" id="faction-' + f.abIds[0] + '">' + escHtml(f.name) + '</div>';
+        f.abIds.forEach(id => {
+          const a = abilityMap[id];
+          if (a) archiveHTML += buildAbilityCard(a);
+        });
       });
     });
-  });
+  } else {
+    // 按CRT高低（按绝对值）排序的扁平列表
+    const list = abilityData.slice();
+    if (abilitySort === 'crtAsc') list.sort((x, y) => crtAbs(x) - crtAbs(y));
+    else list.sort((x, y) => crtAbs(y) - crtAbs(x));
+    list.forEach(a => { archiveHTML += buildAbilityCard(a); });
+  }
   archive.innerHTML = archiveHTML;
+}
+
+function buildAbilityCard(a) {
+  const isZpn = !!a.zn;                       // 镇压院区 (suppression-zone) ability
+  const siege = !isZpn && maxCrt(a.c) >= 14;  // 攻城级 (siege-tier, CRT ≥ 14) -> red frame
+  const labels = isZpn ? ZPN_LABELS : statLabels;
+  const statStr = a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
+  let cls = 'ability-card';
+  if (isZpn) cls += ' ability-card-zpn';
+  if (siege) cls += ' ability-card-siege';
+  let html = '<div class="' + cls + '" id="ab-' + a.id + '">';
+  // Card top: name + badges + meta bar
+  html += '<div class="ability-card-top">';
+  html += '<div class="ability-name">「' + escHtml(a.n) + '」';
+  if (a.st) html += '<span class="release-badge">解放阶段</span>';
+  if (isZpn) html += '<span class="zpn-badge">镇压院区</span>';
+  if (siege) html += '<span class="siege-badge">攻城级</span>';
+  html += '</div>';
+  html += '<div class="ability-meta-bar">';
+  // 排序模式下标注所属阵营
+  if (abilitySort !== 'order' && factionOf[a.id]) html += '<span class="ability-faction-tag">' + escHtml(factionOf[a.id]) + '</span>';
+  html += '<span>👤 ' + escHtml(a.h) + '</span>';
+  if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
+  html += '<span class="ability-stats">' + statStr + '</span>';
+  html += '</div></div>';
+  // 镇压院区 note at the start of the card body
+  if (a.zn) html += '<div class="zpn-note">' + escHtml(a.zn) + '</div>';
+  // Card body: radar chart (left) + content (right)
+  html += '<div class="ability-card-body">';
+  html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
+  html += '<div class="ability-content">';
+  if (a.d) {
+    const paras = a.d.split('\n').filter(p => p.trim());
+    html += '<div class="ability-desc">' + paras.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
+  }
+  if (a.q) {
+    const qLines = a.q.split('\n');
+    const quoteTexts = [];
+    const quoteAttrs = [];
+    qLines.forEach(function (ln) {
+      const t = ln.trim();
+      if (!t) return;
+      if (t.indexOf('——') === 0) quoteAttrs.push(t);
+      else quoteTexts.push(t);
+    });
+    let quoteInner = '';
+    if (quoteTexts.length) quoteInner += '<span class="quote-text">' + quoteTexts.map(escHtml).join('<br>') + '</span>';
+    if (quoteAttrs.length) quoteInner += '<span class="quote-attribution">' + quoteAttrs.map(escHtml).join('<br>') + '</span>';
+    if (a.sp) {
+      quoteInner = '<span class="spoiler-mark">（评价可能涉及剧透，点击查看）</span><span class="spoiler-content">' + quoteInner + '</span>';
+    }
+    html += '<div class="ability-quote">' + quoteInner + '</div>';
+  }
+  if (a.qb) {
+    const qbLines = a.qb.split('\n').filter(p => p.trim());
+    html += '<div class="ability-admin"><span class="ability-admin-tag">⚠ 管理员</span>' + qbLines.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
+  }
+  if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
+  html += '</div></div></div>';
+  return html;
 }
 
 function scrollToAbility(id) {
@@ -3376,8 +3426,10 @@ function scrollToAbility(id) {
 function scrollToFaction(firstId) {
   document.getElementById('abilities').scrollIntoView({ behavior: 'smooth', block: 'start' });
   setTimeout(() => {
-    const card = document.getElementById('ab-' + firstId);
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 出场顺序模式下先找阵营标题；排序模式下无阵营标题，回退到该阵营首个能力卡片
+    let el = document.getElementById('faction-' + firstId);
+    if (!el) el = document.getElementById('ab-' + firstId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 400);
 }
 

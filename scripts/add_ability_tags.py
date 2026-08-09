@@ -3,6 +3,12 @@
 
 格式: tg:"阵营1|阵营2, 时间线, 院区, 卷目"
 用法: python scripts/add_ability_tags.py
+
+注：本文件为初版阵营分配。后续经 scripts/update_camps.py 修订——
+    '其他势力'/'其他角色'/'没名字的组合' 合并为 '其他'；
+    阿芙忒乐尔斯特、契尔文孙 归入 '死神首席'；
+    前传能力(ab99-117) 取消阵营标签，仅靠 tl/vol='前传' 区分。
+    以 index.html 实际数据为准。
 """
 import io, re, sys
 

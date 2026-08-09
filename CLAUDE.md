@@ -176,6 +176,14 @@ E:\永恒流光\永恒流光\
 - CSS：新增 `.tag-filter-bar`, `.tag-filter-label`, `.tag-filter-btn`, `.ability-empty`；移除 `.tl-label`, `.ability-timeline-title`, `.ability-faction-title`
 - 一次性注入脚本：`scripts/add_ability_tags.py`（含全部 abID→tg 映射表，可作标签分配参考）
 
+### 第 8 次更新 — 阵营标签调整
+**提交**: `0e78e67`
+- **合并"其他"阵营**：'其他势力'/'其他角色'/'没名字的组合' → 统一为 `其他`（ab50-57、ab69-77）
+- **新增"死神首席"阵营**：阿芙忒乐尔斯特（ab58-60）、契尔文孙（ab96-98）归入 `死神首席`
+- **前传去阵营化**：前传能力（ab99-117）不再有阵营标签（删除 `十七前传`/`正义前传`），正传/前传通过 tl/vol='前传' 区分
+- 词表 `abilityTags.camps.values` 同步更新；q 引文归属、世界设定组织数据不受影响
+- 修订脚本：`scripts/update_camps.py`（区域限定仅改 tg 字段）
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：

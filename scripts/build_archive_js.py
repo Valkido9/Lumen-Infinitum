@@ -113,6 +113,12 @@ for a in abilities:
         stats.append(str(stat_val.get(v, 0)))
 
     desc = (a.get('desc') or '').strip()
+    # 无名（本尼艾诺）解放阶段：描述中除首行标题「无名」的解放阶段。外，其余「无名」指代改为全角空格空白
+    # （原文档为空白指代；半角空格会被HTML折叠导致间隔消失）
+    if holder == '本尼艾诺' and stage == '解放阶段':
+        _dl = desc.split('\n')
+        if _dl:
+            desc = _dl[0] + '\n' + '\n'.join(_ln.replace('「无名」', '「　　　　　」') for _ln in _dl[1:])
     quote = (a.get('quote') or '').strip()
     note = (a.get('note') or '').strip()
     qb = (a.get('qb') or '').strip()

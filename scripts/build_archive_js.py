@@ -12,9 +12,9 @@ def esc(s):
     return s.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'").replace('\n', '\\n')
 
 # ---- annotations that DELETE entries ----
-# #27 删除 恶血天堂（十七）与其下的 幻血之梦（达克多）
 # #33 删除 真视魔瞳（明风）
-DELETED = {'恶血天堂', '幻血之梦', '真视魔瞳'}
+# #27 曾删除 恶血天堂（十七）与其下的 幻血之梦（达克多）；用户要求恢复 恶血天堂，已在 index.html 手工补入（ab118），故不再删除
+DELETED = {'幻血之梦', '真视魔瞳'}
 
 # ---- section → (timeline, faction) ----
 SECTION_MAP = {

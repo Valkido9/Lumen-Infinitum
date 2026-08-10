@@ -4,28 +4,37 @@
 
 这是一个中国原创网络小说的可视化故事网站。小说名为《永恒流光》（英文名 Lumen Infinitum），讲述了一个横跨多个平行世界的宏大故事——以后时光机时代为背景，围绕卢纳森特基地"第二代时之秩序"小队展开的冒险。
 
-网站是单文件 HTML 应用（`index.html`），所有 CSS 和 JavaScript 内联。部署在 GitHub Pages：**https://valkido9.github.io/Lumen-Infinitum/**，仓库：`Valkido9/Lumen-Infinitum`，分支：`main`，发布源：`/ (root)`。
+网站由五个独立的 HTML 页面组成，每个页面共享相同的 CSS 框架和 JavaScript（内联），均支持审阅模式。部署在 GitHub Pages：**https://valkido9.github.io/Lumen-Infinitum/**，仓库：`Valkido9/Lumen-Infinitum`，分支：`main`，发布源：`/ (root)`。
 
 ## 项目结构
 
 ```
 E:\永恒流光\永恒流光\
-├── index.html              ← 主文件（网站全部内容）
+├── index.html              ← 故事主线（序幕 + 第一卷）
+├── sidetory.html           ← 时空遗闻（人物背景 / 前传 / 番外 / 特殊事件）
+├── world.html              ← 世界设定（名词解释 / 行政结构）
+├── abilities.html          ← 能力档案（122 个能力条目）
+├── characters.html         ← 角色百科（角色搜索网格）
 ├── CLAUDE.md               ← 本文档（给 AI 的项目指引）
 ├── .gitignore
 ├── src/                    ← 原始小说文档
-│   ├── 序章正文（2025.8待改）.docx / .txt
-│   ├── 第一章正文 2024.1.25 工地状态.docx / .txt
-│   ├── 永恒流光能力设定集（2026.6.10）.docx / .txt
-│   └── 永恒流光设定集2025.4.28.docx / .txt
 ├── data/                   ← .nosdb 数据库文件（写作辅助工具）
 ├── assets/videos/          ← 视频素材（.mp4）
 ├── scripts/                ← Python 工具脚本
-│   ├── build_docx.py
-│   └── create_docx.py
 └── docs/                   ← 额外的故事讲解 HTML
-    └── 永恒流光故事讲解.html
 ```
+
+## 五个页面及导航
+
+| 页面 | 标题 | 内容 |
+|---|---|---|
+| `index.html` | 故事主线 | 序幕 + 第一卷章节、时间线一览、角色卡片弹窗 |
+| `sidetory.html` | 时空遗闻 | 支线故事选择器、人物背景、前传、番外、特殊事件 |
+| `world.html` | 世界设定 | 名词解释标签页 + 行政结构标签页 |
+| `abilities.html` | 能力档案 | 122 个能力条目、四维筛选、排序、六维雷达图 |
+| `characters.html` | 角色百科 | 角色搜索网格（`buildCharCards()` 动态渲染） |
+
+每个页面的导航栏均包含指向全部五个页面的链接，当前页面高亮。审阅模式在所有五个页面上完全可用（密码、批注、编辑、历史、导出）。
 
 ## 网站技术架构
 
@@ -290,12 +299,32 @@ E:\永恒流光\永恒流光\
 - **叙事文字同步**：q 引文 / nt 备注中的"第X章最终战" → "第X卷最终战"（6 处）
 - **恪钴 ab41 特别说明**：原 vol=第一卷（角色初登场），现按"该能力参与的战役"标记为 `第二卷最终战`（与 ab39/40/42 的第二章最终战归类一致）
 
+### 第 19 次更新 — 五页面拆分 + 文本修正 + 审阅统一
+**提交**: `（本次）`
+- **五页面拆分**：将原单文件 `index.html`（含故事+世界+能力三板块）和 `sidetory.html`（含时空遗闻+角色百科两板块）拆分为五个独立页面：
+  - `index.html` → 故事主线（保留序幕 + 第一卷章节内容）
+  - `sidetory.html` → 时空遗闻（人物背景/前传/番外/特殊事件；使用完整 CSS/JS 框架，新增审阅模式支持）
+  - `world.html` → 世界设定（名词解释 + 行政结构标签页）
+  - `abilities.html` → 能力档案（122 个能力条目）
+  - `characters.html` → 角色百科（角色搜索网格）
+- **审阅模式全覆盖**：所有五个页面共享完整的 CSS/JS 框架，审阅模式（密码、批注、编辑、历史、导出、清除）在每个页面上均可用
+- **弹窗编辑持久化修复**：`openChar()`、`openTerm()`、`openTimeline()` 生成弹窗内容后调用 `applyStoredEdits()`，编辑后关闭再打开不再弹回
+- **按钮统一**：
+  - "📋 导出批注" + "💾 导出存档" → "📋 导出审阅"（合并导出批注与编辑存档）
+  - "🗑 清除批注" → "🗑 清除审阅"（同时清除 `lumen-annotations` + `lumen-edits` + `lumen-edits-history`）
+  - 备份文件名统一为 `永恒流光-审阅备份-*.txt`
+- **文本修正**：
+  - 全站"流光永佑" → "英勇为怀，广济众生"（8 处，跨 index.html 与 sidetory.html）
+  - 琉璐珀人物卡/百科"过度热情"句修正："总是冷淡地打击琉璐珀过度的热情" → "总是冷淡地打击歌涅法过度的热情"
+  - 可乐术语描述："在沃克加德也有售卖" → "在卢纳森特基地附近也有售卖"
+- **导航更新**：所有页面导航栏统一为五页面链接，当前页高亮；wiki-jump 链接指向 `characters.html`；移除所有 `onclick="scrollToSection(...)"`（跨页不需要）
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：
 1. 从 localStorage 键 `lumen-annotations` 读取所有批注，从 `lumen-edits` 读取直接编辑的修改
-2. 每条批注包含：位置路径（`el-N` 或 `getStablePath` 生成的 CSS 选择器路径）、批注文本（用户的修改要求）、时间戳
-3. 根据批注文本 / 编辑内容修改 `index.html`（或 `sidetory.html`）中对应的 HTML 内容
+2. 每条批注包含：位置路径（CSS 选择器路径）、批注文本（用户的修改要求）、时间戳
+3. 根据批注路径确定所属页面（`index.html` / `sidetory.html` / `world.html` / `abilities.html` / `characters.html`），修改对应 HTML 文件
 4. 修改完成后，清除 localStorage 中的 `lumen-annotations` 与 `lumen-edits` 键
 5. Git commit 并 push 到 GitHub
 
@@ -317,13 +346,15 @@ git push origin main
 推送后网站自动部署到 https://valkido9.github.io/Lumen-Infinitum/（GitHub Pages 从 main 分支 `/` 根目录发布）。
 
 ### 注意事项：
-- 所有内容在单文件 `index.html` 中（~2600+ 行，~140KB），CSS 在 `<style>` 中，JS 在 `<script>` 中
-- 不要拆分文件，保持单文件结构
+- 网站由五个独立 HTML 文件组成，每个页面共享相同的 CSS（~900行）和 JS（~2700行）框架，均为内联
+- 五个页面：`index.html`（故事）、`sidetory.html`（时空遗闻）、`world.html`（世界设定）、`abilities.html`（能力档案）、`characters.html`（角色百科）
+- **不要合并文件**，保持五页面结构
 - CSS 变量定义在 `:root`（日间）和 `.dark`（夜间）中
 - 角色数据在 JS 对象 `characters` 中，术语在 `terms` 中，能力数据在 `abilityData` 数组中
 - 能力档案的筛选依赖 `tg` 标签（阵营/时间线/院区/卷目）；新增能力时需确保 `tg` 的各值都在 `abilityTags.*.values` 词表中，否则筛选不到
 - `abilityMap` 是按 ID 快速查找能力的映射表
-- 批注系统的密码常量 `REVIEW_PASSWORD` 在 JS 中
+- 批注系统的密码常量 `REVIEW_PASSWORD` 在 JS 中，所有五页共享
 - `.spoiler-content` 元素在 HTML 中的位置可能在 `.spoiler-mark` 之前（通过 `<br>` 分隔），查找时需双向搜索
 - 修改 `abilityData` 后需调用 `renderAbilityArchive()` 刷新视图
 - 修改 `characters` 数据中的 `abilityDetail` 只需保留基础描述，详细能力介绍在 `abilityData` 中
+- 审阅模式（批注/编辑）在全站五个页面上均可使用，localStorage 键跨页共享

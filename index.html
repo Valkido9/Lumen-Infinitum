@@ -1843,7 +1843,7 @@ const terms = {
   staff: { name: '云略的手杖', content: '云略穿越时携带的神秘手杖。长约一米九，蚀刻着哥特风花纹，末端是钟表表盘。对能力攻击有强大排斥力（"九点三千格每度"），可在云略受到能力攻击时旋转并反弹攻击。无法被取下，像长在身上一样。实质上是一种强大的指令之力防护装置。' },
   kezhi_room: { name: '苛志室', content: '卢纳森特基地中负责记忆删除和记忆管理的特殊部门。特工签署保密协议后，由苛志室执行记忆删除。同时存储着被删除的记忆档案，在特定条件下可以释放部分记忆。' },
   memory: { name: '周期性失忆', content: '协议能力使在签署"二次保密协议"后接受的记忆删除的副作用。礼奈每天早上醒来都会忘掉所有东西——包括性格。马萨卡虽然也是协议能力使，但似乎没有出现并发症。' },
-  cola: { name: '可乐', content: '柯洛雯时间线的新品饮料，在沃克加德也有售卖。黑色冒泡的液体，被马萨卡称为"可笑"，被酒吧小子称为"极为致命的化学品，有着强大的成瘾性"（开玩笑）。云略评价："喝起来像是可口可乐和百事可乐的一比一混合。"' },
+  cola: { name: '可乐', content: '柯洛雯时间线的新品饮料，在卢纳森特基地附近也有售卖。黑色冒泡的液体，被马萨卡称为"可笑"，被酒吧小子称为"极为致命的化学品，有着强大的成瘾性"（开玩笑）。云略评价："喝起来像是可口可乐和百事可乐的一比一混合。"' },
   ear_translator: { name: '耳译装置', content: '卢纳森特基地的微型实时翻译设备。植入耳道后可将听到的语言实时翻译为使用者的母语。有不同型号——礼奈的型号支持电话和MP3扩展（亡灵兔不推荐）。需要配合视网膜手术才能阅读文字。' },
   leader_pun: { name: '「礼队」', content: '马萨卡对礼奈的称呼，谐音英文 Leader（领导者/队长）。礼奈觉得这是一个糟糕的双关——但并没有阻止他这样叫。实际上，每天早上忘记一切的她，或许并不讨厌这个每天都有人重新称呼她的方式。' },
   chuandu: { name: '船都', content: '漂在沃克加德汪洋一角、由无数破船舱垒成的"难民营"，是教皇城永远不愿承认的地域。船都人没有公民权利，连交不交税都无关紧要。斯帕里森两年来持续接济船都，是船都人心中的"大救星"。boundary在船都出生，大约也会在船都死去。' },
@@ -1942,6 +1942,7 @@ function openChar(key) {
       <a href="sidetory.html#char-wiki-${key}">📖 进入角色百科 · 深入了解「${c.name}」→</a>
     </div>` : ''}
   `;
+  applyStoredEdits(document.getElementById('charModalContent'));
   document.getElementById('charModal').classList.add('show');
 }
 
@@ -1954,6 +1955,7 @@ function openTerm(key) {
     <h3 style="color:var(--gold); margin-bottom:12px;">${t.name}</h3>
     <p>${t.content}</p>
   `;
+  applyStoredEdits(document.getElementById('termModalContent'));
   document.getElementById('termModal').classList.add('show');
 }
 
@@ -2179,6 +2181,7 @@ function openTimeline(key) {
     ${t.settings.length ? `<div class="tl-section"><div class="tl-section-title">相关设定</div><div class="tl-chips">${settingHtml}</div></div>` : ''}
     ${t.section ? `<button class="tl-jump" onclick="closeModal('tlModal');scrollToSection('${t.section}')">📖 阅读本站已收录的这段剧情</button>` : ''}
   `;
+  applyStoredEdits(document.getElementById('tlModalContent'));
   document.getElementById('tlModal').classList.add('show');
 }
 
@@ -2386,7 +2389,7 @@ function enterReviewMode() {
   addClearButton();
   addBackupButton();
   addHistoryButtons();
-  addExportSaveButton();
+  // 导出审阅已合并批注+编辑存档，不再需要独立的导出存档按钮
 
   document.addEventListener('click', reviewDocClick, true);
   document.addEventListener('keydown', reviewKeydown, true);
@@ -2416,7 +2419,6 @@ function exitReviewMode() {
   removeClearButton();
   removeBackupButton();
   removeHistoryButtons();
-  removeExportSaveButton();
 
   document.removeEventListener('click', reviewDocClick, true);
   document.removeEventListener('keydown', reviewKeydown, true);
@@ -2450,15 +2452,15 @@ function removeAllBadges() {
   document.querySelectorAll('.annotated').forEach(el => el.classList.remove('annotated'));
 }
 
-// ── Export button ──
+// ── Export button (合并批注 + 编辑存档 → 统一"导出审阅") ──
 function addExportButton() {
   removeExportButton();
   const btn = document.createElement('button');
   btn.id = 'exportBtn';
   btn.className = 'review-toggle';
   btn.style.left = '140px';
-  btn.textContent = '📋 导出批注';
-  btn.title = '导出所有批注';
+  btn.textContent = '📋 导出审阅';
+  btn.title = '导出所有批注与编辑模式存档';
   btn.addEventListener('click', showExport);
   document.body.appendChild(btn);
 }
@@ -2468,15 +2470,15 @@ function removeExportButton() {
   if (btn) btn.remove();
 }
 
-// ── Clear-all button (with auto backup) ──
+// ── Clear-all button (with auto backup, clears both annotations and edits) ──
 function addClearButton() {
   removeClearButton();
   const btn = document.createElement('button');
   btn.id = 'clearAnnBtn';
   btn.className = 'review-toggle danger';
   btn.style.left = '260px';
-  btn.textContent = '🗑 清除批注';
-  btn.title = '备份当前全部批注到本地，然后一键清除';
+  btn.textContent = '🗑 清除审阅';
+  btn.title = '备份当前全部批注与编辑到本地，然后一键清除';
   btn.addEventListener('click', clearAllAnnotations);
   document.body.appendChild(btn);
 }
@@ -2493,31 +2495,13 @@ function addBackupButton() {
   btn.className = 'review-toggle';
   btn.style.left = '380px';
   btn.textContent = '💾 备份到本地';
-  btn.title = '把当前全部批注保存为本地文档（可选择保存位置）';
+  btn.title = '把当前全部批注与编辑保存为本地文档（可选择保存位置）';
   btn.addEventListener('click', backupToLocal);
   document.body.appendChild(btn);
 }
 
 function removeBackupButton() {
   const btn = document.getElementById('backupAnnBtn');
-  if (btn) btn.remove();
-}
-
-// ── 独立导出"编辑模式存档"按钮（专供发给 AI 落地改动）──
-function addExportSaveButton() {
-  removeExportSaveButton();
-  const btn = document.createElement('button');
-  btn.id = 'exportSaveBtn';
-  btn.className = 'review-toggle';
-  btn.style.left = '1100px';
-  btn.textContent = '💾 导出存档';
-  btn.title = '导出编辑模式存档（含改动位置/原文/新文），可发给 AI 在服务器端落地';
-  btn.addEventListener('click', showExportSave);
-  document.body.appendChild(btn);
-}
-
-function removeExportSaveButton() {
-  const btn = document.getElementById('exportSaveBtn');
   if (btn) btn.remove();
 }
 
@@ -2545,26 +2529,30 @@ function buildBackupText() {
       entries.push({ path, snippet, ...a });
     });
   });
-  let out = '// ===== 永恒流光 批注备份 =====\n';
+  let out = '// ===== 永恒流光 审阅备份 =====\n';
   out += `// 备份时间: ${new Date().toLocaleString('zh-CN')}\n`;
   out += `// 共 ${entries.length} 条批注（未处理 ${unresolved} / 已处理 ${resolved}）\n`;
   out += '// ==============================\n\n';
-  if (entries.length === 0) { out += '（暂无批注）\n'; return out; }
-  entries.forEach((a, i) => {
-    out += `【批注 #${i + 1}】${a.resolved ? '（已处理）' : '（未处理）'}\n`;
-    out += `  位置: "${a.snippet}..."\n`;
-    out += `  内容: ${a.text}\n`;
-    out += `  时间: ${a.time}\n`;
-    out += `  路径: ${a.path}\n`;
-    out += '\n';
-  });
+  if (entries.length === 0) { out += '（暂无批注）\n'; }
+  else {
+    entries.forEach((a, i) => {
+      out += `【批注 #${i + 1}】${a.resolved ? '（已处理）' : '（未处理）'}\n`;
+      out += `  位置: "${a.snippet}..."\n`;
+      out += `  内容: ${a.text}\n`;
+      out += `  时间: ${a.time}\n`;
+      out += `  路径: ${a.path}\n`;
+      out += '\n';
+    });
+  }
+  // 同时附带编辑模式存档
+  out += buildEditArchiveSection();
   return out;
 }
 
 function timestampedFileName() {
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
-  return `永恒流光-批注备份-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
+  return `永恒流光-审阅备份-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
 }
 
 function downloadAnnotationsFile() {
@@ -2599,8 +2587,10 @@ async function saveAnnotationsWithPicker() {
 
 function backupToLocal() {
   const anns = getAnnotations();
-  const total = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
-  if (total === 0) { alert('当前没有批注。'); return; }
+  const edits = getEdits();
+  const annTotal = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
+  const editTotal = Object.keys(edits).length;
+  if (annTotal === 0 && editTotal === 0) { alert('当前没有批注或编辑。'); return; }
   if (window.showSaveFilePicker) {
     saveAnnotationsWithPicker();
   } else {
@@ -2610,27 +2600,38 @@ function backupToLocal() {
 
 function clearAllAnnotations() {
   const anns = getAnnotations();
-  const total = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
-  if (total === 0) {
-    alert('当前没有批注。');
+  const edits = getEdits();
+  const annTotal = Object.values(anns).reduce((n, arr) => n + (Array.isArray(arr) ? arr.length : 0), 0);
+  const editTotal = Object.keys(edits).length;
+  if (annTotal === 0 && editTotal === 0) {
+    alert('当前没有批注或编辑。');
     return;
   }
-  const ok = confirm(`确定要清除全部 ${total} 条批注吗？\n清除前会自动把当前批注备份为本地文档，并存入浏览器存储。`);
+  const parts = [];
+  if (annTotal > 0) parts.push(`${annTotal} 条批注`);
+  if (editTotal > 0) parts.push(`${editTotal} 条编辑`);
+  const ok = confirm(`确定要清除全部 ${parts.join(' + ')} 吗？\n清除前会自动备份为本地文档，并存入浏览器存储。`);
   if (!ok) return;
   const backed = backupAnnotations();
   const savedFile = downloadAnnotationsFile();
   saveAnnotations({});
+  // 同时清除编辑模式的修改和历史
+  localStorage.removeItem(EDIT_STORAGE_KEY);
+  localStorage.removeItem(HIS_KEY);
+  editHistory = { states: [], index: -1 };
+  editBaselines = {};
+  refreshUndoButtons();
   removeAllPopups();
   renderAllBadges();
   const hint = document.getElementById('reviewHint');
   if (backed && savedFile) {
-    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（本地文档下载 + 浏览器存储）。`;
+    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档下载 + 浏览器存储）。`;
   } else if (savedFile) {
-    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（本地文档）。⚠️ 浏览器存储备份失败。`;
+    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档）。⚠️ 浏览器存储备份失败。`;
   } else if (backed) {
-    hint.textContent = `🗑 已清除全部 ${total} 条批注。备份已保存（浏览器存储）。⚠️ 本地文档下载失败。`;
+    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（浏览器存储）。⚠️ 本地文档下载失败。`;
   } else {
-    hint.textContent = `🗑 已清除全部 ${total} 条批注。⚠️ 备份失败，无法恢复。`;
+    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。⚠️ 备份失败，无法恢复。`;
   }
   hint.classList.add('show');
   setTimeout(() => hint.classList.remove('show'), 5000);
@@ -2977,7 +2978,7 @@ function resolveAnnotation(path, id) {
   saveAnnotations(anns);
 }
 
-// ── Export ──
+// ── Export (统一导出审阅：批注 + 编辑存档) ──
 function showExport() {
   const anns = getAnnotations();
   const allPaths = Object.keys(anns);
@@ -2994,13 +2995,12 @@ function showExport() {
     });
   });
 
-  let output = '// ===== 永恒流光 网页批注导出 =====\n';
+  let output = '// ===== 永恒流光 审阅导出 =====\n';
   output += `// 导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
   output += `// 未处理批注: ${unresolved.length} 条 | 已处理: ${resolved.length} 条\n`;
   output += '//\n';
-  output += '// ⚠️  以下批注需要 AI 根据内容进行修改。\n';
+  output += '// ⚠️  以下批注与编辑需要 AI 根据内容进行修改。\n';
   output += '// 每条批注包含：位置（段落开头文字）、批注内容、创建时间。\n';
-  output += '// 修改完成后请清除 localStorage 中的 "lumen-annotations" 键。\n';
   output += '// =========================================\n\n';
 
   if (unresolved.length === 0) {
@@ -3057,12 +3057,6 @@ function buildEditArchiveSection() {
   out += '// 把上面整段文字发给 AI 助手，它会按"路径"在 index.html 中找到对应元素，\n';
   out += '// 用"新文"替换原内容，改完即可提交部署。\n';
   return out;
-}
-
-// 独立"导出存档"：仅导出编辑模式存档（不含批注），专供发给 AI 落地改动
-function showExportSave() {
-  document.getElementById('exportContent').textContent = buildEditArchiveSection();
-  document.getElementById('exportModal').classList.add('show');
 }
 
 function closeExport() {

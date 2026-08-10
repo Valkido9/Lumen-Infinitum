@@ -91,7 +91,7 @@ E:\永恒流光\永恒流光\
   - **编辑模式**：点击任意文字 → 该元素进入 contenteditable 直接编辑 → 点击其它位置保存、按 `Esc` 取消。修改持久化到 `lumen-edits`，页面重渲染（如能力档案筛选、世界设定切换）后自动重新应用（`applyStoredEdits`）
 - **全站可审阅**：事件委托 + 捕获阶段监听（`reviewDocClick`），`getReviewableElement` 向上查找持有直接文本的元素，页面任何文字（正文、能力卡片、术语词典、世界设定等）均可批注/编辑
 - **稳定路径**：`getStablePath(el)` 生成"最近带 id 祖先 + `:nth-child` 链"的 CSS 选择器路径（如 `#ab-ab81 > div:nth-child(2) > ...`），替代旧的 `el-N` 索引路径，重渲染后仍可定位
-- **导出批注**：审阅模式下"📋 导出批注"按钮 → 格式化导出所有未处理批注 + 直接编辑的修改（`// ===== 直接编辑的修改 =====` 段）→ 可复制
+- **导出审阅**：审阅模式下"📋 导出审阅"按钮 → 格式化导出所有未处理批注 + 编辑模式存档（`// ===== 永恒流光 · 编辑模式存档 =====` 段）→ 可复制
 - **存储**：批注在 localStorage 键 `lumen-annotations`（`{elementPath: [{id, text, time, resolved}]}`）；直接编辑在 `lumen-edits`
 - **退出**：再次点击审阅按钮退出，清除所有徽章、弹窗、模式按钮和监听器（未提交的编辑先保存）
 
@@ -102,14 +102,14 @@ E:\永恒流光\永恒流光\
 | `lumen-annotations` | 批注数据 |
 | `lumen-edits` | 编辑模式的直接修改（`{path: html}`） |
 | `lumen-edits-history` | 编辑历史（`{states:[...], index:n}`，最多 10 份快照，见第 17 次更新） |
-| `lumen-annotations-backup` | 清除批注前自动备份的上一版本批注（`{time, data}`） |
+| `lumen-annotations-backup` | 清除前自动备份的上一版本审阅数据（`{time, data}`） |
 
 ### 审阅模式辅助按钮
-- 审阅模式下，右下角会依次出现三个按钮：`📋 导出批注`（左140px）、`🗑 清除批注`（左260px）、`💾 备份到本地`（左380px）
+- 审阅模式下，右下角会依次出现三个按钮：`📋 导出审阅`（左140px）、`🗑 清除审阅`（左260px）、`💾 备份到本地`（左380px）
 - 编辑历史按钮（第 17 次更新新增）：`↩ 撤回`（左500px）、`↪ 重做`（左620px）、`💾 存档`（左740px）、`📂 读档`（左860px）、存档状态文字（左980px）
-- `🗑 清除批注`：确认后先将当前批注**备份为本地文档**（自动下载 `.txt`）+ 写入 `lumen-annotations-backup`，再清空 `lumen-annotations`
-- `💾 备份到本地`：用 `showSaveFilePicker` 弹出系统保存对话框选择位置（Chrome/Edge），其它浏览器自动下载带时间戳的 `.txt` 文档
-- 备份文档文件名格式：`永恒流光-批注备份-YYYYMMDD-HHMMSS.txt`
+- `🗑 清除审阅`：确认后先将当前批注与编辑**备份为本地文档**（自动下载 `.txt`）+ 写入 `lumen-annotations-backup`，再清空 `lumen-annotations`、`lumen-edits` 与 `lumen-edits-history`
+- `💾 备份到本地`：用 `showSaveFilePicker` 弹出系统保存对话框选择位置（Chrome/Edge），其它浏览器自动下载带时间戳的 `.txt` 文档（同时包含批注和编辑存档）
+- 备份文档文件名格式：`永恒流光-审阅备份-YYYYMMDD-HHMMSS.txt`
 
 ## 更新历史
 
@@ -299,10 +299,10 @@ E:\永恒流光\永恒流光\
 4. 修改完成后，清除 localStorage 中的 `lumen-annotations` 与 `lumen-edits` 键
 5. Git commit 并 push 到 GitHub
 
-### 导出批注的替代方式：
+### 导出审阅的替代方式：
 如果无法访问 localStorage，用户可以：
-1. 在审阅模式下点击"📋 导出批注"按钮
-2. 复制格式化后的批注文本
+1. 在审阅模式下点击"📋 导出审阅"按钮
+2. 复制格式化后的批注与编辑存档文本
 3. 粘贴给你
 
 ### Git 工作流：

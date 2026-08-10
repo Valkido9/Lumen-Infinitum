@@ -3861,7 +3861,7 @@ applyStoredEdits();
   document.body.appendChild(tooltip);
 
   // 设备判定：支持悬停（鼠标/触控板）→ 桌面端，鼠标放入显现真名、离开恢复空白；
-  // 不支持悬停（触摸屏）→ 移动端，保持点击显现 + 悬停小气泡提示
+  // 不支持悬停（触摸屏）→ 移动端，保持点击显现；"你知道的太多了"小气泡两种设备都显示
   const isHover = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
 
   // 点击：移动端显现真名（红色、闪烁抽动），2.4 秒后淡出恢复空白；桌面端由悬停驱动，点击忽略
@@ -3873,17 +3873,14 @@ applyStoredEdits();
   }, true);
 
   // 悬停：
-  //  桌面端 → 鼠标放入显现真名（保持显示）、离开立即恢复空白；
-  //  移动端 → 在触摸处附近显示"你知道的太多了"提示小框
+  //  任意设备 → 显示"你知道的太多了"提示小框；
+  //  桌面端额外 → 鼠标放入显现真名（保持显示）、离开立即恢复空白
   document.addEventListener('mouseover', function(e) {
     const s = e.target.closest ? e.target.closest('.lumen-secret') : null;
     if (!s) return;
-    if (isHover) {
-      revealSecret(s, false);
-    } else {
-      tooltip.textContent = '你知道的太多了';
-      tooltip.classList.add('show');
-    }
+    tooltip.textContent = '你知道的太多了';
+    tooltip.classList.add('show');
+    if (isHover) revealSecret(s, false);
   });
   document.addEventListener('mousemove', function(e) {
     if (!tooltip.classList.contains('show')) return;
@@ -3897,11 +3894,8 @@ applyStoredEdits();
   document.addEventListener('mouseout', function(e) {
     const s = e.target.closest ? e.target.closest('.lumen-secret') : null;
     if (!s) return;
-    if (isHover) {
-      hideSecret(s);
-    } else {
-      tooltip.classList.remove('show');
-    }
+    tooltip.classList.remove('show');
+    if (isHover) hideSecret(s);
   });
 
   // 显现真名。autoFade=true（移动端点击）：2.4s 后淡出恢复空白；

@@ -768,7 +768,7 @@ body {
   color: var(--text); font-size: 0.92em; line-height: 1.75;
 }
 
-/* 本尼艾诺空白能力：点击后逐渐显现真名 */
+/* 本尼艾诺空白能力：桌面端悬停显现真名，移动端点击显现 */
 .lumen-secret {
   cursor: pointer; color: inherit;
   user-select: none;
@@ -3853,25 +3853,37 @@ function getCharAbilityHtml(charKey) {
 renderAbilityArchive();
 applyStoredEdits();
 
-// ── 本尼艾诺空白能力：真名显现 + 悬停提示 ──
+// ── 本尼艾诺空白能力：桌面端悬停显现真名，移动端点击显现 ──
 (function() {
   const SECRET_REAL = '世界的罪业';
   const tooltip = document.createElement('div');
   tooltip.id = 'secretTooltip';
   document.body.appendChild(tooltip);
 
-  // 点击：显现真名（红色、闪烁抽动），2-3 秒后淡出恢复空白
+  // 设备判定：支持悬停（鼠标/触控板）→ 桌面端，鼠标放入显现真名、离开恢复空白；
+  // 不支持悬停（触摸屏）→ 移动端，保持点击显现 + 悬停小气泡提示
+  const isHover = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+
+  // 点击：移动端显现真名（红色、闪烁抽动），2.4 秒后淡出恢复空白；桌面端由悬停驱动，点击忽略
   document.addEventListener('click', function(e) {
     const s = e.target.closest ? e.target.closest('.lumen-secret') : null;
-    if (!s) return;
+    if (!s || isHover) return;
     e.stopImmediatePropagation();
-    revealSecret(s);
+    revealSecret(s, true);
   }, true);
 
-  // 悬停：在鼠标附近显示小框提示
+  // 悬停：
+  //  桌面端 → 鼠标放入显现真名（保持显示）、离开立即恢复空白；
+  //  移动端 → 在触摸处附近显示"你知道的太多了"提示小框
   document.addEventListener('mouseover', function(e) {
     const s = e.target.closest ? e.target.closest('.lumen-secret') : null;
-    if (s) { tooltip.textContent = '你知道的太多了'; tooltip.classList.add('show'); }
+    if (!s) return;
+    if (isHover) {
+      revealSecret(s, false);
+    } else {
+      tooltip.textContent = '你知道的太多了';
+      tooltip.classList.add('show');
+    }
   });
   document.addEventListener('mousemove', function(e) {
     if (!tooltip.classList.contains('show')) return;
@@ -3884,25 +3896,49 @@ applyStoredEdits();
   });
   document.addEventListener('mouseout', function(e) {
     const s = e.target.closest ? e.target.closest('.lumen-secret') : null;
-    if (s) tooltip.classList.remove('show');
+    if (!s) return;
+    if (isHover) {
+      hideSecret(s);
+    } else {
+      tooltip.classList.remove('show');
+    }
   });
 
-  function revealSecret(s) {
+  // 显现真名。autoFade=true（移动端点击）：2.4s 后淡出恢复空白；
+  // autoFade=false（桌面端悬停）：保持显示，由 hideSecret 在鼠标离开时恢复
+  function revealSecret(s, autoFade) {
     if (s.dataset.revealing === '1') return;
     s.dataset.revealing = '1';
     s.dataset.origText = s.textContent;
     s.textContent = SECRET_REAL;
     s.classList.remove('fading');
     s.classList.add('revealed');
-    setTimeout(function() {
-      s.classList.add('fading');
-      setTimeout(function() {
-        s.textContent = s.dataset.origText || '';
-        s.classList.remove('revealed', 'fading');
-        delete s.dataset.revealing;
-        delete s.dataset.origText;
-      }, 450);
-    }, 2400);
+    clearTimers(s);
+    if (autoFade) {
+      s.dataset.timer = setTimeout(function() {
+        s.classList.add('fading');
+        s.dataset.timer2 = setTimeout(function() {
+          hideSecret(s);
+        }, 450);
+      }, 2400);
+    }
+  }
+
+  // 立即恢复空白（同时清理未触发的定时器）
+  function hideSecret(s) {
+    if (s.dataset.revealing !== '1') return;
+    clearTimers(s);
+    s.textContent = s.dataset.origText || '';
+    s.classList.remove('revealed', 'fading');
+    delete s.dataset.revealing;
+    delete s.dataset.origText;
+  }
+
+  function clearTimers(s) {
+    if (s.dataset.timer) clearTimeout(Number(s.dataset.timer));
+    if (s.dataset.timer2) clearTimeout(Number(s.dataset.timer2));
+    delete s.dataset.timer;
+    delete s.dataset.timer2;
   }
 })();
 

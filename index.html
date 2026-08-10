@@ -533,6 +533,36 @@ body {
 }
 .review-toggle.danger { border-color: var(--accent2); color: var(--accent2); }
 .review-toggle.danger:hover { background: var(--accent2); color: #fff; }
+
+/* 编辑历史按钮（撤回/重做/存档/读档 + 状态文字） */
+.review-toggle.hist-btn:disabled { opacity: 0.4; cursor: default; }
+.review-toggle.hist-btn:disabled:hover { border-color: var(--border); color: var(--text-dim); }
+.review-toggle.hist-status { cursor: default; }
+
+/* 读档弹窗 */
+.load-dialog {
+  position: fixed; left: 500px; bottom: 74px; z-index: 1200;
+  width: 340px; max-height: 400px; overflow-y: auto;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; box-shadow: var(--shadow-lg);
+  padding: 10px; font-size: 0.82em;
+}
+.load-dialog .load-head { font-weight: 600; color: var(--text); padding: 4px 6px 10px; border-bottom: 1px dashed var(--border); margin-bottom: 6px; }
+.load-dialog .load-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 8px; border-radius: 8px; cursor: pointer;
+  color: var(--text-dim); border: 1px solid transparent;
+}
+.load-dialog .load-item:hover { background: rgba(88,166,255,0.08); color: var(--text); }
+.load-dialog .load-item.active { background: rgba(168,130,255,0.12); border-color: rgba(168,130,255,0.4); color: var(--text); }
+.load-dialog .load-slot { font-weight: 700; color: var(--accent); flex-shrink: 0; }
+.load-dialog .load-time { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.load-dialog .load-count { color: var(--text-muted); flex-shrink: 0; font-size: 0.9em; }
+.load-dialog .load-close {
+  margin-top: 8px; padding: 6px; text-align: center; cursor: pointer;
+  color: var(--text-muted); border-top: 1px dashed var(--border);
+}
+.load-dialog .load-close:hover { color: var(--accent); }
 .review-hint {
   position: fixed; left: 20px; bottom: 62px; z-index: 1100;
   font-size: 0.75em; color: var(--text-muted);
@@ -2355,8 +2385,10 @@ function enterReviewMode() {
   addExportButton();
   addClearButton();
   addBackupButton();
+  addHistoryButtons();
 
   document.addEventListener('click', reviewDocClick, true);
+  document.addEventListener('keydown', reviewKeydown, true);
 }
 
 function exitReviewMode() {
@@ -2382,8 +2414,10 @@ function exitReviewMode() {
   removeExportButton();
   removeClearButton();
   removeBackupButton();
+  removeHistoryButtons();
 
   document.removeEventListener('click', reviewDocClick, true);
+  document.removeEventListener('keydown', reviewKeydown, true);
 }
 
 // ── Badges ──
@@ -2647,6 +2681,8 @@ function saveEdit(path, html) {
 function startInlineEdit(el, path) {
   if (el.isContentEditable) return;
   document.querySelectorAll('[data-inline-edit="1"]').forEach(function(x) { if (x !== el) commitInlineEdit(x); });
+  // 首次编辑某元素时记录其原始内容，作为导出存档的"原文"基线
+  if (editBaselines[path] === undefined) editBaselines[path] = el.innerHTML;
   el.dataset.inlinePrev = el.innerHTML;
   el.dataset.inlineEdit = '1';
   el.contentEditable = 'true';
@@ -2670,6 +2706,7 @@ function commitInlineEdit(el) {
   const path = getStablePath(el);
   if (el.innerHTML !== el.dataset.inlinePrev) {
     saveEdit(path, el.innerHTML);
+    commitEditHistory();          // 编辑完成 → 自动压入一份历史快照
     el.classList.add('review-edited');
   }
   delete el.dataset.inlinePrev;
@@ -2688,6 +2725,147 @@ function applyStoredEdits(root) {
     try { el = (root || document).querySelector(path); } catch(e) { el = null; }
     if (el) { el.innerHTML = edits[path]; el.classList.add('review-edited'); }
   });
+}
+
+// ── 编辑历史：存档 / 撤回 / 重做 / 读档（最多 10 层快照，lumen-edits-history）──
+const HIS_KEY = 'lumen-edits-history';
+const HIS_MAX = 10;
+let editHistory = loadHistory();
+let editBaselines = {};   // path → 首次编辑前的 innerHTML（导出"原文"用，仅内存态）
+
+function loadHistory() {
+  try {
+    const h = JSON.parse(localStorage.getItem(HIS_KEY) || '{}');
+    const states = Array.isArray(h.states) ? h.states : [];
+    let index = (typeof h.index === 'number') ? h.index : (states.length - 1);
+    if (index < -1 || index >= states.length) index = states.length - 1;
+    return { states: states, index: index };
+  } catch(e) { return { states: [], index: -1 }; }
+}
+function saveHistory() {
+  localStorage.setItem(HIS_KEY, JSON.stringify(editHistory));
+}
+// 在"条目编辑完成、写入 lumen-edits"之后调用：压入当前 lumen-edits 快照
+function commitEditHistory() {
+  const cur = getEdits();
+  editHistory.states = editHistory.states.slice(0, editHistory.index + 1); // 剪掉重做分支
+  editHistory.states.push({ time: new Date().toLocaleString('zh-CN'), data: JSON.parse(JSON.stringify(cur)) });
+  if (editHistory.states.length > HIS_MAX) editHistory.states.shift(); // 只留 10 份
+  editHistory.index = editHistory.states.length - 1;
+  saveHistory();
+  refreshUndoButtons();
+}
+function applySnapshot(data) {
+  localStorage.setItem(EDIT_STORAGE_KEY, JSON.stringify(data || {}));
+  applyStoredEdits();
+  refreshUndoButtons();
+}
+function undoEdit() {
+  if (editHistory.index <= 0) return;
+  editHistory.index--;
+  saveHistory();
+  applySnapshot(editHistory.states[editHistory.index].data);
+}
+function redoEdit() {
+  if (editHistory.index >= editHistory.states.length - 1) return;
+  editHistory.index++;
+  saveHistory();
+  applySnapshot(editHistory.states[editHistory.index].data);
+}
+function loadSlot(i) {
+  if (i < 0 || i >= editHistory.states.length) return;
+  editHistory.index = i;
+  saveHistory();
+  applySnapshot(editHistory.states[i].data);
+  removeLoadDialog();
+}
+
+// ── 历史按钮（审阅模式下右下角）──
+function addHistoryButtons() {
+  removeHistoryButtons();
+  const mk = function(id, label, left, fn, title) {
+    const b = document.createElement('button');
+    b.id = id; b.className = 'review-toggle hist-btn';
+    b.style.left = left;
+    b.textContent = label;
+    b.title = title || label;
+    b.addEventListener('click', fn);
+    document.body.appendChild(b);
+    return b;
+  };
+  mk('undoBtn', '↩ 撤回', '500px', function() { undoEdit(); }, '撤回上一步编辑（Ctrl+Z）');
+  mk('redoBtn', '↪ 重做', '620px', function() { redoEdit(); }, '重做被撤回的编辑（Ctrl+Y / Ctrl+Shift+Z）');
+  mk('saveHisBtn', '💾 存档', '740px', function() { commitEditHistory(); }, '手动保存当前编辑为一份存档');
+  mk('loadHisBtn', '📂 读档', '860px', showLoadDialog, '读取历史存档');
+  const st = document.createElement('span');
+  st.id = 'histStatus';
+  st.className = 'review-toggle hist-status';
+  st.style.left = '980px';
+  st.textContent = '存档 0/0';
+  document.body.appendChild(st);
+  refreshUndoButtons();
+}
+function removeHistoryButtons() {
+  ['undoBtn', 'redoBtn', 'saveHisBtn', 'loadHisBtn', 'histStatus'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+  removeLoadDialog();
+}
+function refreshUndoButtons() {
+  const u = document.getElementById('undoBtn');
+  const r = document.getElementById('redoBtn');
+  const s = document.getElementById('histStatus');
+  const n = editHistory.states.length;
+  if (u) u.disabled = editHistory.index <= 0;
+  if (r) r.disabled = editHistory.index >= n - 1;
+  if (s) s.textContent = '存档 ' + (n ? (editHistory.index + 1) : 0) + '/' + n;
+}
+
+// ── 读档弹窗 ──
+function showLoadDialog() {
+  removeLoadDialog();
+  if (!editHistory.states.length) { alert('暂无存档。编辑任意文字或点击「💾 存档」即可产生存档。'); return; }
+  const dlg = document.createElement('div');
+  dlg.id = 'loadHistDialog';
+  dlg.className = 'load-dialog';
+  let items = '';
+  editHistory.states.forEach(function(st, i) {
+    const cur = i === editHistory.index;
+    const cnt = Object.keys(st.data || {}).length;
+    items += '<div class="load-item' + (cur ? ' active' : '') + '" data-slot="' + i + '">' +
+      '<span class="load-slot">#' + (i + 1) + '</span>' +
+      '<span class="load-time">' + st.time + '</span>' +
+      '<span class="load-count">' + cnt + ' 条修改' + (cur ? '（当前）' : '') + '</span>' +
+      '</div>';
+  });
+  dlg.innerHTML = '<div class="load-head">选择存档（最多 ' + HIS_MAX + ' 份，点任意一项即读取）</div>' + items +
+    '<div class="load-close">关闭</div>';
+  dlg.querySelector('.load-close').addEventListener('click', removeLoadDialog);
+  dlg.querySelectorAll('.load-item').forEach(function(it) {
+    it.addEventListener('click', function() { loadSlot(parseInt(it.dataset.slot, 10)); });
+  });
+  document.body.appendChild(dlg);
+}
+function removeLoadDialog() {
+  const d = document.getElementById('loadHistDialog');
+  if (d) d.remove();
+}
+
+// ── 键盘快捷键：审阅模式下 Ctrl+Z 撤回 / Ctrl+Y·Ctrl+Shift+Z 重做 ──
+function reviewKeydown(e) {
+  const k = e.ctrlKey || e.metaKey;
+  if (k && e.key === 'z') {                       // Ctrl+Z（不带 Shift，Shift 下为 'Z' 归入重做）
+    e.preventDefault();
+    e.stopPropagation();
+    const cur = document.querySelector('[data-inline-edit="1"]');
+    if (cur) commitInlineEdit(cur);   // 先收尾当前正在编辑的条目
+    undoEdit();
+  } else if (k && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {   // Ctrl+Y / Ctrl+Shift+Z
+    e.preventDefault();
+    e.stopPropagation();
+    redoEdit();
+  }
 }
 
 function showAnnotationPopup(el, path) {
@@ -2825,19 +3003,31 @@ function showExport() {
     });
   }
 
-  // 直接编辑模式产生的修改
+  // 编辑模式存档（含撤回历史与原文基线，供 AI 在服务器端按稳定路径落地）
   const edits = getEdits();
   const editKeys = Object.keys(edits);
-  if (editKeys.length > 0) {
-    output += '\n// ===== 直接编辑的修改（来自「✏️ 编辑模式」）=====\n';
-    editKeys.forEach(function(path) {
+  const histPos = editHistory.states.length ? (editHistory.index + 1) : 0;
+  output += '\n// ===== 永恒流光 · 编辑模式存档 =====\n';
+  output += `// 导出时间：${new Date().toLocaleString('zh-CN')}\n`;
+  output += `// 编辑条目：${editKeys.length} 条 | 存档 ${histPos}/${editHistory.states.length}\n\n`;
+  if (editKeys.length === 0) {
+    output += '（暂无直接编辑的修改）\n';
+  } else {
+    editKeys.forEach(function(path, i) {
       const el = getElementByPath(path);
       const snippet = el ? el.textContent.substring(0, 60) : '(未知位置)';
-      output += `【修改】 位置: "${snippet}..."\n`;
-      output += `  路径: ${path}\n`;
-      output += `  新内容: ${edits[path]}\n\n`;
+      const original = (editBaselines[path] !== undefined) ? editBaselines[path] : null;
+      output += `[${i + 1}] 路径：${path}\n`;
+      output += `    位置：${snippet}...\n`;
+      output += `    说明：编辑模式直接修改\n`;
+      output += `    原文：${original !== null ? original : '（无原文记录）'}\n`;
+      output += `    新文：${edits[path]}\n\n`;
     });
   }
+  output += '// ===== 使用说明 =====\n';
+  output += '// "路径"为该元素在页面中的稳定 CSS 选择器（重渲染后仍可定位）。\n';
+  output += '// 把上面整段文字发给 AI 助手，它会按"路径"在 index.html 中找到对应元素，\n';
+  output += '// 用"新文"替换原内容，改完即可提交部署。\n';
 
   document.getElementById('exportContent').textContent = output;
   document.getElementById('exportModal').classList.add('show');

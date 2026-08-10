@@ -101,10 +101,12 @@ E:\永恒流光\永恒流光\
 | `lumen-theme` | 主题偏好（`'dark'` 或不存在） |
 | `lumen-annotations` | 批注数据 |
 | `lumen-edits` | 编辑模式的直接修改（`{path: html}`） |
+| `lumen-edits-history` | 编辑历史（`{states:[...], index:n}`，最多 10 份快照，见第 17 次更新） |
 | `lumen-annotations-backup` | 清除批注前自动备份的上一版本批注（`{time, data}`） |
 
 ### 审阅模式辅助按钮
 - 审阅模式下，右下角会依次出现三个按钮：`📋 导出批注`（左140px）、`🗑 清除批注`（左260px）、`💾 备份到本地`（左380px）
+- 编辑历史按钮（第 17 次更新新增）：`↩ 撤回`（左500px）、`↪ 重做`（左620px）、`💾 存档`（左740px）、`📂 读档`（左860px）、存档状态文字（左980px）
 - `🗑 清除批注`：确认后先将当前批注**备份为本地文档**（自动下载 `.txt`）+ 写入 `lumen-annotations-backup`，再清空 `lumen-annotations`
 - `💾 备份到本地`：用 `showSaveFilePicker` 弹出系统保存对话框选择位置（Chrome/Edge），其它浏览器自动下载带时间戳的 `.txt` 文档
 - 备份文档文件名格式：`永恒流光-批注备份-YYYYMMDD-HHMMSS.txt`
@@ -259,6 +261,20 @@ E:\永恒流光\永恒流光\
 - **攻城级判定放宽**：`buildAbilityCard` 中 `const siege = maxCrt(a.c) >= 14;`（去掉原先的 `!isZpn &&` 排除）。`maxCrt` 正则忽略负号，天然按绝对值比较，因此镇压院区的负 CRT（如 `(-15.8)`）同样满足攻城级
 - **受影响能力（4 个）**：ab67「无名」（本尼艾诺，-15.8）、ab81「　　　　　」（本尼艾诺，-18）、ab83「噩梦解放」（道杰斯，-16.5）、ab85「狂梦解放」（鸿荧，-15.3）——卡片同时显示 `镇压院区` + `攻城级` 两个徽章
 - **显示框优先级**：新增 CSS `.ability-card-zpn.ability-card-siege`（含 hover 变体，双类特异性 0,2,0 高于单类），强制紫色镇压院区边框并清除攻城级红色光晕（`box-shadow: none`）——同时满足时优先显示紫色镇压院区框，攻城级徽章仍显示
+
+### 第 17 次更新 — 编辑历史系统（存档 / 撤回 / 重做 / 读档）
+**提交**: `（本次）`
+- **新增 localStorage 键 `lumen-edits-history`**：`{states:[...], index:n}`，`states` 最多 **10 份**快照，每份 `{time, data}`（`data` 为当时 `lumen-edits` 的深拷贝）；旧键 `lumen-edits` 格式不变、叠加兼容
+- **历史引擎**：`loadHistory()` / `saveHistory()` / `commitEditHistory()`（剪掉重做分支→压入当前 `lumen-edits` 快照→超 10 份 `shift()`→更新 index）/ `undoEdit()` / `redoEdit()` / `loadSlot(i)` / `applySnapshot(data)`（写回 `lumen-edits` + 复用 `applyStoredEdits()` 全量重放）/ `refreshUndoButtons()`
+- **自动存档**：`commitInlineEdit` 中内容变更并写入 `lumen-edits` 后调用 `commitEditHistory()`——每次编辑完成自动压一份快照；`💾 存档`（手动）走同一函数，上限一致
+- **原文基线**：`editBaselines = {}`（内存态），`startInlineEdit` 首次编辑某元素时记录 `el.innerHTML` 作为导出"原文"
+- **按钮**（审阅模式右下角，`addHistoryButtons`/`removeHistoryButtons`）：`↩ 撤回`（左500px）/ `↪ 重做`（左620px）/ `💾 存档`（左740px）/ `📂 读档`（左860px）+ 存档状态文字 `存档 当前/总数`（左980px）；`refreshUndoButtons` 按 index 置灰撤回/重做；读档弹窗 `.load-dialog` 列出最多 10 份 `time` 时间戳，点击任意项 `loadSlot(i)`
+- **键盘快捷键**（`reviewKeydown`，进入/退出审阅时在 `document` 捕获阶段挂接/移除）：
+  - `Ctrl+Z`（不带 Shift）→ 先 `commitInlineEdit` 收尾正在编辑的条目，再 `undoEdit()`（`preventDefault` 屏蔽输入框内原生撤销）
+  - `Ctrl+Y` 或 `Ctrl+Shift+Z`（Shift 下 `e.key==='Z'`）→ `redoEdit()`
+  - **不用 Ctrl+V**：它是浏览器原生粘贴键，编辑时仍需往输入框贴文字
+- **导出扩展**：`showExport` 原"直接编辑的修改"段替换为 **`===== 永恒流光 · 编辑模式存档 =====`** 段——每条含 `路径`（稳定 CSS 选择器）/ `位置` / `原文`（取自 `editBaselines`，无则注明"（无原文记录）"）/ `新文`，外加 `编辑条目：N 条 | 存档 x/y` 与使用说明；AI 服务器端按"路径"在 `index.html` 定位节点、用"新文"替换即可
+- CSS 新增：`.hist-btn:disabled`（置灰）、`.hist-status`、`.load-dialog` 系列（读档弹窗）
 
 ## 给接手 AI 的工作指引
 

@@ -1731,7 +1731,7 @@ function buildCharCards(filter = '', tagMode = false) {
     if (tagMode) {
       const effective = getEffectiveCharTg(key);
       if (effective) {
-      effective.camps.forEach(v => {
+        effective.camps.forEach(v => {
         tagChipsHtml += '<span class="tag-chip" style="background:' + catColors.camps + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:0.72em;display:inline-flex;align-items:center;gap:2px;">阵营:' + escHtml(v) + ' <span class="tag-chip-x" onclick="event.stopPropagation();removeCharTag(\'' + key + '\',\'camps\',\'' + v.replace(/'/g, "\\'") + '\')" style="cursor:pointer;font-weight:bold;">×</span></span>';
       });
       if (effective.tl) {
@@ -1745,8 +1745,8 @@ function buildCharCards(filter = '', tagMode = false) {
       }
       tagChipsHtml += '<span class="tag-chip-add" onclick="event.stopPropagation();showTagPicker(\'' + key + '\',event)" style="background:transparent;border:1px dashed var(--border);color:var(--text-dim);padding:1px 6px;border-radius:10px;font-size:0.72em;cursor:pointer;">＋ 添加</span>';
       tagChipsHtml += '</div>';
-    }
       }
+    }
     return '<div class="chapter-card" onclick="' + (tagMode ? 'event.preventDefault()' : 'openChar(\'' + key + '\')') + '" style="cursor:' + (tagMode ? 'default' : 'pointer') + ';">\n' +
       '      <div class="card-num">CRT ' + c.crt + ' · ' + c.ability + '</div>\n' +
       '      <div class="card-title">' + c.name + ' <span style="font-size:0.7em; color:var(--text-dim);">' + c.title.split('·')[0] + '</span></div>\n' +

@@ -3314,7 +3314,7 @@ const abilityData = [
 // 标签筛选：每个能力带 tg 字段 "阵营1|阵营2, 时间线, 院区, 卷目"
 const abilityTags = {
   camps: { label: '阵营', values: [
-    '第二代时之秩序','圣标联合','潮涌居士号','蓝河明船','浪庄游击队','深雾城阵营',
+    '第二代时之秩序','圣标联合','潮涌居士号','蓝河明船','浪庄游击队','圆翼党','深雾城阵营',
     '珀利贝尔实业 · 亲卫队','珀利贝尔实业 · 部门领导组','寒城工坊','长夜事务所','神国',
     '牧人','爱丽丝马戏团','其他','初代时之秩序','基地其他部门','柯洛雯第三帝国','芬奈法拉战线','死神首席'
   ]},
@@ -3322,6 +3322,19 @@ const abilityTags = {
   ward:{ label: '院区', values: ['永恒院','重构院','救赎院','生命院','勇气院','解放院','赦除院','真理院','均衡院','机遇院','绝望院','希冀院','决意院','无院区/未共鸣','特殊'] },
   vol: { label: '初登场卷目', values: ['序幕','第一卷','第一卷最终战','第二卷','第二卷最终战','第三卷','第三卷最终战','第四卷','第四卷最终战','第五卷','第五卷最终战','前传'] }
 };
+
+// Load custom category values from localStorage (synced with character tag editor)
+function loadCustomCategoryValues() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('lumen-ability-tags-custom'));
+    if (saved) {
+      if (saved.camps) abilityTags.camps.values = saved.camps;
+      if (saved.tl) abilityTags.tl.values = saved.tl;
+      if (saved.ward) abilityTags.ward.values = saved.ward;
+      if (saved.vol) abilityTags.vol.values = saved.vol;
+    }
+  } catch(e) {}
+}
 
 // 当前筛选状态：空数组 = 该行不限（全部）；每行内多选 OR，跨行 AND
 const abilityFilter = { camps: [], tl: [], ward: [], vol: [] };
@@ -3653,6 +3666,7 @@ function getCharAbilityHtml(charKey) {
 }
 
 // Initialize ability archive
+loadCustomCategoryValues();
 renderAbilityArchive();
 applyStoredEdits();
 

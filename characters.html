@@ -570,6 +570,64 @@ body {
 }
 .review-hint.show { opacity: 1; }
 
+/* ── Tag picker ── */
+.tag-picker {
+  position: fixed; z-index: 1200; width: 240px; max-height: 280px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3); overflow-y: auto; padding: 8px;
+}
+.tag-picker-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.tag-picker-tab {
+  flex: 1; font-size: 0.75em; padding: 4px 2px; border: 1px solid var(--border);
+  border-radius: 6px; background: transparent; color: var(--text-dim); cursor: pointer;
+}
+.tag-picker-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tag-picker-val {
+  display: block; width: 100%; text-align: left; font-size: 0.78em; padding: 5px 8px;
+  border: none; border-radius: 4px; background: transparent; color: var(--text); cursor: pointer; margin-bottom: 2px;
+}
+.tag-picker-val:hover { background: rgba(88,166,255,0.1); }
+.tag-picker-val.has { color: var(--text-muted); cursor: default; font-style: italic; }
+.tag-picker-close {
+  position: absolute; top: 6px; right: 8px; background: none; border: none;
+  color: var(--text-muted); font-size: 1em; cursor: pointer;
+}
+
+/* ── Category manager ── */
+.cat-mgr-dlg {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 1300;
+  width: 440px; max-width: 90vw; max-height: 70vh; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4); overflow-y: auto; padding: 16px;
+}
+.cat-mgr-header { font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+.cat-mgr-close { background: none; border: none; color: var(--text-muted); font-size: 1.2em; cursor: pointer; }
+.cat-mgr-cat { margin-bottom: 16px; }
+.cat-mgr-cat strong { display: block; margin-bottom: 6px; color: var(--accent); }
+.cat-mgr-vals { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.cat-mgr-chip {
+  background: rgba(88,166,255,0.1); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1px 6px; font-size: 0.75em; display: inline-flex; align-items: center; gap: 2px;
+}
+.cat-mgr-rm { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 0.9em; padding: 0 2px; }
+.cat-mgr-add-row { display: flex; gap: 4px; }
+.cat-mgr-add-row input {
+  flex: 1; font-size: 0.78em; padding: 4px 8px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--bg); color: var(--text);
+}
+.cat-mgr-add-row button {
+  font-size: 0.78em; padding: 4px 10px; background: var(--accent); color: #fff;
+  border: none; border-radius: 6px; cursor: pointer;
+}
+
+/* ── Tag chips on cards ── */
+.tag-chips-row { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.tag-chip { color: #fff; padding: 1px 6px; border-radius: 10px; font-size: 0.72em; display: inline-flex; align-items: center; gap: 2px; }
+.tag-chip-x { cursor: pointer; font-weight: bold; opacity: 0.7; }
+.tag-chip-x:hover { opacity: 1; }
+.tag-chip-add { background: transparent; border: 1px dashed var(--border); color: var(--text-dim); padding: 1px 6px; border-radius: 10px; font-size: 0.72em; cursor: pointer; }
+.tag-chip-add:hover { border-color: var(--accent); color: var(--accent); }
+
 /* Password modal */
 .pw-dialog {
   position: fixed; inset: 0; z-index: 3000;
@@ -747,6 +805,7 @@ body {
 /* ===== ABILITY ARCHIVE ===== */
 .ability-archive { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
 .ability-nav-bar { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 24px; }
+.tag-filter-container { margin-bottom: 12px; }
 .tag-filter-bar { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 4px 0; align-items: flex-start; }
 .tag-filter-label { flex: 0 0 auto; font-size: 0.82em; font-weight: 700; color: var(--gold); min-width: 6.5em; padding-top: 5px; }
 .tag-filter-btn { padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); cursor: pointer; font-size: 0.78em; line-height: 1.5; transition: all 0.2s; white-space: nowrap; }
@@ -1036,6 +1095,7 @@ body {
 
     <!-- ===== CHARACTERS SECTION ===== -->
     <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色档案</h2>
+    <div class="tag-filter-container" id="characterNav"></div>
     <div class="search-bar">
       <input type="text" id="charSearch" placeholder="搜索角色（输入名字、代号或能力名）..." oninput="filterCharacters()">
     </div>
@@ -1082,7 +1142,8 @@ const characters = {
     ],
     quotes: ['"奇变偶不变，符号看象限。"', '"这个世界是不是除了我都是能力使啊？"', '"没在人山人海的食堂抢过饭……还敢试探我的身手？"'],
     appearances: ['序章第一章：从天而降，在电梯废墟中被发现', '序章第五至七章：手杖困扰，粥娘实验室', '序章第十三至十六章：基地遇袭，被正义置换进传送舱', '第一卷·第二章：以本体误入沃克加德，语言不通寸步难行', '第一卷·第六章：与优碧卡搏斗并和解，为它接上断臂', '第一卷·第九章：从录像中得知亡灵兔与六八的秘密，选择隐瞒', '第一卷·第十四章：与亡灵兔摊牌，守护这支队伍'],
-    abilityDetail: '「流光」（CRT-?）：<span class="spoiler-content">修瓦尔扎曾有能力「长终」的一个削弱态，具有其部分力量。扭转怀表上的发条后，云略下一次接触的物品将会变为"时间炸弹"，在云略决定发动能力时爆炸，造成一次分贝巨大的音波打击并停止范围内一切生命体的活动能力3-8秒。云略如果在爆炸范围内，也会受到时间停止的影响。时间停止范围内正在运动的物体会在能力启动后的0.3秒内被凝滞住。时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你真的释放能力了吗？为什么这机器读不出来CRT的数值？"——粥娘</em>'
+    abilityDetail: '「流光」（CRT-?）：<span class="spoiler-content">修瓦尔扎曾有能力「长终」的一个削弱态，具有其部分力量。扭转怀表上的发条后，云略下一次接触的物品将会变为"时间炸弹"，在云略决定发动能力时爆炸，造成一次分贝巨大的音波打击并停止范围内一切生命体的活动能力3-8秒。云略如果在爆炸范围内，也会受到时间停止的影响。时间停止范围内正在运动的物体会在能力启动后的0.3秒内被凝滞住。时间停止的优先级最高，可以打断其他一切时光机能力的引导和施法动作。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你真的释放能力了吗？为什么这机器读不出来CRT的数值？"——粥娘</em>',
+    tg: '第二代时之秩序|芬奈法拉战线, 未知, 永恒院, 序幕'
   },
   linai: {
     name: '礼奈', title: '「失语的烈阳」· 队长', avatar: 'F', avatarText: '礼',
@@ -1098,7 +1159,8 @@ const characters = {
     ],
     quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"（马萨卡对她的问候）', '"第二代时之秩序，从来就不是一个需要隐蔽的组织。"', '"我不能容忍任何一个，被我算作\'队员\'的人在我面前死去。"'],
     appearances: ['序章全部章节', '第一卷·第三章：以帕瓦蒂·罗伊的身份在重伤部苏醒', '第一卷·第九章：定下出海计划，喊出"英勇为怀，广济众生"', '第一卷·第十章：伪装被boundary识破，一同造访船都', '第一卷·第十二章：十二道光芒刺穿亚因森特，坠入深海', '第一卷·第十六章：在内城瞭望塔向boundary袒露执念'],
-    abilityDetail: '「双生烈阳」（CRT-10.8）：<span class="spoiler-content">可以进行一次瞬间移动，要求瞬移的落点必须比自己脚下地面的温度更高。如果瞬移成功，礼奈将可以使自己的下次攻击附带高温燃烧效果。攻击的温度会随着攻击的频率与次数不断上升。升温到一定阶段后礼奈可以刮出温度极高的热浪，并暂时缩小自己的碰撞体积，能够在人群中飞速穿梭。当礼奈从较高地形向较低地形发动俯冲时，她还可以释放"焚风"——一道由火焰组成、向下缓慢推进的高温幕墙，造成无差别杀伤，用以击退敌人或者保护自己。「双生烈阳」不能够使礼奈携带其他人进行瞬移。礼奈可以通过持续升高体温以极大程度地缩短每次发动能力间的冷却。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"机制简单的能力最好用了。"——粥娘</em>'
+    abilityDetail: '「双生烈阳」（CRT-10.8）：<span class="spoiler-content">可以进行一次瞬间移动，要求瞬移的落点必须比自己脚下地面的温度更高。如果瞬移成功，礼奈将可以使自己的下次攻击附带高温燃烧效果。攻击的温度会随着攻击的频率与次数不断上升。升温到一定阶段后礼奈可以刮出温度极高的热浪，并暂时缩小自己的碰撞体积，能够在人群中飞速穿梭。当礼奈从较高地形向较低地形发动俯冲时，她还可以释放"焚风"——一道由火焰组成、向下缓慢推进的高温幕墙，造成无差别杀伤，用以击退敌人或者保护自己。「双生烈阳」不能够使礼奈携带其他人进行瞬移。礼奈可以通过持续升高体温以极大程度地缩短每次发动能力间的冷却。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"机制简单的能力最好用了。"——粥娘</em>',
+    tg: '第二代时之秩序, 卢纳森特, 救赎院, 序幕'
   },
   masaka: {
     name: '马萨卡', title: '「金色的判官」· 双能力使', avatar: 'M', avatarText: '马',
@@ -1113,7 +1175,8 @@ const characters = {
     ],
     quotes: ['"早上好，礼队。我是马萨卡——很高兴第无数次认识你。"', '"这玩意不吃不喝，连遛弯都不用，可好养了。"（指他的武器"小凝"）', '"……看来你这家伙就是典狱长了！告诉我你把他关到了什么地方……"（暴走状态）'],
     appearances: ['序章第一章：电梯坠落中展现能力', '序章第十一章：暴走事件', '第一卷·第二章：以斐迪南·马斯克的身份在监狱中醒来', '第一卷·第七章：在圆翼党地下基地与众会合', '第一卷·第十二章：在无海坠入水中与海盗贴身搏杀', '第一卷·第十三章：被卢卡森审问，杀出重围救出优碧卡', '第一卷·第十五章：以「天平」蒸发海水，击败潮汐死士'],
-    abilityDetail: '「天平」（CRT-11.1，高危级）：<span class="spoiler-mark">（可能涉及剧透）</span><span class="spoiler-content">在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期（前三卷）常被认为是"操纵动能的能力"。马萨卡可以加速交通工具、弹射物弹道与肢体的挥动来增加破坏力，也可以减速身边会对自己造成威胁的目标。每次加速都会消耗体力，连续多次加速会严重影响身体机能甚至出现假死现象，但一次足够睡眠后即可恢复正常。只要物体在半径0.8米范围内，加速时不需要直接接触物体。</span>\n解放阶段「天平（解放阶段）」（CRT-12.4）：<span class="spoiler-content">移除连续多次释放的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。被击倒后会陷入比正常假死更长时间的昏迷；即使赢下战斗，也会在十分钟内快速耗尽体力晕倒。</span>\n「司明」（CRT-9.4）：储存太阳能以操控电能。可以让头发（尤其是呆毛）发光，也可以在短兵相接中麻痹对方。并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。'
+    abilityDetail: '「天平」（CRT-11.1，高危级）：<span class="spoiler-mark">（可能涉及剧透）</span><span class="spoiler-content">在平衡空间内时间流速快慢的情况下，控制范围内指定区域内任意物品的时间流速，从而加快或减缓其运动状态。因为此能力的表现形式往往改变为物体运动的快慢，马萨卡的「天平」在早期（前三卷）常被认为是"操纵动能的能力"。马萨卡可以加速交通工具、弹射物弹道与肢体的挥动来增加破坏力，也可以减速身边会对自己造成威胁的目标。每次加速都会消耗体力，连续多次加速会严重影响身体机能甚至出现假死现象，但一次足够睡眠后即可恢复正常。只要物体在半径0.8米范围内，加速时不需要直接接触物体。</span>\n解放阶段「天平（解放阶段）」（CRT-12.4）：<span class="spoiler-content">移除连续多次释放的体力限制，且会随着释放次数的增加不断提高每次时间扭曲作用的目标数量和范围。被击倒后会陷入比正常假死更长时间的昏迷；即使赢下战斗，也会在十分钟内快速耗尽体力晕倒。</span>\n「司明」（CRT-9.4）：储存太阳能以操控电能。可以让头发（尤其是呆毛）发光，也可以在短兵相接中麻痹对方。并不是马萨卡的主要战斗能力，主要用于照明，但常常被他用以辅助进攻。',
+    tg: '第二代时之秩序, 卢纳森特, 勇气院, 序幕'
   },
   zhengyi: {
     name: '正义（贾斯汀）', title: '情报司前司长', avatar: 'M', avatarText: '正',
@@ -1127,7 +1190,8 @@ const characters = {
     ],
     quotes: ['"道歉是解决不了任何问题的。"', '"我真不知道其他的能力使为什么要在打架的时候胡言乱语，这让他们简直蠢得像是日保院送的大塑料袋。"', '"你在着急什么？这不过只是一场大火而已。"'],
     appearances: ['序章第八章：在圣标联合首次登场', '序章第十四至十六章：带领云略穿越燃烧的基地', '第一卷·第九章：提供"斯帕里森是个海盗"的情报', '第一卷·第十四章：带来康明德博士即将回归的消息'],
-    abilityDetail: '「空间断层」（CRT-11.5，高危级）：<span class="spoiler-content">在以自己为坐标轴原点并默念一个坐标后，可以立刻拉取坐标处2m×2m×2m的空间并使其与正义面前1m处2m×2m×2m的空间交换。正义操纵「空间断层」进行攻击时往往会以制造地形破坏为主要攻击手段，同时也会以挪移重型物体的方式对自身进行保护。该技能的运用上下限相当广泛——理论上可以直接通过削除空间使目标身体分裂并当场死亡，但正义从来都不会用能力来直接对敌人发动攻击。每次使用能力后正义都会进入10秒钟的缓冲期，期间变得易损且乏力。若在缓冲期再次使用能力，则以他为中心、半径6米内的空间将被以长条状切裂并重组，之后虚弱时间变为1分钟且无法再使用能力。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你不会愿意看见别人的脑浆在你面前爆开的。不说残忍与否，至少很恶心。"——未署名录音6331</em>'
+    abilityDetail: '「空间断层」（CRT-11.5，高危级）：<span class="spoiler-content">在以自己为坐标轴原点并默念一个坐标后，可以立刻拉取坐标处2m×2m×2m的空间并使其与正义面前1m处2m×2m×2m的空间交换。正义操纵「空间断层」进行攻击时往往会以制造地形破坏为主要攻击手段，同时也会以挪移重型物体的方式对自身进行保护。该技能的运用上下限相当广泛——理论上可以直接通过削除空间使目标身体分裂并当场死亡，但正义从来都不会用能力来直接对敌人发动攻击。每次使用能力后正义都会进入10秒钟的缓冲期，期间变得易损且乏力。若在缓冲期再次使用能力，则以他为中心、半径6米内的空间将被以长条状切裂并重组，之后虚弱时间变为1分钟且无法再使用能力。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"你不会愿意看见别人的脑浆在你面前爆开的。不说残忍与否，至少很恶心。"——未署名录音6331</em>',
+    tg: '圣标联合, 卢纳森特, 重构院, 序幕'
   },
   youbika: {
     name: '优碧卡（UPK-002）', title: '炼金仿生人偶', avatar: 'O', avatarText: '优',
@@ -1143,7 +1207,8 @@ const characters = {
     ],
     quotes: ['"根据概率论计算和数据分析……各位并不需要帮助。"', '"本机请求投降。"', '"本机，感到恐惧……"', '"异议。本机没有\'随便杀人\'。正加载愤怒情绪模块。"'],
     appearances: ['第一卷·第五章：船都之夜斩杀黑帮，与「永冻领域」对决', '第一卷·第六章：与云略搏斗并和解', '第一卷·第九章：向礼奈投降，加入第二代时之秩序', '第一卷·第十一至十二章：无海之战，坠海被教皇城所俘', '第一卷·第十三章：被马萨卡从军务部救出', '第一卷·第十五章：随马萨卡潜入生命院'],
-    abilityDetail: '右臂内置高频电锯，可通过抽取能力使血液提取指令之力。装配实验型单体超空间穿梭系统（应急模式下以炼金核心供能）。电量仅剩约二十天。感情模块曾出现严重问题，被删除部分记忆。'
+    abilityDetail: '右臂内置高频电锯，可通过抽取能力使血液提取指令之力。装配实验型单体超空间穿梭系统（应急模式下以炼金核心供能）。电量仅剩约二十天。感情模块曾出现严重问题，被删除部分记忆。',
+    tg: '圆翼党, 沃克加德, 特殊, 第一卷'
   },
   wanglingtu: {
     name: '亡灵兔', title: '孤独的技术天才', avatar: 'M', avatarText: '兔',
@@ -1158,7 +1223,8 @@ const characters = {
     ],
     quotes: ['"这有什么问题。现在基地的情报处在反常状态……"', '"这不是为了那个满是虫豸的基地……而是为了我的朋友们。"', '"我早就不再信任基地了。但我还愿意相信这个队伍。"'],
     appearances: ['序章：作为工程师提供技术支持', '第一卷·第四章：以秘密通讯器联络珀利贝尔实业', '第一卷·第八章：与「永冻领域」六八在酒馆会面', '第一卷·第十一章：在无海以一发镇静剂终结梅纳德', '第一卷·第十四章：与云略摊牌，选择相信这支队伍'],
-    abilityDetail: '非能力使。精通机械工程和炼金术的基础知识（来自家父的熏陶）。依靠技术能力和聪明才智在战场上发挥作用。持有可与基地及珀利贝尔通讯的秘密联络设备。'
+    abilityDetail: '非能力使。精通机械工程和炼金术的基础知识（来自家父的熏陶）。依靠技术能力和聪明才智在战场上发挥作用。持有可与基地及珀利贝尔通讯的秘密联络设备。',
+    tg: '第二代时之秩序, 卢纳森特, 无院区/未共鸣, 序幕'
   },
   liuba: {
     name: '「永冻领域」六八', title: '珀利贝尔实业亲卫队队长', avatar: 'O', avatarText: '六',
@@ -1171,7 +1237,8 @@ const characters = {
     ],
     quotes: ['"我不希望，在你身上展现出连我自己都无法控制的强大力量。"', '"有戒心是好事。很高兴能看到你这么操心自己的组织。"'],
     appearances: ['第一卷·第五章：船都之夜，与优碧卡的对决', '第一卷·第八章：酒馆夜色中与亡灵兔的秘密会面', '第一卷·第十二章：无海之战，以冰霜卷走亡灵兔'],
-    abilityDetail: '常态阶段-「永冻领域」（CRT-13.7）：<span class="spoiler-content">以自己为球心控制周围空气的温度。常规状态下最低温度可达零下120至零下200摄氏度，降温所需时间为10秒，范围为半径七米。可使用以下攻击方式：操控被凝华的水蒸气覆盖的物体环绕自身进行保护；把冻结范围转移到武器上（半径五米，最低零下90至零下150摄氏度）；通过快速升温降温制造热浪；冻结朝自己飞来的弩箭和弹药并随机弹射回各个方向；把冻结的水蒸气作为子弹发射；制造简易冰墙。当周围空气水蒸气被全部凝结时降温会停止。</span><br>解放阶段-「永冻领域·温度坍缩」（CRT-14.8）：<span class="spoiler-content">降温极限下降到接近零下273.15摄氏度。温度坍缩的指令一旦下行，温度将在0.5秒内暴跌至零下273摄氏度以下，再缓慢地无限接近绝对零度。可冻结氮气形成护盾，操纵被冷冻物体（正常情况为五倍体重），使气压极速增大将物体压碎。关闭能力后气压会剧烈失衡并带着温度爆炸，使周围逼近真空。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span>'
+    abilityDetail: '常态阶段-「永冻领域」（CRT-13.7）：<span class="spoiler-content">以自己为球心控制周围空气的温度。常规状态下最低温度可达零下120至零下200摄氏度，降温所需时间为10秒，范围为半径七米。可使用以下攻击方式：操控被凝华的水蒸气覆盖的物体环绕自身进行保护；把冻结范围转移到武器上（半径五米，最低零下90至零下150摄氏度）；通过快速升温降温制造热浪；冻结朝自己飞来的弩箭和弹药并随机弹射回各个方向；把冻结的水蒸气作为子弹发射；制造简易冰墙。当周围空气水蒸气被全部凝结时降温会停止。</span><br>解放阶段-「永冻领域·温度坍缩」（CRT-14.8）：<span class="spoiler-content">降温极限下降到接近零下273.15摄氏度。温度坍缩的指令一旦下行，温度将在0.5秒内暴跌至零下273摄氏度以下，再缓慢地无限接近绝对零度。可冻结氮气形成护盾，操纵被冷冻物体（正常情况为五倍体重），使气压极速增大将物体压碎。关闭能力后气压会剧烈失衡并带着温度爆炸，使周围逼近真空。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span>',
+    tg: '珀利贝尔实业 · 亲卫队, 霍因佩兹, 无院区/未共鸣, 第一卷'
   },
   kangmingde: {
     name: '康明德', title: '科研司司长', avatar: 'M', avatarText: '康',
@@ -1183,7 +1250,8 @@ const characters = {
     ],
     quotes: ['"千万别叫我\'康博士\'或\'康教授\'，那样容易让人误会我是个长川人。"'],
     appearances: ['序章第十二章：作为协同联络者向小队介绍沃克加德任务', '第一卷·第十四章：被传来即将回归基地的消息'],
-    abilityDetail: '具体能力未知。专精于先进微电子元件和巫魔炼金科技。作为科研司司长主持多项机密研发项目。优碧卡是他最杰出的作品之一。'
+    abilityDetail: '具体能力未知。专精于先进微电子元件和巫魔炼金科技。作为科研司司长主持多项机密研发项目。优碧卡是他最杰出的作品之一。',
+    tg: '基地其他部门, 卢纳森特, 无院区/未共鸣, 序幕'
   },
   sipalisen: {
     name: '斯帕里森', title: '海盗之王·宝藏猎人', avatar: 'M', avatarText: '斯',
@@ -1193,7 +1261,8 @@ const characters = {
     bonds: [],
     quotes: [],
     appearances: ['第一卷：作为基地行动的目标被提及，其身份在海盗圈中呼之欲出', '第一卷·第十六章：被推断已潜入内城，甚至身在生命院'],
-    abilityDetail: '「空屿」（CRT-9.7）：心跳和肢体运动提供抗性护盾，护盾被击破时爆出尖利水刺击退周围敌人并再生水膜。水膜存在时护盾回复加速。持有大量宝物：威尔士柯基（腐蚀金属弯刀）、金色巡回（展开式回旋镖）、鹦鹉螺壳（激光）、章鱼令牌（召唤巨型章鱼）、无定（穿墙传送门）等。'
+    abilityDetail: '「空屿」（CRT-9.7）：心跳和肢体运动提供抗性护盾，护盾被击破时爆出尖利水刺击退周围敌人并再生水膜。水膜存在时护盾回复加速。持有大量宝物：威尔士柯基（腐蚀金属弯刀）、金色巡回（展开式回旋镖）、鹦鹉螺壳（激光）、章鱼令牌（召唤巨型章鱼）、无定（穿墙传送门）等。',
+    tg: '潮涌居士号, 沃克加德, 均衡院, 第一卷'
   },
   kenuo: {
     name: '克诺', title: '「灵魂之桥」· 支援位', avatar: 'M', avatarText: '克',
@@ -1206,7 +1275,8 @@ const characters = {
     ],
     quotes: ['"我很高兴能认识你，云略。"', '"应到四人，实到四人……某种意义上来说，咱们已经可以开始行动了。"'],
     appearances: ['序章第三章起：为云略安装耳译', '第一卷·第九章：定下出海联络斯帕里森的计划', '第一卷·第十一章：在无海祭出一次性礼炮', '第一卷·第十四章：决定率队前往亚因森特的刑场'],
-    abilityDetail: '「灵魂之桥」（CRT-8.9）：<span class="spoiler-content">使目标和自己的肉体失去实体，进入"幽灵状态"。在此期间一切物体都会直接穿过两人，以此来达到让两人免疫一切攻击的效果。这也意味着处在幽灵状态下的人可以在墙壁之间穿梭。「灵魂之桥」持续五秒，冷却时间为120分钟。如果能力的目标只有克诺自己，那么时间将会被大幅度延长至15秒。持续时间结束后，"桥上之人"的躯体会立刻在当前自己所处的位置重现。如果在能力解除时目标在障碍物之中，会被回弹至一个有充足空间的落点。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"非常朴素的援助能力，简直就是为了保护队友而生的呢！"——粥娘</em>'
+    abilityDetail: '「灵魂之桥」（CRT-8.9）：<span class="spoiler-content">使目标和自己的肉体失去实体，进入"幽灵状态"。在此期间一切物体都会直接穿过两人，以此来达到让两人免疫一切攻击的效果。这也意味着处在幽灵状态下的人可以在墙壁之间穿梭。「灵魂之桥」持续五秒，冷却时间为120分钟。如果能力的目标只有克诺自己，那么时间将会被大幅度延长至15秒。持续时间结束后，"桥上之人"的躯体会立刻在当前自己所处的位置重现。如果在能力解除时目标在障碍物之中，会被回弹至一个有充足空间的落点。</span><br><span class="spoiler-mark">（可能涉及剧透，点击查看）</span><br><em style="color:var(--text-muted);">"非常朴素的援助能力，简直就是为了保护队友而生的呢！"——粥娘</em>',
+    tg: '第二代时之秩序, 卢纳森特, 生命院, 序幕'
   },
   laikesi: {
     name: '莱克丝', title: '文书', avatar: 'F', avatarText: '莱',
@@ -1219,7 +1289,8 @@ const characters = {
     ],
     quotes: ['"我真是对你们这群能力使羡慕嫉妒恨……"', '"谁——谁呀？一天两次不算特别夸张吧？！"', '"如果你想死得像块炸鸡一样……"'],
     appearances: ['序章第六章起：作为文书登场', '序章第十三章：与云略在火海中逃生', '第一卷·第十四章：在通讯器中哭得上气不接下气'],
-    abilityDetail: '非能力使。第二代时之秩序年龄最小的成员。负责文书工作，同时在努力学习苛志室药物护理员的知识。对记忆分离药剂等化学品有一定了解。'
+    abilityDetail: '非能力使。第二代时之秩序年龄最小的成员。负责文书工作，同时在努力学习苛志室药物护理员的知识。对记忆分离药剂等化学品有一定了解。',
+    tg: '第二代时之秩序, 卢纳森特, 无院区/未共鸣, 序幕'
   },
   zhouniang: {
     name: '粥娘', title: '「狂乱的鸡尾酒」· 圣标联合药学家', avatar: 'F', avatarText: '粥',
@@ -1233,7 +1304,8 @@ const characters = {
     ],
     quotes: ['"哎呀，陋室没来得及好好收拾收拾，真是十分不好意思……"', '"玩笑话，玩笑话！"', '"这玩意可见不得光……来——喝了它，把这段保密程度极高的记忆过他个一遍。"'],
     appearances: ['序章第七至九章：为礼奈配置显影液，揭示无名（bbq）的记忆'],
-    abilityDetail: '「狂乱的鸡尾酒」（CRT-8.4）：随时可以进行一次"调酒"，使自己瓶中的蒸馏水立刻变为一罐高温的鸡尾酒。如果鸡尾酒自然降回常温则会变回蒸馏水。喝下或被打中的人如果不是攻击目标则只是普通鸡尾酒；如果是敌人，液滴会展现出强大的腐蚀性，像毒蛇一样主动钻入目标身体。被鸡尾酒制造出的伤口无法用常规手段治愈，只能止血并等待自愈。可通过切除更大伤口来解除负面影响——这一治疗方法被粥娘本人称作"醒酒"。'
+    abilityDetail: '「狂乱的鸡尾酒」（CRT-8.4）：随时可以进行一次"调酒"，使自己瓶中的蒸馏水立刻变为一罐高温的鸡尾酒。如果鸡尾酒自然降回常温则会变回蒸馏水。喝下或被打中的人如果不是攻击目标则只是普通鸡尾酒；如果是敌人，液滴会展现出强大的腐蚀性，像毒蛇一样主动钻入目标身体。被鸡尾酒制造出的伤口无法用常规手段治愈，只能止血并等待自愈。可通过切除更大伤口来解除负面影响——这一治疗方法被粥娘本人称作"醒酒"。',
+    tg: '圣标联合, 卢纳森特, 无院区/未共鸣, 序幕'
   },
   boundary: {
     name: 'boundary', title: '「孤尽幻怨」· 圆翼党骨干', avatar: 'M', avatarText: 'B',
@@ -1247,7 +1319,8 @@ const characters = {
     ],
     quotes: ['"免冠以示我微不足道的敬意，罗伊小姐。"', '"计划哪赶得上变化。"', '"别费劲了。你不是帕瓦蒂·罗伊。"', '"如果那神出鬼没的船长真要独身救出他的手下……这就是他们，最后的活路。"'],
     appearances: ['第一卷·第三章：在教堂以「孤尽幻怨」救下礼奈', '第一卷·第十章：识破礼奈的伪装，带她与云略造访船都', '第一卷·第十一至十二章：无海之战，在船舱内独斗亚因森特', '第一卷·第十六章：从深海捞回礼奈，发现生命院的下水管道迷宫'],
-    abilityDetail: '「孤尽幻怨」（CRT-10.0）：以自己为中心释放大量烟雾，范围约20米。烟雾逐渐加重并具有隔音效果，完全展开后可隔绝一切声音。在烟雾中boundary获得行动速度加成，吸入烟雾的敌人抗击打能力被削弱。无论是否戴口罩，烟雾不会对他自身造成影响。'
+    abilityDetail: '「孤尽幻怨」（CRT-10.0）：以自己为中心释放大量烟雾，范围约20米。烟雾逐渐加重并具有隔音效果，完全展开后可隔绝一切声音。在烟雾中boundary获得行动速度加成，吸入烟雾的敌人抗击打能力被削弱。无论是否戴口罩，烟雾不会对他自身造成影响。',
+    tg: '第二代时之秩序, 卢纳森特, 生命院, 序幕'
   },
   hongying: {
     name: '鸿荧', title: '「希冀院」· 桃花源之主 · 第五代战线最高领导者', avatar: 'F', avatarText: '鸿',
@@ -1261,7 +1334,8 @@ const characters = {
     ],
     quotes: ['"若您在战线或桃源有事相托，请尽管与我诉说。"'],
     appearances: ['序幕终章：与道杰斯对弈', '第五卷：芬奈法拉战线现任最高领导者（尚未在主线登场）'],
-    abilityDetail: '希冀院能力持有者——与「绝望院」相对，拥有压制痛苦、激发希望的力量，也是唯一能够将完全解放的道杰斯从深渊中拉回的存在。兼修妖灵一族操纵天候的妖术，能精密调节整片土地的降雨与季风。作为整个时间线空间内近乎全部超能力形式领域的资深学者，是名副其实的妖术大师。'
+    abilityDetail: '希冀院能力持有者——与「绝望院」相对，拥有压制痛苦、激发希望的力量，也是唯一能够将完全解放的道杰斯从深渊中拉回的存在。兼修妖灵一族操纵天候的妖术，能精密调节整片土地的降雨与季风。作为整个时间线空间内近乎全部超能力形式领域的资深学者，是名副其实的妖术大师。',
+    tg: '芬奈法拉战线, 芬奈法拉, 希冀院, 第五卷'
   },
   daojiesi: {
     name: '道杰斯', title: '附魔师 · 「绝望院」能力使', avatar: 'M', avatarText: '道',
@@ -1277,7 +1351,8 @@ const characters = {
     ],
     quotes: ['"幸会。我是道杰斯，一介学者，一名法师。"'],
     appearances: ['序幕终章：与鸿荧对弈', '第五卷：已撕裂"染缸"重返人世，回芬奈法拉协助鸿荧（尚未在主线登场）'],
-    abilityDetail: '「附魔术」：附魔术是一门"信息"的艺术。以引燃青金石为触媒，从随身携带的附魔书中"抽出"术式——高密度魔弹、复杂结界、振奋或削弱目标状态、为武器施加咒印，甚至能在一定范围内随意分配空间的形态、修改物体的物理状态。常携魔剑「花青」，以附魔后的青金石即时铸造剑刃。<br>「绝望院能力」：作为终端四区之一，绝望院对其它能力使有极其明显的克制作用。可为屏障、魔弹与武器附加偏转指令之力的效果，将能力使造成的破坏降至三到四成。「噩梦燃烧」——令「花青」化为被青金石晶体覆盖的双手大剑，燃烧出黑色的火焰，攻击强度强化至原先的数十到数百倍；「光影交锋」——超载绝望之力化为黑雾缠绕强化自身，可轻易单手挥动启动「噩梦燃烧」的魔剑，但仅能维持约三十秒，超时将被绝望之力彻底吞噬。<br>「覆命审判」：持有战线唯一的神谕碎片。在埋藏最多五块充能青金石后，无论距离多远、过了多久，都可立刻在埋藏地制造爆炸，并将范围内记录的所有信息重置到安置时的状态——可以使人真正意义上的"死而复生"，是至今任何技术都无法企及的力量。'
+    abilityDetail: '「附魔术」：附魔术是一门"信息"的艺术。以引燃青金石为触媒，从随身携带的附魔书中"抽出"术式——高密度魔弹、复杂结界、振奋或削弱目标状态、为武器施加咒印，甚至能在一定范围内随意分配空间的形态、修改物体的物理状态。常携魔剑「花青」，以附魔后的青金石即时铸造剑刃。<br>「绝望院能力」：作为终端四区之一，绝望院对其它能力使有极其明显的克制作用。可为屏障、魔弹与武器附加偏转指令之力的效果，将能力使造成的破坏降至三到四成。「噩梦燃烧」——令「花青」化为被青金石晶体覆盖的双手大剑，燃烧出黑色的火焰，攻击强度强化至原先的数十到数百倍；「光影交锋」——超载绝望之力化为黑雾缠绕强化自身，可轻易单手挥动启动「噩梦燃烧」的魔剑，但仅能维持约三十秒，超时将被绝望之力彻底吞噬。<br>「覆命审判」：持有战线唯一的神谕碎片。在埋藏最多五块充能青金石后，无论距离多远、过了多久，都可立刻在埋藏地制造爆炸，并将范围内记录的所有信息重置到安置时的状态——可以使人真正意义上的"死而复生"，是至今任何技术都无法企及的力量。',
+    tg: '芬奈法拉战线, 芬奈法拉, 绝望院, 第五卷'
   },
   wuming: {
     name: '无名（bbq）', aliases: ['bbq', 'Q总', '无名', '本尼艾诺'], title: '传奇·晨霄与暮鼓的共主', avatar: 'M', avatarText: '无',
@@ -1289,7 +1364,8 @@ const characters = {
     ],
     quotes: ['"不错。真是史上最强的学员！你已经觉醒了时光机能力……而且也对我造成了伤害。"', '"我的存在不能在基地里公之于众……如果你要来找我，可以去我们刚才相遇的地方，高喊那个我曾用过的名字——\'bbq\'。"'],
     appearances: ['序章第九章：礼奈的三十秒记忆中', '序章第十六章：中央核心遇袭时以"黑十字"身份出现'],
-    abilityDetail: '具体能力未知。十一年前凭借一己之力终结了席卷世界的"大浩劫"。目前似乎在暗中为基地效力，但基地方面不愿公开这个事实。粥娘的判断："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"'
+    abilityDetail: '具体能力未知。十一年前凭借一己之力终结了席卷世界的"大浩劫"。目前似乎在暗中为基地效力，但基地方面不愿公开这个事实。粥娘的判断："这次行动逼出了基地的王牌……绝对不止是援护灾难这么简单。"',
+    tg: '基地其他部门, 卢纳森特, 决意院, 序幕'
   },
   yiwanlaosi: {
     name: '伊万劳斯', title: '海港主 · 圆翼党领袖', avatar: 'M', avatarText: '伊',
@@ -1302,7 +1378,8 @@ const characters = {
     ],
     quotes: ['"革命的时刻到了。"'],
     appearances: ['第一卷·第七章：在圆翼党地下基地与众会面', '第一卷·第十四章：向外城宣告革命开始'],
-    abilityDetail: '具体能力未知。作为海港主掌控着沃克加德的海港命脉，是圆翼党反抗教皇统治的精神支柱。'
+    abilityDetail: '具体能力未知。作为海港主掌控着沃克加德的海港命脉，是圆翼党反抗教皇统治的精神支柱。',
+    tg: '圆翼党, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   gieniefa: {
     name: '歌涅法', title: '浪庄游击队队长 · 海蓝骑士', avatar: 'F', avatarText: '歌',
@@ -1316,7 +1393,8 @@ const characters = {
     ],
     quotes: ['"我是贫民窟浪庄游击队的队长，歌涅法！引导这片区域的孩子，调节船都内部的各种矛盾……偶尔也整顿整顿陆地上下来的那些坏人。欢迎几位来到我们的基地！"'],
     appearances: ['第一卷·第十章：在船都登场，加入第二代时之秩序', '第一卷·第十一章：为小队驾飞剪船领路，哼起海歌', '第一卷·第十二章：以「幻冥灵骑」驭火狂奔，长枪贯穿巨人', '第一卷·第十六章：与琉璐珀道别，回船都稳定局势'],
-    abilityDetail: '「幻冥灵骑」（CRT-8.8）：幻化出一匹半透明的蓝色战马，骑乘时力量与反应力小幅提升。常以折叠式长枪作战，骑乘时展开长枪发起冲刺。战马依存于她的意志存在，重伤时会自动消散。'
+    abilityDetail: '「幻冥灵骑」（CRT-8.8）：幻化出一匹半透明的蓝色战马，骑乘时力量与反应力小幅提升。常以折叠式长枪作战，骑乘时展开长枪发起冲刺。战马依存于她的意志存在，重伤时会自动消散。',
+    tg: '浪庄游击队, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   liulupo: {
     name: '琉璐珀', title: '船都全科医生', avatar: 'F', avatarText: '琉',
@@ -1330,7 +1408,8 @@ const characters = {
     ],
     quotes: ['"我叫琉璐珀，船都的全科医生。只是比起治病，更擅长潜入和催眠罢了。"'],
     appearances: ['第一卷·第十章：在船都登场，与里昂秘密交接古书', '第一卷·第十六章：临别赠予云略写着"Leon"的小瓶'],
-    abilityDetail: '并非觉醒时光机能力的战斗型能力使。擅长潜入、催眠与高超的医术。与里昂保持秘密联络，似乎掌握着通往内城的特殊途径。'
+    abilityDetail: '并非觉醒时光机能力的战斗型能力使。擅长潜入、催眠与高超的医术。与里昂保持秘密联络，似乎掌握着通往内城的特殊途径。',
+    tg: '其他, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   meinade: {
     name: '梅纳德·庞奇', title: '教皇城海域海盗首领', avatar: 'M', avatarText: '梅',
@@ -1343,7 +1422,8 @@ const characters = {
     ],
     quotes: ['"本海盗团就是负责接济船都的唯一供应商。"', '"拒绝执行此项命令的，同样是我。"'],
     appearances: ['第一卷·第一章：破雾登船，掷出千斤铁锚', '第一卷·第十一章：在无海拦截第二代时之秩序，释放感官抑制剂后被亡灵兔击倒'],
-    abilityDetail: '无明确的时光机能力记载。惯用铺天盖地的白色泡沫——感官抑制剂，隔绝视野、封锁听觉的反能力使毒剂，令能力使沦为待宰的羔羊。'
+    abilityDetail: '无明确的时光机能力记载。惯用铺天盖地的白色泡沫——感官抑制剂，隔绝视野、封锁听觉的反能力使毒剂，令能力使沦为待宰的羔羊。',
+    tg: '其他, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   yayinsente: {
     name: '亚因森特·埃德加', title: '鱼叉手 · 无海巨舰副手', avatar: 'M', avatarText: '亚',
@@ -1356,7 +1436,8 @@ const characters = {
     ],
     quotes: ['"既然得到了我的认可，那就必须彻底消亡。"'],
     appearances: ['第一卷·第十二章：在黑旗舰上与第二代时之秩序决战，海洋之心脱落掀起海啸', '第一卷·第十三章：落败被俘，成为教皇城处刑的对象'],
-    abilityDetail: '披潜水重甲、以一条铁臂作战的巨人，具体能力细节待补。胸前的蓝色水晶"海洋之心"如心脏般跳动，脱落时掀起了十米高的海啸。'
+    abilityDetail: '披潜水重甲、以一条铁臂作战的巨人，具体能力细节待补。胸前的蓝色水晶"海洋之心"如心脏般跳动，脱落时掀起了十米高的海啸。',
+    tg: '蓝河明船, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   lukasen: {
     name: '伦道夫·卢卡森', title: '内城军务部执事领事', avatar: 'M', avatarText: '卢',
@@ -1369,7 +1450,8 @@ const characters = {
     ],
     quotes: ['"这盏油灯，最多还能烧三十分钟。屋里没有光是什么样，我想你自己很清楚。希望咱们合作愉快。"'],
     appearances: ['第一卷·第十三章：在军务部病房审问马萨卡，抛出橄榄枝'],
-    abilityDetail: '「白夜浪客」（CRT-11.9）：以双眼化作光源，用影子绞杀敌人的能力。'
+    abilityDetail: '「白夜浪客」（CRT-11.9）：以双眼化作光源，用影子绞杀敌人的能力。',
+    tg: '其他, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   liang: {
     name: '里昂', title: '「堕乐之园」· 神秘的借书人', avatar: 'M', avatarText: '里',
@@ -1382,7 +1464,8 @@ const characters = {
     ],
     quotes: ['"不能在这里久留。我看见巡逻队了。"'],
     appearances: ['第一卷·第十章：在船都露一面后离去', '第一卷·第十六章：云略手持"Leon"之瓶循迹追踪'],
-    abilityDetail: '「堕乐之园」（CRT-12.3）：驾驭"腐化"侵染并萃取物体内部的"古老的黑暗"，使其化为受他掌控的"腐化之地"。'
+    abilityDetail: '「堕乐之园」（CRT-12.3）：驾驭"腐化"侵染并萃取物体内部的"古老的黑暗"，使其化为受他掌控的"腐化之地"。',
+    tg: '深雾城阵营, 沃克加德, 无院区/未共鸣, 第一卷'
   },
   lannier: {
     name: '兰尼尔', title: '言语辐射病患者', avatar: 'M', avatarText: '兰',
@@ -1395,7 +1478,8 @@ const characters = {
     ],
     quotes: ['"……他说话让人感觉……特别不舒服……"'],
     appearances: ['序幕：在圣标联合登场'],
-    abilityDetail: '患"言语辐射病"——每说一个字，周围的人都会感到强烈的压迫与慌乱。'
+    abilityDetail: '患"言语辐射病"——每说一个字，周围的人都会感到强烈的压迫与慌乱。',
+    tg: '圣标联合, 卢纳森特, 无院区/未共鸣, 序幕'
   },
   lainuo: {
     name: '莱诺', title: '卢纳森特基地最高领导人', avatar: 'M', avatarText: '莱',
@@ -1405,7 +1489,140 @@ const characters = {
     bonds: [],
     quotes: [],
     appearances: ['序幕：在中央核心向第二代时之秩序下达沃克加德任务'],
-    abilityDetail: '非能力使。卢纳森特基地的最高领导人。'
+    abilityDetail: '非能力使。卢纳森特基地的最高领导人。',
+    tg: '初代时之秩序, 卢纳森特, 真理院, 第一卷'
+  },
+  wanjiete: {
+    name: '万杰特', title: '「创世之耀」· 初代时之秩序', avatar: 'M', avatarText: '万',
+    crt: '12.3（创世之耀）/ 14.0（日昳散）', ability: '创世之耀 + 日昳散',
+    tg: '初代时之秩序, 卢纳森特, 救赎院, 序幕',
+    identity: '初代时之秩序的成员，神器「创世之耀」的持有者',
+    personality: '初代时之秩序的核心战力之一。凭借神器「创世之耀」——一把白色石英大剑——在战场上无往不利。在绝境中能解放「日昳散」，点燃大剑进入狂暴状态，即便生理性死亡后仍能继续战斗。',
+    bonds: [
+      { with: '莱诺', type: '初代战友', desc: '与莱诺同为初代时之秩序成员，共同经历了无数战斗。' },
+      { with: '杏子', type: '初代战友', desc: '同为初代成员，在战斗中相互掩护。' }
+    ],
+    quotes: ['"创世之耀——归于我手！"'],
+    appearances: ['序幕：作为初代时之秩序成员被提及'],
+    abilityDetail: '「创世之耀」（CRT-12.3）：神器能力。获得驾驭白色石英大剑「创世之耀」的能力——可远程召唤、火焰附魔、强制瞬移目标至剑下、高温射线。\n「日昳散」（CRT-14.0）：解放阶段，点燃大剑进入22秒狂暴——切断痛觉与听觉、爆发移动速度、每次攻击强制瞬移3名敌人。22秒后重置为毫发无损状态，但5分钟内无法再使用能力。'
+  },
+  hongmao: {
+    name: '红猫', title: '「间力乱流」· 圣标联合', avatar: 'F', avatarText: '猫',
+    crt: '12.5', ability: '间力乱流',
+    tg: '圣标联合, 卢纳森特, 赦除院, 序幕',
+    identity: '圣标联合能力使，异猫族裔，拥有异常严重的辐射病',
+    personality: '具有异猫族裔的超常身体素质和反应速度。使用一把鞭刃作战，战斗中如红色噩梦般席卷全场。因辐射病的困扰而很少完全解放能力，但一旦释放便势不可挡。在考核中曾对高速移动的对手说：“别乱动弹了，我不想误伤你。”',
+    bonds: [
+      { with: '正义', type: '圣标联合同僚', desc: '同为圣标联合成员，多次共同执行任务。' }
+    ],
+    quotes: ['“别乱动弹了，我不想误伤你。对不长眼的刀刃够快，但是对我来说……实在是太慢了。”'],
+    appearances: ['序幕：圣标联合成员，特别行动部能力测试'],
+    abilityDetail: '「间力乱流」（CRT-12.5）：以自己为中心捕获范围内的各种力并进行模拟——模拟力最大可达被模拟力的70%。可自由决定作用对象和方向，用法包括隔空打击、偏转攻击、增强鞭刃、甚至让自己飞行。半径8m。'
+  },
+  jingjue: {
+    name: '靖珏', title: '「狭明万象」· 圣标联合', avatar: 'F', avatarText: '靖',
+    crt: '10.6', ability: '狭明万象',
+    tg: '圣标联合, 卢纳森特, 重构院, 序幕',
+    identity: '圣标联合能力使，传送门能力者',
+    personality: '机灵而略带调皮。喜欢在能力记录报告上乱加批注，被粥娘抱怨过“你能不能别在我的能力记录报告上瞎加批注”。战斗中善用传送门创造灵活的战术优势。',
+    bonds: [
+      { with: '粥娘', type: '测试与被测试', desc: '粥娘负责记录她的能力数据，但总被她加满搞怪批注。' }
+    ],
+    quotes: ['“你能不能别在我的能力记录报告上瞎加批注，靖珏？”（粥娘对她的抱怨）'],
+    appearances: ['序幕：圣标联合成员，特别行动部能力测试'],
+    abilityDetail: '「狭明万象」（CRT-10.6）：为手持物体加注指令之力，在物体远离手持端处撕裂空间形成传送门奇点。可自由缩短手持物体长度。传送门存在25秒，可开启“斩杀模式”自由操纵传送门大小——因体积过大不能完全通过的物体会被部分传送而切割。最大范围直线125m，连续释放时急剧衰减至15m。'
+  },
+  pulanqiang: {
+    name: '普兰奇昂', title: '「装甲大师」· 初代时之秩序', avatar: 'M', avatarText: '普',
+    crt: '10.5', ability: '装甲大师',
+    tg: '初代时之秩序, 卢纳森特, 救赎院, 序幕',
+    identity: '初代时之秩序成员，防御型能力使',
+    personality: '稳重的支援型能力使。为队友提供隐形装甲保护，是队伍中不可或缺的防御支柱。能力表现形式为一件轻便精良的防弹背心。',
+    bonds: [
+      { with: '莱诺', type: '初代战友', desc: '同为初代时之秩序成员，担任队伍的防御核心。' }
+    ],
+    quotes: [],
+    appearances: ['序幕：作为初代时之秩序成员被提及'],
+    abilityDetail: '「装甲大师」（CRT-10.5）：平时表现为防弹背心。穿上后可释放三个能力（共享10分钟冷却）：①为最多10人套上隐形轻甲（3分钟）；②为最多2人套上10倍重量隐形重甲（10秒）；③操控最多3人的盔甲使其移动或飞行（2分钟）。自身前方或后方半径8m扇形范围。'
+  },
+  xingzi: {
+    name: '杏子', title: '「电照掣集」· 初代时之秩序', avatar: 'F', avatarText: '杏',
+    crt: '9.6', ability: '电照掣集',
+    tg: '初代时之秩序, 卢纳森特, 解放院, 序幕',
+    identity: '初代时之秩序成员，电场操控能力使',
+    personality: '温和务实，很少将能力用于战斗，更多用于日常生活和科研试验。能力爆发时可制造瞬时值高达千万伏的电压，但日常中更常被用来给电器充电或在非正式飞镖比赛中作弊。',
+    bonds: [
+      { with: '莱诺', type: '初代战友', desc: '同为初代时之秩序成员。' }
+    ],
+    quotes: [],
+    appearances: ['序幕：作为初代时之秩序成员被提及'],
+    abilityDetail: '「电照掣集」（CRT-9.6）：对范围内的任意两点施加电场。用途包括释放电流、球形闪电、引来雷电、控制/摧毁电子设备、间接控制磁场移动铁质物体、在导体中制造电流使其熔化、弱电流麻痹神经系统。以自己为球心半径10m空间范围内任意两点。'
+  },
+  qibi: {
+    name: '奇比', title: '「无穷酒馆」· 初代时之秩序 · 检察院院长', avatar: 'F', avatarText: '奇',
+    crt: '6.0', ability: '无穷酒馆',
+    tg: '初代时之秩序, 卢纳森特, 无院区/未共鸣, 序幕',
+    identity: '初代时之秩序成员，现任检察院院长',
+    personality: '性格大大咧咧，有着让人费解的古怪举动——比如把办公室廊道全换成路灯跑酷设施。拥有连接“无穷酒馆”的神秘能力，酒馆里全是和她长得一样的“奇比”。对自己的能力习以为常，甚至因为酒馆给所有“奇比”打五折而乐在其中。',
+    bonds: [
+      { with: '莱诺', type: '初代战友', desc: '同为初代时之秩序成员。' }
+    ],
+    quotes: ['“那家酒馆给所有‘奇比’打五折！”'],
+    appearances: ['序幕：作为初代时之秩序成员被提及'],
+    abilityDetail: '「无穷酒馆」（CRT-6.0）：可能在任何拐角处消失，进入一扇门后出现在一家昏暗酒馆的木制走廊上。酒馆里全是和她长得一样的“奇比”。会主动躲避其他人——只有奇比独自一人时才会出现。该能力的范围“完全无法侦测”，面板全C仅为奇比日常行动范围的平均值。'
+  },
+  twikyo: {
+    name: 'Twikyo', title: '「西格玛谜题」· 基地检察院', avatar: 'M', avatarText: 'T',
+    crt: '10.5', ability: '西格玛谜题',
+    tg: '基地其他部门, 卢纳森特, 真理院, 序幕',
+    identity: '卢纳森特基地检察院成员，重力操控能力使',
+    personality: '冷静理性的重力使。能力选择奇数个目标→加重，偶数个目标→失重——这种“西格玛谜题”式的规则让他在战斗中需要精心计算目标数量。在范围内超过16个目标时自己也会受到影响。',
+    bonds: [
+      { with: '奇比', type: '检察院长官', desc: '在检察院院长奇比的领导下工作。' }
+    ],
+    quotes: [],
+    appearances: ['序幕：基地检察院成员'],
+    abilityDetail: '「西格玛谜题」（CRT-10.5）：控制重力。奇数个目标→全部加重；偶数个目标→全部失重。范围内目标越多、质量越大，效果越明显。超过16个目标时自身也会受影响。无法单独解除——只能全体解除后进入冷却。以自己为中心底面半径15m高8m的圆柱范围。'
+  },
+  xiuwaerzha: {
+    name: '修瓦尔扎', title: '「长终」· 黑死神解放者 · 芬奈法拉战线创立者', avatar: 'F', avatarText: '修',
+    crt: '18.0（长终）/ 15.8（劣化长终）', ability: '长终 / 劣化长终',
+    tg: '芬奈法拉战线, 芬奈法拉, 永恒院, 第三卷',
+    identity: '芬奈法拉战线创立者，黑死神艾威尔的解放者，时间停止能力使',
+    personality: '芬奈法拉的原住民，以一人之力解放了被囚禁的黢镰冥神艾威尔，并组建“芬奈法拉战线”团结整个时空对抗苍镰诡神艾克森。沉稳坚毅，有着跨越千年的信念与担当。后遭阿芙忒乐尔斯特的「名实的分离」洗脑改造，能力大幅下降。',
+    bonds: [
+      { with: '阿芙忒乐尔斯特', type: '宿敌', desc: '被阿芙忒以「名实的分离」洗脑改造，能力被劣化。' },
+      { with: '鸿荧', type: '战线传承', desc: '芬奈法拉战线的创立者，战线领导权后传至鸿荧。' }
+    ],
+    quotes: ['“长终。”（发动能力的施术号令）', '“请不要对艾威尔大人的意志作无谓的抗争。我们尽快结束吧。”'],
+    appearances: ['第三卷：洛琛顿时间线，与阿芙忒乐尔斯特的最终战'],
+    abilityDetail: '「长终」（CRT-18.0）：扭转怀表发条后，下次接触的物品变为“时间炸弹”——爆炸造成贯穿力极强的音波打击并停止范围内一切生命的活动12-20s。在时停范围内可自由移动，速度与力量增强。时停优先级最高——可打断一切时光机能力。以投掷物为中心12m×12m×12m范围。\n「劣化长终」（CRT-15.8）：被阿芙忒洗脑改造后的削弱态，效果相近但范围与持续时间略有下降。云略的「流光」是此能力的进一步削弱态。'
+  },
+  afuteleersite: {
+    name: '阿芙忒乐尔斯特', title: '「死神首席」· 腐化之主 · 神之仆从', avatar: 'F', avatarText: '芙',
+    crt: '13.1（暗月淑女）/ 15.9（浊梦尖啸）/ 16.1（名实的分离）', ability: '暗月淑女 + 浊梦尖啸 + 名实的分离',
+    tg: '死神首席, 洛琛顿, 解放院, 第三卷最终战',
+    identity: '死神首席成员，三大“神之仆从”之一，腐化之力的化身',
+    personality: '来自洛琛顿的死神信徒。狡诈而疯狂——将“腐化”注入本我核心导致洛琛顿毁灭，自己也被腐化同化，依靠吞噬时间线维持形体。作为三大神之仆从的一员，她的野心与力量同样深不可测。',
+    bonds: [
+      { with: '修瓦尔扎', type: '宿敌', desc: '以「名实的分离」洗脑改造了修瓦尔扎，使其能力劣化。' }
+    ],
+    quotes: ['“难道你以为，仅凭这种拙劣的工艺……也能挡住我？！”', '“……你可曾畏服于所谓‘时空’？”'],
+    appearances: ['第三卷最终战：洛琛顿时间线，与芬奈法拉战线的决战'],
+    abilityDetail: '「暗月淑女」（CRT-13.1）：驾驭腐化术——侵染并萃取物体内部”古老的黑暗”使其变为腐化之地。在腐化之地上可操纵地表、召唤恶念造物（腐化植物、触手、怪物）。范围内所有指令之力削弱。接触指令之力时加速蔓延。成熟阶段引发”完全扭曲状态”——幻觉与认知失常。半径30m，理论无限。\n「浊梦尖啸」（CRT-15.9）：引爆腐化之地或孢子，沿爆炸轨迹冲锋（接近光速）——汲取精神力强化防御。腐化稀薄时闪烁至最近睁眼者的视野中。闪现30m，俯冲1000m。\n「名实的分离」（CRT-16.1）：提取目标的”掌心精神世界”判定精神状态。处于完全扭曲状态且体能不支时可改写其精神世界——幻觉可能变为现实造成物理伤害。可捏碎精神世界以洗脑目标。同时作用于暗月淑女范围内所有完全扭曲状态的目标。'
+  },
+  wendi: {
+    name: '温蒂', title: '「狂卷残鸣」· 「永黯双子」· 龙眼海盗团', avatar: 'F', avatarText: '温',
+    crt: '9.8（狂卷残鸣）/ 8.7（永黯双子）', ability: '狂卷残鸣 + 永黯双子',
+    tg: '龙眼海盗团, 沃克加德, 重构院, 第二卷',
+    identity: '龙眼海盗团成员，双生能力使',
+    personality: '拥有两个独立能力的罕见双生能力使。性格复杂多面——狂卷残鸣的狂暴与永黯双子的沉默在她身上形成鲜明对比。在海盗团中以双能力著称，是龙眼海盗团的王牌战力之一。',
+    bonds: [
+      { with: '里昂', type: '同船战友', desc: '与里昂同属龙眼海盗团，在其麾下并肩作战。' }
+    ],
+    quotes: [],
+    appearances: ['第二卷：沃克加德时间线，龙眼海盗团'],
+    abilityDetail: '「狂卷残鸣」（CRT-9.8）：通过声音制造并操控空气振动波——高声呼喊时能力增幅。效果包括波动弹飞、吹飞爆破、声波屏障、超声波探测、音爆推进器，最高温度可达300°C。最大直线40m，范围半径16m。\n「永黯双子」（CRT-8.7）：提取两个目标的记忆并实体化为怪物。实体化的怪物会复制目标的外貌特征并攻击对方。持续时间5分钟，每24小时只能使用1次。半径8m。'
   }
 };
 
@@ -1438,30 +1655,111 @@ const terms = {
   twilight_breaker: { name: '「暮蓝隙行」', content: '蓝色狼耳的神秘能力使。黑炎能够侵蚀空间本身，将触及的一切瞬间湮灭。曾与正义交手，凭借「曼菲斯菲的审判日」的金色铆钉才勉强逼退他。' }
 };
 
+// ===== CHARACTER TAG FILTER =====
+const characterFilter = { camps: [], tl: [], ward: [], vol: [] };
+
+function parseCharTg(c) {
+  const p = (c.tg || '').split(',');
+  return {
+    camps: (p[0] || '').split('|').map(s => s.trim()).filter(Boolean),
+    tl:    (p[1] || '').trim(),
+    ward:  (p[2] || '').trim(),
+    vol:   (p[3] || '').trim()
+  };
+}
+
+function matchesCharFilter(c) {
+  const t = parseCharTg(c);
+  if (characterFilter.camps.length && !t.camps.some(c => characterFilter.camps.includes(c))) return false;
+  if (characterFilter.tl.length   && !characterFilter.tl.includes(t.tl)) return false;
+  if (characterFilter.ward.length && !characterFilter.ward.includes(t.ward)) return false;
+  if (characterFilter.vol.length  && !characterFilter.vol.includes(t.vol)) return false;
+  return true;
+}
+
+function renderCharFilterBars() {
+  const nav = document.getElementById('characterNav');
+  if (!nav) return;
+  let html = '';
+  ['camps', 'tl', 'ward', 'vol'].forEach(cat => {
+    const meta = abilityTags[cat];
+    const sel = characterFilter[cat];
+    html += '<div class="tag-filter-bar">';
+    html += '<span class="tag-filter-label">' + escHtml(meta.label) + '</span>';
+    html += '<button class="tag-filter-btn' + (sel.length ? '' : ' active') + '" onclick="setCharFilter(\'' + cat + '\',\'\')">全部</button>';
+    meta.values.forEach(v => {
+      const on = sel.includes(v);
+      html += '<button class="tag-filter-btn' + (on ? ' active' : '') + '" onclick="setCharFilter(\'' + cat + '\',\'' + v.replace(/'/g, "\\'") + '\')">' + escHtml(v) + '</button>';
+    });
+    html += '</div>';
+  });
+  nav.innerHTML = html;
+}
+
+function setCharFilter(cat, val) {
+  const sel = characterFilter[cat];
+  if (val === '') {
+    characterFilter[cat] = [];
+  } else {
+    const i = sel.indexOf(val);
+    if (i >= 0) sel.splice(i, 1);
+    else sel.push(val);
+  }
+  renderCharFilterBars();
+  buildCharCards(document.getElementById('charSearch').value);
+}
+
 // ===== BUILD CHARACTER CARDS =====
-function buildCharCards(filter = '') {
+function buildCharCards(filter = '', tagMode = false) {
   const grid = document.getElementById('charGrid');
   const entries = Object.entries(characters);
-  const filtered = filter ? entries.filter(([k, c]) => {
-    const q = filter.toLowerCase();
-    return c.name.toLowerCase().includes(q) || c.title.toLowerCase().includes(q) || c.ability.toLowerCase().includes(q) || c.identity.toLowerCase().includes(q);
-  }) : entries;
+  const filtered = entries.filter(([k, c]) => {
+    // Text search
+    if (filter) {
+      const q = filter.toLowerCase();
+      if (!c.name.toLowerCase().includes(q) && !c.title.toLowerCase().includes(q) && !c.ability.toLowerCase().includes(q) && !c.identity.toLowerCase().includes(q)) return false;
+    }
+    // Tag filter
+    return matchesCharFilter(c);
+  });
 
-  grid.innerHTML = filtered.map(([key, c]) => `
-    <div class="chapter-card" onclick="openChar('${key}')" style="cursor:pointer;">
-      <div class="card-num">CRT ${c.crt} · ${c.ability}</div>
-      <div class="card-title">${c.name} <span style="font-size:0.7em; color:var(--text-dim);">${c.title.split('·')[0]}</span></div>
-      <div class="card-desc">${c.identity}</div>
-      <div class="card-tags">
-        ${c.bonds.slice(0,3).map(b => `<span class="card-tag">${b.with}</span>`).join('')}
-      </div>
-    </div>
-  `).join('');
+  // Tag chip colors
+  const catColors = { camps: '#4a9eff', tl: '#e67e22', ward: '#9b59b6', vol: '#2ecc71' };
+
+  grid.innerHTML = filtered.length ? filtered.map(([key, c]) => {
+    const effective = getEffectiveCharTg(key);
+    let tagChipsHtml = '';
+    if (tagMode && effective) {
+      tagChipsHtml = '<div class="tag-chips-row" style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px;">';
+      effective.camps.forEach(v => {
+        tagChipsHtml += '<span class="tag-chip" style="background:' + catColors.camps + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:0.72em;display:inline-flex;align-items:center;gap:2px;">阵营:' + escHtml(v) + ' <span class="tag-chip-x" onclick="event.stopPropagation();removeCharTag(\'' + key + '\',\'camps\',\'' + v.replace(/'/g, "\\'") + '\')" style="cursor:pointer;font-weight:bold;">×</span></span>';
+      });
+      if (effective.tl) {
+        tagChipsHtml += '<span class="tag-chip" style="background:' + catColors.tl + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:0.72em;display:inline-flex;align-items:center;gap:2px;">时间线:' + escHtml(effective.tl) + ' <span class="tag-chip-x" onclick="event.stopPropagation();removeCharTag(\'' + key + '\',\'tl\',\'' + effective.tl.replace(/'/g, "\\'") + '\')" style="cursor:pointer;font-weight:bold;">×</span></span>';
+      }
+      if (effective.ward) {
+        tagChipsHtml += '<span class="tag-chip" style="background:' + catColors.ward + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:0.72em;display:inline-flex;align-items:center;gap:2px;">院区:' + escHtml(effective.ward) + ' <span class="tag-chip-x" onclick="event.stopPropagation();removeCharTag(\'' + key + '\',\'ward\',\'' + effective.ward.replace(/'/g, "\\'") + '\')" style="cursor:pointer;font-weight:bold;">×</span></span>';
+      }
+      if (effective.vol) {
+        tagChipsHtml += '<span class="tag-chip" style="background:' + catColors.vol + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:0.72em;display:inline-flex;align-items:center;gap:2px;">卷目:' + escHtml(effective.vol) + ' <span class="tag-chip-x" onclick="event.stopPropagation();removeCharTag(\'' + key + '\',\'vol\',\'' + effective.vol.replace(/'/g, "\\'") + '\')" style="cursor:pointer;font-weight:bold;">×</span></span>';
+      }
+      tagChipsHtml += '<span class="tag-chip-add" onclick="event.stopPropagation();showTagPicker(\'' + key + '\',event)" style="background:transparent;border:1px dashed var(--border);color:var(--text-dim);padding:1px 6px;border-radius:10px;font-size:0.72em;cursor:pointer;">＋ 添加</span>';
+      tagChipsHtml += '</div>';
+    }
+    return '<div class="chapter-card" onclick="' + (tagMode ? 'event.preventDefault()' : 'openChar(\'' + key + '\')') + '" style="cursor:' + (tagMode ? 'default' : 'pointer') + ';">\n' +
+      '      <div class="card-num">CRT ' + c.crt + ' · ' + c.ability + '</div>\n' +
+      '      <div class="card-title">' + c.name + ' <span style="font-size:0.7em; color:var(--text-dim);">' + c.title.split('·')[0] + '</span></div>\n' +
+      '      <div class="card-desc">' + c.identity + '</div>\n' +
+      '      <div class="card-tags">\n' +
+      '        ' + c.bonds.slice(0,3).map(b => '<span class="card-tag">' + b.with + '</span>').join('') + '\n' +
+      '      </div>\n' + tagChipsHtml +
+      '    </div>';
+  }).join('') : '<div class="ability-empty">没有匹配的角色，请调整筛选条件或搜索关键词。</div>';
 }
 
 function filterCharacters() {
   const q = document.getElementById('charSearch').value;
-  buildCharCards(q);
+  buildCharCards(q, reviewMode === 'tag');
 }
 
 // ===== OPEN CHARACTER MODAL =====
@@ -1673,7 +1971,8 @@ const timelineData = [
     factions: ['卢纳森特基地', '第二代时之秩序', '圣标联合', '苛志室'],
     characters: ['yunlue', 'linai', 'masaka', 'kenuo', 'wanglingtu', 'laikesi', 'zhouniang', 'zhengyi', 'wuming'],
     settings: ['timeline', 'command_force', 'crt', 'kezhi_room', 'memory', 'staff', 'judgement_day'],
-    section: 'pro-ch1'
+    section: 'pro-ch1',
+    tg: '初代时之秩序, 卢纳森特, 真理院, 第一卷'
   },
   {
     key: 'wokgard', icon: '⚓', name: '沃克加德时间线', tag: '第一卷',
@@ -1819,6 +2118,9 @@ document.querySelectorAll('.sidebar .chap-link').forEach(function(a) {
 
 // ===== INIT =====
 initTheme();
+loadCustomCategoryValues();
+applyStoredCharTags();
+renderCharFilterBars();
 buildCharCards();
 
 // ===== SPOILER TOGGLE =====
@@ -1888,7 +2190,7 @@ function hasDirectText(el) {
 }
 function getReviewableElement(el) {
   if (!el || el.nodeType !== 1) return null;
-  if (el.closest('.ann-popup, .ann-badge, .pw-dialog, .pw-box, .export-modal, .export-box, #secretTooltip, .review-toggle, #reviewModeBar, .spoiler-mark, .load-dialog')) return null;
+  if (el.closest('.ann-popup, .ann-badge, .pw-dialog, .pw-box, .export-modal, .export-box, #secretTooltip, .review-toggle, #reviewModeBar, .spoiler-mark, .load-dialog, .tag-picker, .cat-mgr-dlg, .tag-chip-x, .tag-chip-add')) return null;
   if (el.closest('button, input, textarea, select')) return null;
   let node = el;
   for (let i = 0; i < 6 && node && node.nodeType === 1; i++) {
@@ -1958,9 +2260,11 @@ function enterReviewMode() {
   btn.classList.add('active');
   btn.textContent = '✅ 退出审阅';
 
-  hint.textContent = '💡 审阅模式：点击任意文字添加批注；切换到「✏️ 编辑模式」可直接修改页面文字。';
+  hint.textContent = '💡 审阅模式：点击任意文字添加批注；切换到「✏️ 编辑模式」可直接修改页面文字；「🏷 标签」管理角色分类标签。';
   hint.classList.add('show');
 
+  loadCustomCategoryValues();
+  applyStoredCharTags();
   applyStoredEdits();
   renderAllBadges();
   addModeButtons();
@@ -1998,6 +2302,9 @@ function exitReviewMode() {
   removeClearButton();
   removeBackupButton();
   removeHistoryButtons();
+  removeTagPicker();
+  removeCategoryManager();
+  if (reviewMode === 'tag') exitTagMode();
 
   document.removeEventListener('click', reviewDocClick, true);
   document.removeEventListener('keydown', reviewKeydown, true);
@@ -2217,16 +2524,17 @@ function clearAllAnnotations() {
 }
 
 // ── 审阅模式：任意文字点击分发（批注 / 编辑 双模式） ──
-let reviewMode = 'annotate';   // 'annotate' | 'edit'
+let reviewMode = 'annotate';   // 'annotate' | 'edit' | 'tag'
 function reviewDocClick(e) {
   if (!reviewModeActive) return;
-  if (e.target.closest('.ann-popup, .ann-badge, #reviewModeBar, .review-toggle, .pw-dialog, .pw-box, .export-modal, .export-box, #secretTooltip, .load-dialog')) return;
+  if (e.target.closest('.ann-popup, .ann-badge, #reviewModeBar, .review-toggle, .pw-dialog, .pw-box, .export-modal, .export-box, #secretTooltip, .load-dialog, .tag-picker, .cat-mgr-dlg')) return;
   const el = getReviewableElement(e.target);
   if (!el) return;
   e.stopPropagation();
   e.preventDefault();
   const path = getStablePath(el);
   if (reviewMode === 'edit') startInlineEdit(el, path);
+  else if (reviewMode === 'tag') return; // tag mode handled by card click events
   else showAnnotationPopup(el, path);
 }
 
@@ -2236,16 +2544,18 @@ function addModeButtons() {
   const bar = document.createElement('div');
   bar.id = 'reviewModeBar';
   bar.style.cssText = 'position:fixed; left:20px; bottom:98px; z-index:1100; display:flex; gap:8px;';
-  const mk = function(id, label) {
+  const mk = function(id, label, mode) {
     const b = document.createElement('button');
     b.id = id; b.className = 'review-toggle';
     b.textContent = label; b.style.position = 'static';
-    b.addEventListener('click', function() { setReviewMode(id === 'editModeBtn' ? 'edit' : 'annotate'); });
+    b.addEventListener('click', function() { setReviewMode(mode); });
     return b;
   };
-  const ab = mk('annotateModeBtn', '💬 批注模式');
-  const eb = mk('editModeBtn', '✏️ 编辑模式');
-  bar.appendChild(ab); bar.appendChild(eb);
+  const ab = mk('annotateModeBtn', '💬 批注模式', 'annotate');
+  const eb = mk('editModeBtn', '✏️ 编辑模式', 'edit');
+  const tb = mk('tagModeBtn', '🏷 标签', 'tag');
+  const gb = mk('catMgrBtn', '⚙ 种类', 'catmgr');
+  bar.appendChild(ab); bar.appendChild(eb); bar.appendChild(tb); bar.appendChild(gb);
   document.body.appendChild(bar);
   setReviewMode(reviewMode, true);
 }
@@ -2254,18 +2564,271 @@ function removeModeButtons() {
   if (bar) bar.remove();
 }
 function setReviewMode(m, silent) {
+  if (m === 'catmgr') { showCategoryManager(); return; }
+  // Exit previous tag mode if switching away
+  if (reviewMode === 'tag' && m !== 'tag') exitTagMode();
   reviewMode = m;
   const ab = document.getElementById('annotateModeBtn');
   const eb = document.getElementById('editModeBtn');
+  const tb = document.getElementById('tagModeBtn');
   if (ab) ab.classList.toggle('active', m === 'annotate');
   if (eb) eb.classList.toggle('active', m === 'edit');
+  if (tb) tb.classList.toggle('active', m === 'tag');
+  if (m === 'tag') enterTagMode();
   if (silent) return;
   const hint = document.getElementById('reviewHint');
   hint.textContent = m === 'edit'
     ? '✏️ 编辑模式：点击任意文字可直接修改；点击其它位置保存，按 Esc 取消。'
+    : m === 'tag'
+    ? '🏷 标签模式：点击标签上的 × 移除；点击 ＋ 添加新标签；⚙ 种类 管理分类。'
     : '💬 批注模式：点击任意文字添加批注。';
   hint.classList.add('show');
 }
+
+// ── 标签编辑模式 ──
+const CHAR_TAGS_KEY = 'lumen-char-tags';
+const _charOrigTg = {}; // backup of original tg values for safe restore
+
+function getCharTagOverrides() {
+  try { return JSON.parse(localStorage.getItem(CHAR_TAGS_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+
+function saveCharTagOverrides(data) {
+  localStorage.setItem(CHAR_TAGS_KEY, JSON.stringify(data));
+}
+
+// Merge stored overrides into character tg fields (safe: restores originals first)
+function applyStoredCharTags() {
+  // Restore originals first
+  Object.entries(_charOrigTg).forEach(([key, orig]) => {
+    if (characters[key]) characters[key].tg = orig;
+  });
+  // Save current as originals if not saved yet
+  Object.keys(characters).forEach(key => {
+    if (!(key in _charOrigTg)) _charOrigTg[key] = characters[key].tg;
+  });
+  // Apply overrides on top of originals
+  const overrides = getCharTagOverrides();
+  Object.entries(overrides).forEach(([key, ov]) => {
+    if (!characters[key]) return;
+    const orig = parseCharTg(characters[key]);
+    const merged = {
+      camps: ov.camps && ov.camps.length ? ov.camps : orig.camps,
+      tl: ov.tl || orig.tl,
+      ward: ov.ward || orig.ward,
+      vol: ov.vol || orig.vol
+    };
+    characters[key].tg = merged.camps.join('|') + ', ' + merged.tl + ', ' + merged.ward + ', ' + merged.vol;
+  });
+}
+
+// Get effective (current) tags for a character, considering overrides
+function getEffectiveCharTg(charKey) {
+  const overrides = getCharTagOverrides();
+  const c = characters[charKey];
+  if (!c) return null;
+  // Use original tg if available, otherwise current tg
+  const baseTg = _charOrigTg[charKey] || c.tg;
+  const orig = parseCharTg({tg: baseTg});
+  const ov = overrides[charKey] || {};
+  return {
+    camps: ov.camps && ov.camps.length ? ov.camps : orig.camps,
+    tl: ov.tl || orig.tl,
+    ward: ov.ward || orig.ward,
+    vol: ov.vol || orig.vol
+  };
+}
+
+function enterTagMode() {
+  removeAllBadges();
+  buildCharCards(document.getElementById('charSearch').value, true);
+}
+
+function exitTagMode() {
+  removeTagPicker();
+  removeCategoryManager();
+  buildCharCards(document.getElementById('charSearch').value, false);
+}
+
+function addCharTag(charKey, cat, val) {
+  const overrides = getCharTagOverrides();
+  if (!overrides[charKey]) overrides[charKey] = {};
+  if (cat === 'camps') {
+    if (!overrides[charKey].camps) {
+      overrides[charKey].camps = [...parseCharTg(characters[charKey]).camps];
+    }
+    if (!overrides[charKey].camps.includes(val)) overrides[charKey].camps.push(val);
+  } else {
+    overrides[charKey][cat] = val;
+  }
+  saveCharTagOverrides(overrides);
+  applyStoredCharTags();
+  removeTagPicker();
+  buildCharCards(document.getElementById('charSearch').value, true);
+}
+
+function removeCharTag(charKey, cat, val) {
+  const overrides = getCharTagOverrides();
+  if (!overrides[charKey]) overrides[charKey] = {};
+  if (cat === 'camps') {
+    if (!overrides[charKey].camps) {
+      overrides[charKey].camps = [...parseCharTg(characters[charKey]).camps];
+    }
+    overrides[charKey].camps = overrides[charKey].camps.filter(v => v !== val);
+  } else {
+    // Reset to original value (or empty)
+    overrides[charKey][cat] = '';
+  }
+  // Clean up empty overrides
+  const ov = overrides[charKey];
+  if (!ov.camps || !ov.camps.length) delete ov.camps;
+  if (!ov.tl && !ov.ward && !ov.vol && (!ov.camps || !ov.camps.length)) {
+    delete overrides[charKey];
+  }
+  saveCharTagOverrides(overrides);
+  applyStoredCharTags();
+  buildCharCards(document.getElementById('charSearch').value, true);
+}
+
+// ── Tag picker (floating popup to add a tag to a character) ──
+function showTagPicker(charKey, ev) {
+  removeTagPicker();
+  const picker = document.createElement('div');
+  picker.className = 'tag-picker';
+  picker.id = 'tagPicker';
+  picker.innerHTML = '<div class="tag-picker-tabs">' +
+    ['camps','tl','ward','vol'].map(cat =>
+      '<button class="tag-picker-tab' + (cat==='camps'?' active':'') + '" onclick="switchTagPickerTab(\''+cat+'\')">' + abilityTags[cat].label + '</button>'
+    ).join('') +
+    '</div><div class="tag-picker-body" id="tagPickerBody"></div>' +
+    '<button class="tag-picker-close" onclick="removeTagPicker()">✕</button>';
+  picker.dataset.charKey = charKey;
+  document.body.appendChild(picker);
+  // Position near click
+  picker.style.left = Math.min(ev.clientX, window.innerWidth - 260) + 'px';
+  picker.style.top = Math.min(ev.clientY, window.innerHeight - 280) + 'px';
+  switchTagPickerTab('camps');
+}
+
+function switchTagPickerTab(cat) {
+  const picker = document.getElementById('tagPicker');
+  if (!picker) return;
+  picker.querySelectorAll('.tag-picker-tab').forEach(t => t.classList.toggle('active', t.textContent === abilityTags[cat].label));
+  const body = document.getElementById('tagPickerBody');
+  const charKey = picker.dataset.charKey;
+  const current = getEffectiveCharTg(charKey);
+  const isInCurrent = cat === 'camps'
+    ? (v) => current.camps.includes(v)
+    : (v) => current[cat] === v;
+  body.innerHTML = abilityTags[cat].values.map(v => {
+    const has = isInCurrent(v);
+    return '<button class="tag-picker-val' + (has ? ' has' : '') + '" ' + (has ? 'disabled' : '') + ' onclick="addCharTag(\'' + charKey + '\',\'' + cat + '\',\'' + v.replace(/'/g, "\\'") + '\')">' + escHtml(v) + (has ? ' ✓' : '') + '</button>';
+  }).join('');
+}
+
+function removeTagPicker() {
+  const p = document.getElementById('tagPicker');
+  if (p) p.remove();
+}
+
+// ── Category manager ──
+function showCategoryManager() {
+  removeCategoryManager();
+  const dlg = document.createElement('div');
+  dlg.className = 'cat-mgr-dlg';
+  dlg.id = 'catMgrDlg';
+  let html = '<div class="cat-mgr-header">⚙ 管理标签种类<button class="cat-mgr-close" onclick="removeCategoryManager()">✕</button></div>';
+  html += '<div class="cat-mgr-body">';
+  ['camps','tl','ward','vol'].forEach(cat => {
+    html += '<div class="cat-mgr-cat"><strong>' + abilityTags[cat].label + '</strong>';
+    html += '<div class="cat-mgr-vals">';
+    abilityTags[cat].values.forEach(v => {
+      html += '<span class="cat-mgr-chip">' + escHtml(v) + ' <button class="cat-mgr-rm" title="删除" onclick="removeCategoryValue(\'' + cat + '\',\'' + v.replace(/'/g, "\\'") + '\')">×</button></span>';
+    });
+    html += '</div>';
+    html += '<div class="cat-mgr-add-row"><input type="text" id="catMgrInput_' + cat + '" placeholder="新增' + abilityTags[cat].label + '值" onkeydown="if(event.key===\'Enter\')addCategoryValue(\'' + cat + '\',document.getElementById(\'catMgrInput_' + cat + '\').value)"><button onclick="addCategoryValue(\'' + cat + '\',document.getElementById(\'catMgrInput_' + cat + '\').value)">＋ 添加</button></div></div>';
+  });
+  html += '</div>';
+  dlg.innerHTML = html;
+  document.body.appendChild(dlg);
+}
+
+function addCategoryValue(cat, val) {
+  val = val.trim();
+  if (!val) return;
+  if (abilityTags[cat].values.includes(val)) return;
+  abilityTags[cat].values.push(val);
+  saveCategoryChanges();
+  showCategoryManager();
+}
+
+function removeCategoryValue(cat, val) {
+  abilityTags[cat].values = abilityTags[cat].values.filter(v => v !== val);
+  // Also remove from all character overrides
+  const overrides = getCharTagOverrides();
+  let dirty = false;
+  Object.keys(overrides).forEach(k => {
+    const ov = overrides[k];
+    if (cat === 'camps' && ov.camps) {
+      ov.camps = ov.camps.filter(v => v !== val);
+      if (!ov.camps.length) delete ov.camps;
+      dirty = true;
+    } else if (ov[cat] === val) {
+      delete ov[cat];
+      dirty = true;
+    }
+  });
+  if (dirty) saveCharTagOverrides(overrides);
+  saveCategoryChanges();
+  showCategoryManager();
+  applyStoredCharTags();
+  if (reviewMode === 'tag') buildCharCards(document.getElementById('charSearch').value, true);
+}
+
+function saveCategoryChanges() {
+  // Save abilityTags values to a localStorage backup so changes persist
+  try {
+    localStorage.setItem('lumen-ability-tags-custom', JSON.stringify({
+      camps: abilityTags.camps.values,
+      tl: abilityTags.tl.values,
+      ward: abilityTags.ward.values,
+      vol: abilityTags.vol.values
+    }));
+  } catch(e) {}
+}
+
+function loadCustomCategoryValues() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('lumen-ability-tags-custom'));
+    if (saved) {
+      if (saved.camps) abilityTags.camps.values = saved.camps;
+      if (saved.tl) abilityTags.tl.values = saved.tl;
+      if (saved.ward) abilityTags.ward.values = saved.ward;
+      if (saved.vol) abilityTags.vol.values = saved.vol;
+    }
+  } catch(e) {}
+}
+
+function removeCategoryManager() {
+  const d = document.getElementById('catMgrDlg');
+  if (d) d.remove();
+}
+
+// Close pickers on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('tagPicker')) { removeTagPicker(); e.stopPropagation(); }
+    if (document.getElementById('catMgrDlg')) { removeCategoryManager(); e.stopPropagation(); }
+  }
+}, true);
+
+// Close pickers on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.tag-picker') && !e.target.closest('.tag-picker-tab') && !e.target.closest('.cat-mgr-dlg') && !e.target.closest('#reviewModeBar')) {
+    removeTagPicker();
+  }
+}, true);
 
 // ── 编辑模式：内联编辑 + localStorage 持久化 ──
 const EDIT_STORAGE_KEY = 'lumen-edits';
@@ -3311,7 +3874,7 @@ const abilityData = [
 // 标签筛选：每个能力带 tg 字段 "阵营1|阵营2, 时间线, 院区, 卷目"
 const abilityTags = {
   camps: { label: '阵营', values: [
-    '第二代时之秩序','圣标联合','潮涌居士号','蓝河明船','浪庄游击队','深雾城阵营',
+    '第二代时之秩序','圣标联合','潮涌居士号','蓝河明船','浪庄游击队','圆翼党','深雾城阵营',
     '珀利贝尔实业 · 亲卫队','珀利贝尔实业 · 部门领导组','寒城工坊','长夜事务所','神国',
     '牧人','爱丽丝马戏团','其他','初代时之秩序','基地其他部门','柯洛雯第三帝国','芬奈法拉战线','死神首席'
   ]},
@@ -3650,6 +4213,9 @@ function getCharAbilityHtml(charKey) {
 }
 
 // Initialize character grid
+loadCustomCategoryValues();
+applyStoredCharTags();
+renderCharFilterBars();
 buildCharCards();
 applyStoredEdits();
 

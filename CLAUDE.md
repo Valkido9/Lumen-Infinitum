@@ -319,6 +319,22 @@ E:\永恒流光\永恒流光\
   - 可乐术语描述："在沃克加德也有售卖" → "在卢纳森特基地附近也有售卖"
 - **导航更新**：所有页面导航栏统一为五页面链接，当前页高亮；wiki-jump 链接指向 `characters.html`；移除所有 `onclick="scrollToSection(...)"`（跨页不需要）
 
+### 第 20 次更新 — 角色百科标签分类 + 新角色 + 筛选 UI + 审阅标签编辑器
+**提交**: `（本次）`
+- **角色 `tg` 字段**：为全部 35 个角色添加 `tg` 字段（格式同能力档案：`"阵营1|阵营2, 时间线, 院区, 卷目"`）
+- **新增 10 个角色**：万杰特、红猫、靖珏、普兰奇昂、杏子、奇比、Twikyo、修瓦尔扎、阿芙忒乐尔斯特、温蒂（含完整档案：身份、性格、羁绊、台词、出场、能力描述）
+- **角色筛选 UI**：复用能力档案标签筛选系统——4 行筛选条（阵营/时间线/院区/初登场卷目）、`characterFilter` 状态、`parseCharTg`/`matchesCharFilter`/`renderCharFilterBars`/`setCharFilter`；`buildCharCards` 结合文本搜索 + 标签筛选；无匹配时显示空态
+- **审阅模式标签编辑器**（第三模式 `🏷 标签`）：
+  - 标签模式下角色卡片显示当前标签 chips（彩色圆角，带 × 移除按钮）+ `＋ 添加` 按钮
+  - `showTagPicker(key, ev)` — 浮动标签选择面板（4 类 tabs）
+  - `⚙ 种类` 按钮 → `showCategoryManager()` — 弹窗管理标签种类（新增/删除值，持久化到 `lumen-ability-tags-custom`）
+  - 角色标签覆盖持久化到 `lumen-char-tags` localStorage 键
+  - `_charOrigTg` 备份原始 tg 值，`applyStoredCharTags()` 安全合并覆盖
+- **`abilityTags` 词表同步**：新增阵营值 `圆翼党`、`蓝河明船`、`珀利贝尔实业 · 亲卫队`、`潮涌居士号`、`浪庄游击队`（同步到所有 5 个页面的 `abilityTags.camps.values`）
+- **CSS 新增**：`.tag-picker`、`.cat-mgr-dlg`、`.tag-chips-row`、`.tag-chip`、`.tag-chip-x`、`.tag-chip-add`、`.tag-filter-container`
+- **关键修复**：`buildCharCards` 中 `getEffectiveCharTg()` 的 TDZ 错误——该函数访问 `const _charOrigTg`（定义于第一轮 init 之后），改为仅在 `tagMode` 时调用（第二轮 init 之后才触发）
+- **标题修正**：角色百科栏目标题从"角色档案"改回"角色百科"
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：

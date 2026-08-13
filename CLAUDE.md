@@ -335,6 +335,16 @@ E:\永恒流光\永恒流光\
 - **关键修复**：`buildCharCards` 中 `getEffectiveCharTg()` 的 TDZ 错误——该函数访问 `const _charOrigTg`（定义于第一轮 init 之后），改为仅在 `tagMode` 时调用（第二轮 init 之后才触发）
 - **标题修正**：角色百科栏目标题从"角色档案"改回"角色百科"
 
+### 第 21 次更新 — 视觉 MCP（识别文档内嵌图片）
+**提交**: `（本次）`
+- **背景**：当前底层模型（deepseek-v4-flash）为纯文本模型，内置 `Read` 读图返回 `[Unsupported Image]`。为满足"识别文档内嵌图片"需求，接入阿里 DashScope Qwen-VL 视觉能力。
+- **新增 `scripts/vision_mcp_server.py`**：极简视觉 MCP 服务器（官方 `mcp` SDK 1.x 的 `FastMCP`），暴露 `analyze_image(image_path, question)` 工具——读取本地图片 → base64 → 调 DashScope OpenAI 兼容端点 `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions`，模型 `qwen-vl-max` → 返回中文描述。HTTP 走标准库 `urllib`（避开 httpx/h11 依赖冲突），仅依赖 `mcp<2`。协议握手与端到端识别均已实测通过。
+- **新增 `.mcp.json`**（项目根）：注册 `lumen-vision` 服务器，`command` 为 Python 绝对路径，`args` 指向该脚本；`DASHSCOPE_API_KEY` 以 `${DASHSCOPE_API_KEY}` 占位引用，`DASHSCOPE_MODEL=qwen-vl-max`。
+- **密钥存储**：真实 key 存于 `.claude/settings.local.json` 的 `env.DASHSCOPE_API_KEY`（已 gitignore）；`.mcp.json` 内不落明文。若 MCP 启动后 key 未生效，用 `/mcp` 重连。
+- **新增 `scripts/extract_docx_images.py`**：把 `src/*.docx` 内嵌图片（docx 是 zip，图片在 `word/media/`）提取到 `docx-images/<文档名>/`，该目录已 gitignore（派生产物）。可指定文件或默认全量提取。
+- **使用流程**：`python scripts/extract_docx_images.py` 提取 → 通过 MCP 工具 `analyze_image` 识别 → 得到图片内容的中文描述（适合地图 / 思维导图 / 示意图 / 时间线图等）。
+- **环境依赖**：pip 需走腾讯镜像 `-i https://mirrors.cloud.tencent.com/pypi/simple/` 安装 `mcp<2`（清华/阿里镜像对该包 403 或缺失；官方 PyPI 被本机代理拦截）。DashScope API 端点本机可达。
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：
@@ -374,3 +384,4 @@ git push origin main
 - 修改 `abilityData` 后需调用 `renderAbilityArchive()` 刷新视图
 - 修改 `characters` 数据中的 `abilityDetail` 只需保留基础描述，详细能力介绍在 `abilityData` 中
 - 审阅模式（批注/编辑）在全站五个页面上均可使用，localStorage 键跨页共享
+- **识别文档内嵌图片**：本机模型不支持视觉，需两步走——先用 `scripts/extract_docx_images.py` 把 `src/*.docx` 的 `word/media/` 图片提取到 `docx-images/`，再用 MCP 工具 `analyze_image`（DashScope qwen-vl-max）识别；见更新历史第 21 次更新

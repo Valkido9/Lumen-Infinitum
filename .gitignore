@@ -12,3 +12,10 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+
+# 从 docx 提取的图片（派生产物，可随时用 extract_docx_images.py 重新生成）
+docx-images/
+
+# 涉密源文档与写作数据库（本地保留，不进版本库 / 不发布到网站）
+src/
+data/

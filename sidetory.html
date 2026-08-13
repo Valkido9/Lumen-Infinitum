@@ -851,6 +851,26 @@ body {
   color: var(--text); font-size: 0.92em; line-height: 1.75;
 }
 
+/* 星号段落：斜体 + 连在一起的星号段落用框框起来 */
+.ability-desc .star-box {
+  margin: 8px 0; padding: 10px 14px;
+  border: 1px solid rgba(168,130,255,0.4);
+  border-left: 4px solid #a882ff;
+  background: rgba(168,130,255,0.06);
+  border-radius: 8px;
+}
+.ability-desc .star-box p { font-style: italic; margin: 4px 0; }
+
+/* 能力吟唱：斜体 + 醒目红字 + 外观框 */
+.ability-desc .chant-box {
+  margin: 10px 0; padding: 12px 16px;
+  border: 1px solid var(--accent2);
+  border-left: 4px solid var(--accent2);
+  background: var(--accent2-soft);
+  border-radius: 8px;
+}
+.ability-desc .chant-box p { font-style: italic; color: var(--accent2); font-weight: 600; margin: 4px 0; }
+
 /* 本尼艾诺空白能力：桌面端悬停显现真名，移动端点击显现 */
 .lumen-secret {
   cursor: pointer; color: inherit;
@@ -3650,6 +3670,46 @@ function secretAwareText(escapedHtml) {
   return escapedHtml.replace(/(　{3,})/g, '<span class="lumen-secret" data-secret="世界的罪业">$1</span>');
 }
 
+// 能力吟唱【“…”】与星号(*)段落的特殊渲染
+function isChantLine(t) {
+  return t.startsWith('【“') || t.startsWith('【"') || t.startsWith('【「');
+}
+function renderAbilityDesc(d) {
+  const paras = d.split('\n').filter(p => p.trim());
+  let out = '';
+  let i = 0;
+  while (i < paras.length) {
+    const t = paras[i].trim();
+    // 能力吟唱：以【“ 开头（可跨多行，直到某行以 】 结尾）
+    if (isChantLine(t)) {
+      const lines = [];
+      let j = i;
+      while (j < paras.length) {
+        const lt = paras[j].trim();
+        lines.push(lt);
+        if (lt.endsWith('】')) break;
+        j++;
+      }
+      out += '<div class="chant-box">' + lines.map(l => '<p>' + secretAwareText(escHtml(l)) + '</p>').join('') + '</div>';
+      i = j + 1;
+      continue;
+    }
+    // 星号段落：斜体；连在一起的星号段落用框框起来
+    if (t.startsWith('*')) {
+      const lines = [];
+      let j = i;
+      while (j < paras.length && paras[j].trim().startsWith('*')) { lines.push(paras[j].trim()); j++; }
+      out += '<div class="star-box">' + lines.map(l => '<p>' + secretAwareText(escHtml(l)) + '</p>').join('') + '</div>';
+      i = j;
+      continue;
+    }
+    if (t === SHENQI_DESC) { out += '<p class="shenqi-desc-box">' + escHtml(t) + '</p>'; i++; continue; }
+    out += '<p>' + secretAwareText(escHtml(t)) + '</p>';
+    i++;
+  }
+  return out;
+}
+
 function buildAbilityCard(a) {
   const isZpn = !!a.zn;                       // 镇压院区 (suppression-zone) ability
   const siege = maxCrt(a.c) >= 14;            // 攻城级 (siege-tier, |CRT| ≥ 14) -> 攻城级徽章（镇压院区能力同样适用）
@@ -3685,12 +3745,7 @@ function buildAbilityCard(a) {
   html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
   html += '<div class="ability-content">';
   if (a.d) {
-    const paras = a.d.split('\n').filter(p => p.trim());
-    html += '<div class="ability-desc">' + paras.map(p => {
-      const t = p.trim();
-      if (t === SHENQI_DESC) return '<p class="shenqi-desc-box">' + escHtml(t) + '</p>';
-      return '<p>' + secretAwareText(escHtml(t)) + '</p>';
-    }).join('') + '</div>';
+    html += '<div class="ability-desc">' + renderAbilityDesc(a.d) + '</div>';
   }
   if (a.q) {
     const qLines = a.q.split('\n');

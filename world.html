@@ -434,7 +434,7 @@ body {
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 .tab-btn:hover { color: var(--text); }
 
-/* ===== Org structure (行政结构) in world tabs ===== */
+/* ===== Org structure (阵营简介) in world tabs ===== */
 .org-card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 20px 22px; margin-top: 16px;
@@ -1149,9 +1149,9 @@ body {
 <!-- ===== WORLD SECTION ===== -->
     <h2 class="section-title" id="world" style="color:var(--accent);"><span class="icon">🌐</span>世界设定</h2>
     <div class="tabs" id="worldTabs">
-      <button class="tab-btn active" onclick="switchWorldTab('terms', event)">名词解释</button>
-      <button class="tab-btn" onclick="switchWorldTab('org', event)">行政结构</button>
-      <button class="tab-btn" onclick="switchWorldTab('setting', event)">📕 设定集</button>
+      <button class="tab-btn active" onclick="switchWorldTab('setting', event)">📕 设定集</button>
+      <button class="tab-btn" onclick="switchWorldTab('terms', event)">名词解释</button>
+      <button class="tab-btn" onclick="switchWorldTab('org', event)">阵营简介</button>
     </div>
     <div id="worldTabContent"></div>
     <div id="settingTab" style="display:none;"></div>
@@ -1719,7 +1719,7 @@ function switchWorldTab(tab, e) {
   applyStoredEdits(document);
 }
 
-// ===== ORG STRUCTURE (行政结构) =====
+// ===== ORG STRUCTURE (阵营简介) =====
 function renderOrgStructure(content) {
   const orgs = [
     {
@@ -5053,7 +5053,7 @@ function getCharAbilityHtml(charKey) {
 }
 
 // Initialize world settings
-switchWorldTab('terms');
+switchWorldTab('setting');
 applyStoredEdits();
 
 // ── 本尼艾诺空白能力：桌面端悬停显现真名，移动端点击显现 ──

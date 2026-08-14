@@ -345,6 +345,17 @@ E:\永恒流光\永恒流光\
 - **使用流程**：`python scripts/extract_docx_images.py` 提取 → 通过 MCP 工具 `analyze_image` 识别 → 得到图片内容的中文描述（适合地图 / 思维导图 / 示意图 / 时间线图等）。
 - **环境依赖**：pip 需走腾讯镜像 `-i https://mirrors.cloud.tencent.com/pypi/simple/` 安装 `mcp<2`（清华/阿里镜像对该包 403 或缺失；官方 PyPI 被本机代理拦截）。DashScope API 端点本机可达。
 
+### 第 22 次更新 — 世界设定新增「设定集」标签页 + 待整理设定要点小结
+**提交**: `bfb4e16`
+- **新增「📕 设定集」标签页**（`world.html`，与名词解释/部门结构并列）：把 `src/永恒流光设定集2025.4.28.docx` 的完整内容（113 段正文 + 10 张图）搬到网页，图片存 `assets/setting/`。
+- **左侧目录 + 多级折叠联动**：`.setting-layout` 双栏（粘性左目录 `.setting-toc` + 正文 `.setting-main`）；目录节点与正文章节共享 `data-sec` 属性，`setSettingNode(id, collapsed)` 一次性切换两侧 `.collapsed`（`.toc-node` / `.set-sec`），折叠时页面条目跟着收起来，页面不臃肿；点击任意目录项展开祖先链（`expandSettingAncestors`）并平滑滚动到正文；默认只展开第一章根节点。
+- **内容结构**：`const SETTING_DATA = [...]` 嵌套 JS 树（58 节点，块类型 `p`/`quote`/`p_attrib`/`note`/`img`/`trait`），`_settingBodyHtml` 渲染、`_buildSettingToc`/`_buildSettingContent` 递归生成目录与正文（标题级随深度递增）。
+- **时间线空二级标题**：6 条时间线各挂 4 个空二级标题（地理与环境/历史沿革/政治与势力/现状与故事关联，`empty:true` → 渲染"（尚未撰写，等待补充）"），等待后续补写。
+- **未写完明确标注**：`badge` 字段 → 金色 `.set-badge`；已标注"施工中 · 未写完"（指令之力装备）与"未写完 · 施工中"（纯粹业理，含原文截断 note）。
+- **持久化容器**：`#settingTab` 独立 div 首建后常驻，切走再切回保持折叠状态；进入该标签时 `applyStoredEdits(document)` + `renderAllBadges()`，审阅模式（批注/编辑）在设定集内容上可用。
+- **工具链**：`scripts/extract_setting_structure.py`（docx→JSON 结构，含图片锚点）→ `scripts/build_setting_data.py`（JSON→`data/setting_data.js`，注意 `data/` 已 gitignore、为派生产物）→ 拼接脚本把数据替换进 world.html 的 `SETTING_DATA = [...]`。
+- **待整理设定**：`待整理设定/`（25 篇设定随笔 docx）已加入 `.gitignore`（本地保留、不进版本库、不发布）；每篇 docx 提取为同名 `.txt`（`scripts/extract_todo_settings.py`），并由后台 agent 提炼出【核心设定要点】写入（`scripts/apply_todo_summaries.py`，纯本地工具，不提交）。
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：

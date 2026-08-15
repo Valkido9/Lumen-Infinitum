@@ -368,6 +368,27 @@ body {
   margin-top: 4px;
 }
 
+/* ===== Character Drawer (PC ≥1280px) ===== */
+.char-drawer {
+  position: fixed; top: 54px; right: 0; bottom: 0;
+  width: 360px; z-index: 1200;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(105%);
+  transition: transform 0.28s ease;
+}
+.char-drawer.show { transform: translateX(0); }
+.char-drawer .char-drawer-inner {
+  width: 100%; max-width: 100%; height: 100%; max-height: 100%;
+  border: none; border-radius: 0; box-shadow: none;
+  animation: none; padding: 24px 20px;
+  overflow-y: auto;
+}
+@media (max-width: 1279px) {
+  .char-drawer { display: none; }
+}
+
 /* ===== Timeline ===== */
 .timeline { position: relative; padding-left: 28px; margin: 20px 0; }
 .timeline::before {
@@ -1481,6 +1502,11 @@ body {
   <div class="modal" id="charModalContent"></div>
 </div>
 
+<!-- Character Drawer (PC ≥1280px) -->
+<div class="char-drawer" id="charDrawer">
+  <div class="modal char-drawer-inner" id="charDrawerContent"></div>
+</div>
+
 <!-- Term Modal -->
 <div class="modal-overlay" id="termModal">
   <div class="modal" id="termModalContent"></div>
@@ -1898,8 +1924,8 @@ function openChar(key) {
   const wikiCovered = ['yunlue','linai','masaka','youbika','wanglingtu','kenuo','laikesi','zhouniang','zhengyi','wuming','boundary','gieniefa','liulupo','liuba','liang','lukasen','sipalisen','meinade','yayinsente','hongying','daojiesi','kangmingde'];
   const hasWiki = wikiCovered.includes(key);
 
-  document.getElementById('charModalContent').innerHTML = `
-    <button class="close-btn" onclick="closeModal('charModal')">&times;</button>
+  const html = `
+    <button class="close-btn" onclick="closeCharCard()">&times;</button>
     <div class="char-header">
       <div class="char-avatar ${avatarClass}">${c.avatarText}</div>
       <div>
@@ -1947,8 +1973,14 @@ function openChar(key) {
       <a href="characters.html#char-wiki-${key}">📖 进入角色百科 · 深入了解「${c.name}」→</a>
     </div>` : ''}
   `;
-  applyStoredEdits(document.getElementById('charModalContent'));
-  document.getElementById('charModal').classList.add('show');
+  if (drawerEnabled()) {
+    document.getElementById('charDrawerContent').innerHTML = html;
+    document.getElementById('charDrawer').classList.add('show');
+  } else {
+    document.getElementById('charModalContent').innerHTML = html;
+    document.getElementById('charModal').classList.add('show');
+  }
+  applyStoredEdits(drawerEnabled() ? document.getElementById('charDrawerContent') : document.getElementById('charModalContent'));
 }
 
 // ===== OPEN TERM MODAL =====
@@ -1968,11 +2000,31 @@ function openTerm(key) {
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
+
+// ===== CHARACTER DRAWER (PC ≥1280px) =====
+function drawerEnabled() {
+  return !!(window.matchMedia && window.matchMedia('(min-width: 1280px)').matches);
+}
+function closeCharDrawer() {
+  const d = document.getElementById('charDrawer');
+  if (d) d.classList.remove('show');
+}
+function closeCharCard() {
+  const d = document.getElementById('charDrawer');
+  if (d && d.classList.contains('show')) { closeCharDrawer(); return; }
+  closeModal('charModal');
+}
+// 窗口缩窄跨断点时，开着的抽屉自动关闭
+window.addEventListener('resize', () => {
+  const d = document.getElementById('charDrawer');
+  if (d && d.classList.contains('show') && !drawerEnabled()) closeCharDrawer();
+});
 document.getElementById('charModal').addEventListener('click', function(e) { if (e.target === this) closeModal('charModal'); });
 document.getElementById('termModal').addEventListener('click', function(e) { if (e.target === this) closeModal('termModal'); });
 document.getElementById('tlModal').addEventListener('click', function(e) { if (e.target === this) closeModal('tlModal'); });
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+    closeCharDrawer();
     closeModal('charModal');
     closeModal('termModal');
     closeModal('tlModal');

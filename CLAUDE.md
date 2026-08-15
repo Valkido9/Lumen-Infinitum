@@ -356,6 +356,15 @@ E:\永恒流光\永恒流光\
 - **工具链**：`scripts/extract_setting_structure.py`（docx→JSON 结构，含图片锚点）→ `scripts/build_setting_data.py`（JSON→`data/setting_data.js`，注意 `data/` 已 gitignore、为派生产物）→ 拼接脚本把数据替换进 world.html 的 `SETTING_DATA = [...]`。
 - **待整理设定**：`待整理设定/`（25 篇设定随笔 docx）已加入 `.gitignore`（本地保留、不进版本库、不发布）；每篇 docx 提取为同名 `.txt`（`scripts/extract_todo_settings.py`），并由后台 agent 提炼出【核心设定要点】写入（`scripts/apply_todo_summaries.py`，纯本地工具，不提交）。
 
+### 第 23 次更新 — PC 端角色卡抽屉组件（宽屏右侧滑出，窄屏保持弹窗）
+**提交**: `（本次）`
+- **背景**：PC 端布局 `.sidebar`(260px) + `.main`(max-width 960px) 导致宽屏右侧大片空白；角色卡原为居中弹窗，PC 上不利用空白且遮挡正文。新增抽屉组件：PC（≥1280px）点击人物超链接 → 角色卡自**右侧滑出**为抽屉（360px 宽，覆盖在右侧空白上，正文不动）；手机/窄屏（<1280px）保持原居中弹窗。
+- **结构**：新增 `.char-drawer`（fixed, top:54px, right:0, bottom:0, 360px, `transform:translateX(105%)` 滑入滑出）+ 内层 `.modal.char-drawer-inner`（复用 `.modal` 内部角色卡样式，覆盖宽度/圆角/动画，自身滚动）；`#charDrawer` 容器加在 `#charModal` overlay 之后；`@media (max-width:1279px){.char-drawer{display:none}}` 兜底隐藏。
+- **分流逻辑**：新增 `drawerEnabled()`（`matchMedia('(min-width:1280px)')`）；`openChar()` 把角色卡 HTML 提为 `const html`，按 `drawerEnabled()` 写入 `#charDrawerContent`（+ `.show`）或 `#charModalContent`（原弹窗）；`applyStoredEdits` 应用于对应容器。
+- **关闭**：新增 `closeCharDrawer()` / `closeCharCard()`（抽屉开则关抽屉，否则关弹窗）；角色卡关闭按钮 `onclick="closeModal('charModal')"` → `closeCharCard()`；全局 Escape 监听在关弹窗前补 `closeCharDrawer()`；`window resize` 跨断点缩窄时自动关闭开着的抽屉。
+- **不动的部分**：术语 `openTerm` / 时间线 `tlModal` 保持居中弹窗；审阅模式（批注/编辑/历史/导出）在抽屉内照常可用（`applyStoredEdits` + `getStablePath` 不依赖容器类型）；能力链接跳转、wiki-jump 行为与弹窗一致；移动端样式不变。
+- **注意**：1280–1580px 窗口下抽屉会覆盖正文右缘一小部分（1580px 以上完全在右侧空白区，不遮挡）。五页面 `openChar()` 函数体保持一致（改动同构），后续修改角色卡时五页需同步。
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：

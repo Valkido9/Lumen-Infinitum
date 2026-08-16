@@ -371,7 +371,7 @@ body {
 /* ===== Character Drawer (PC ≥1280px) ===== */
 .char-drawer {
   position: fixed; top: 54px; right: 0; bottom: 0;
-  width: 360px; z-index: 1200;
+  width: 720px; z-index: 1200;
   background: var(--bg-card);
   border-left: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
@@ -1185,7 +1185,7 @@ body {
     <!-- Ch10-11 -->
     <h3 style="color:var(--prologue); margin:32px 0 12px;" id="pro-ch5">第十至十一章 可乐之夜 · 马萨卡的暴走</h3>
 
-    <p>马萨卡兴冲冲地带回了沃克加德的新奇饮料——<span class="term-link" onclick="openTerm('cola')">可乐</span>，在他口中变成了"可笑"。云略靠着"上课憋笑经验"试图忍住，最终"卡在沙发上不管不顾地笑出了声来"。三人干杯共饮，云略评价这饮料"喝起来像是可口可乐和百事可乐的一比一混合"。这是序幕中难得的一段温馨时光。</p>
+    <p>马萨卡兴冲冲地带回了柯洛雯的新奇饮料——可乐，在他口中变成了"可笑"。云略靠着"上课憋笑经验"试图忍住，最终"卡在沙发上不管不顾地笑出了声来"。三人干杯共饮，云略评价这饮料"喝起来像是可口可乐和百事可乐的一比一混合"。这是序幕中难得的一段温馨时光。</p>
 
     <p>但温馨未能长久。马萨卡在书房冰箱中发现了<span class="term-link" onclick="openTerm('memory_drug')">记忆分离药剂</span>——那是莱克丝为学习苛志室技术而存放的。药剂诱发了他签署保密协议前被压抑的黑暗记忆……</p>
 
@@ -1502,9 +1502,19 @@ body {
   <div class="modal" id="charModalContent"></div>
 </div>
 
-<!-- Character Drawer (PC ≥1280px) -->
+<!-- Character / Term / Timeline Drawer (PC ≥1280px) -->
 <div class="char-drawer" id="charDrawer">
   <div class="modal char-drawer-inner" id="charDrawerContent"></div>
+</div>
+
+<!-- Term Drawer (PC ≥1280px)：名词解释右侧滑出 -->
+<div class="char-drawer" id="termDrawer">
+  <div class="modal char-drawer-inner" id="termDrawerContent"></div>
+</div>
+
+<!-- Timeline Drawer (PC ≥1280px)：时间线卡片右侧滑出 -->
+<div class="char-drawer" id="tlDrawer">
+  <div class="modal char-drawer-inner timeline-modal" id="tlDrawerContent"></div>
 </div>
 
 <!-- Term Modal -->
@@ -1987,13 +1997,20 @@ function openChar(key) {
 function openTerm(key) {
   const t = terms[key];
   if (!t) return;
-  document.getElementById('termModalContent').innerHTML = `
-    <button class="close-btn" onclick="closeModal('termModal')">&times;</button>
+  const html = `
+    <button class="close-btn" onclick="closeFlap('termModal','termDrawer')">&times;</button>
     <h3 style="color:var(--gold); margin-bottom:12px;">${t.name}</h3>
     <p>${t.content}</p>
   `;
-  applyStoredEdits(document.getElementById('termModalContent'));
-  document.getElementById('termModal').classList.add('show');
+  if (drawerEnabled()) {
+    document.getElementById('termDrawerContent').innerHTML = html;
+    document.getElementById('termDrawer').classList.add('show');
+    applyStoredEdits(document.getElementById('termDrawerContent'));
+  } else {
+    document.getElementById('termModalContent').innerHTML = html;
+    applyStoredEdits(document.getElementById('termModalContent'));
+    document.getElementById('termModal').classList.add('show');
+  }
 }
 
 // ===== CLOSE MODAL =====
@@ -2001,7 +2018,16 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
 
-// ===== CHARACTER DRAWER (PC ≥1280px) =====
+// ===== DRAWER (PC ≥1280px)：角色 / 名词解释 / 时间线共用右侧滑出抽屉 =====
+function closeDrawer(id) {
+  const d = document.getElementById(id);
+  if (d) d.classList.remove('show');
+}
+function closeFlap(modalId, drawerId) {
+  const d = document.getElementById(drawerId);
+  if (d && d.classList.contains('show')) { closeDrawer(drawerId); return; }
+  closeModal(modalId);
+}
 function drawerEnabled() {
   return !!(window.matchMedia && window.matchMedia('(min-width: 1280px)').matches);
 }
@@ -2016,8 +2042,8 @@ function closeCharCard() {
 }
 // 窗口缩窄跨断点时，开着的抽屉自动关闭
 window.addEventListener('resize', () => {
-  const d = document.getElementById('charDrawer');
-  if (d && d.classList.contains('show') && !drawerEnabled()) closeCharDrawer();
+  if (drawerEnabled()) return;
+  ['charDrawer','termDrawer','tlDrawer'].forEach(id => { const d = document.getElementById(id); if (d && d.classList.contains('show')) closeDrawer(id); });
 });
 document.getElementById('charModal').addEventListener('click', function(e) { if (e.target === this) closeModal('charModal'); });
 document.getElementById('termModal').addEventListener('click', function(e) { if (e.target === this) closeModal('termModal'); });
@@ -2028,6 +2054,8 @@ document.addEventListener('keydown', function(e) {
     closeModal('charModal');
     closeModal('termModal');
     closeModal('tlModal');
+    closeDrawer('termDrawer');
+    closeDrawer('tlDrawer');
   }
 });
 
@@ -2185,7 +2213,7 @@ const timelineData = [
     story: '柯洛雯同卢纳森特一样，是一条刚刚加入主座时间线不久的新兴时间线。几十年前，一场席卷全球的大战曾经降临于这条时间线。参战的国家从如日中天到行将就木，应征的士兵从踌躇满志到失魂落魄，夺走了千万人性命的那段日子就这样草率地结束了。但停战带来了和平吗？……从不。它带来的只是饥荒、疫病、死亡；经济的危机、地区的瓦解、民族的崩溃；一代人的罪责、一代人的消失，一代人的噩梦……政权在改换，疆域在崩解，各国在战后的深渊苦苦挣扎了几十年之久，终于在某个黎明到达了积重难返的时刻。既然停战无法免除痛苦，于是，从未结束的战争就这样继续下去。战斗从装甲的碾压再到天空的角逐，从枪弹的倾泻再到绝命的肉搏……然而，正当所有人都以为这场浩劫会把整个世界都拖入泥潭中时，一阵超出这条时间线诞生以来，所有指令之力的总和的能量——在柯洛雯国，这场世界大战的主要参战国的首都，突然爆发开来。一道甚至能够阻挡千万次核弹轰炸的铁幕在顷刻之间就包裹了柯洛雯的领土和占领区，将这个国家与战争的地狱彻底隔绝开来。<br>一天、三天、五天……柯洛雯所有的敌人联合起来，朝这道防线发起绝望的冲锋。无数战机撞毁于穹顶之上，无数炮弹殁亡于屏障之中。而柯洛雯第三帝国的最高元首谢尔德夫·普利林特只是冷眼看着这一切……直到第六天，他在参谋部轻描淡写地抬起手，这道防下星球上所有武器，也能摧毁地球上一切防御的存在，便开始以比装甲部队更加迅猛的速度向外推进。<br>四十八小时横扫一个国家，两个半星期征服一片大陆。如推土机一般碾平一切的屏障之后，是让柯洛雯的敌人更加胆寒的、钢铁的洪流。六个月……在短短六个月之后，整个星球都不得不向柯洛雯臣服。紧邻国土的领地并入版图，万里之外的国家亦被傀儡。这个世界似乎将永远被埋入独裁和暴政的坟墓之中……直到，屏障之内的人不再忠于元首。<br>胜利并没有为柯洛雯人带来更好的生活。战争机器停止转动的那一刻，这个国家的经济随之走向崩溃。反抗的奴隶、旧国的残党，不满的人民，还有更加激进的极端派与权力中心之间你死我活的争斗……荒唐的战争在屏障之内继续下去，而元首能做的只有一次又一次的镇压。终于，在一次几乎颠覆了四分之三个世界的、前所未有的反叛之后，盛怒的最高领导人把他的能力收回到了柯洛雯国的核心区域，并在之后按下了核弹的发射按钮……<br>不知多久之后，一条自称“柯洛雯”的时间线接入主座，因其高度繁华和极其现代化的城建迅速成为了时间线贸易的新宠。当其他时间线的人们趋之若鹜地来到这里时，他们所能看到的只是一座飞在天空之上、完全自给自足的超级都市。游客和移民们的活动范围被严格限制在“空港特区”内，但这个国家为何会飞在空中？地面上如今又是什么景象？……没有人能够做出回答。',
     factions: ['柯洛雯第三帝国', '没名字的组合'],
     characters: [],
-    settings: ['cola'],
+    settings: [],
     section: null
   },
   {
@@ -2223,8 +2251,8 @@ function openTimeline(key) {
   const settingHtml = t.settings.length
     ? t.settings.map(k => `<span class="tl-chip" onclick="openTerm('${k}')">${terms[k] ? escHtml(terms[k].name) : k}</span>`).join('')
     : '<span style="font-size:0.82em;color:var(--text-muted);">暂未收录</span>';
-  document.getElementById('tlModalContent').innerHTML = `
-    <button class="close-btn" onclick="closeModal('tlModal')">&times;</button>
+  const html = `
+    <button class="close-btn" onclick="closeFlap('tlModal','tlDrawer')">&times;</button>
     <div class="tlm-header">
       <span class="tl-icon">${t.icon}</span>
       <div>
@@ -2236,10 +2264,17 @@ function openTimeline(key) {
     ${t.factions.length ? `<div class="tl-section"><div class="tl-section-title">势力</div><div class="tl-chips">${factionHtml}</div></div>` : ''}
     ${t.characters.length ? `<div class="tl-section"><div class="tl-section-title">主要角色</div><div class="tl-chips">${charHtml}</div></div>` : ''}
     ${t.settings.length ? `<div class="tl-section"><div class="tl-section-title">相关设定</div><div class="tl-chips">${settingHtml}</div></div>` : ''}
-    ${t.section ? `<button class="tl-jump" onclick="closeModal('tlModal');scrollToSection('${t.section}')">📖 阅读本站已收录的这段剧情</button>` : ''}
+    ${t.section ? `<button class="tl-jump" onclick="closeFlap('tlModal','tlDrawer');scrollToSection('${t.section}')">📖 阅读本站已收录的这段剧情</button>` : ''}
   `;
-  applyStoredEdits(document.getElementById('tlModalContent'));
-  document.getElementById('tlModal').classList.add('show');
+  if (drawerEnabled()) {
+    document.getElementById('tlDrawerContent').innerHTML = html;
+    document.getElementById('tlDrawer').classList.add('show');
+    applyStoredEdits(document.getElementById('tlDrawerContent'));
+  } else {
+    document.getElementById('tlModalContent').innerHTML = html;
+    applyStoredEdits(document.getElementById('tlModalContent'));
+    document.getElementById('tlModal').classList.add('show');
+  }
 }
 
 // ===== SCROLL TO SECTION =====
@@ -3820,7 +3855,7 @@ const abilityData = [
    s:[5,2,1,3,1,1],
    d:"满足使用者的「{R}一切希冀{/R}」。\n这一能力会为了实现使用者恳切说出的愿望而扭曲能力范围内的整个世界。现实与其愿景相差越大，能力就会愈加剧烈地反噬使用者的身心。而这意味着，对于还没有强大到承受过度伤害的灼晦来说，她许下的愿望不能和现实差距过大。\n{R}“希望”{/R}自己被父母拳打脚踢时不会再感到疼痛。{R}“希望”{/R}自己能够快点逃脱寒冷和饥饿的绝境。{R}“希望”{/R}自己的手中立刻出现一把保护自己的武器。{R}“希望”{/R}自己有能挥舞这把武器、保护自己珍视的人的力量……{R}“希望”周围的所有曾经伤害过自己的人，立刻结束自己的生命。{/R}\n每个“希望”都需要偿还代价。",
    nt:"以自身为中心向外延伸20m",zn:"该能力为“镇压院区”能力，遵循特殊的CRT计算原则与能力面板。所有的“镇压院区”能力都有失去控制并且反噬使用者的可能性，使其陷入幻觉并进入彻底的疯狂状态。",
-   q:"“请你加入我吧，鸿荧……我们可以把世界的一切回到它本应是的模样。”",
+   q:"“请你加入我吧，鸿荧……我们可以让世界的一切回到它本应是的模样。”\n——灼晦",
   },
 ];
 
@@ -3840,12 +3875,12 @@ const abilityTags = {
 // 当前筛选状态：空数组 = 该行不限（全部）；每行内多选 OR，跨行 AND
 const abilityFilter = { camps: [], tl: [], ward: [], vol: [] };
 
-// 解析 tg 字符串为 4 个字段；多个阵营用 | 分隔
+// 解析 tg 字符串为 4 个字段；多个阵营 / 多条时间线用 | 分隔
 function parseTg(a) {
   const p = (a.tg || '').split(',');
   return {
     camps: (p[0] || '').split('|').map(s => s.trim()).filter(Boolean),
-    tl:    (p[1] || '').trim(),
+    tl:    (p[1] || '').split('|').map(s => s.trim()).filter(Boolean),
     ward:  (p[2] || '').trim(),
     vol:   (p[3] || '').trim()
   };
@@ -3855,7 +3890,7 @@ function parseTg(a) {
 function matchesFilter(a) {
   const t = parseTg(a);
   if (abilityFilter.camps.length && !t.camps.some(c => abilityFilter.camps.includes(c))) return false;
-  if (abilityFilter.tl.length   && !abilityFilter.tl.includes(t.tl)) return false;
+  if (abilityFilter.tl.length   && !t.tl.some(x => abilityFilter.tl.includes(x))) return false;
   if (abilityFilter.ward.length && !abilityFilter.ward.includes(t.ward)) return false;
   if (abilityFilter.vol.length  && !abilityFilter.vol.includes(t.vol)) return false;
   return true;

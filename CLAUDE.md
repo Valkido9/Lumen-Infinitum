@@ -396,6 +396,17 @@ E:\永恒流光\永恒流光\
 - `abilityTags.vol.values` 词表无需变更（目标值均已存在）。引文/描述/阵营/院区均不动。
 - 一次性脚本：`scripts/batch_update_vols.py`（含逐文件每 abID 替换次数断言 + tg 段数断言 + EOL 保留）已在使用后删除，不提交。
 
+### 第 27 次更新 — 新增「终界余音」+ 乱码 CRT/动态平滑雷达 + 黑洞黑框卡片 + CRT 排序强制第一
+**提交**: `（本次）`
+- **新增「终界余音」(ab133)**：持有者 **希诃底斯·辉祀**（圣灵方/创书者），五页同步收录（abilities.html 为主源，其余四页连同第 24 次遗漏的 `巫魔天国` 阵营值、ab130 文案勘误一并补齐）。
+- **`end:1` 排序强制第一**：新增能力字段 `end`——`setAbilitySort` 的 `crtAsc`/`crtDesc` 比较器前置 `x.end ? -1`，无论正序倒序 ab133 永远位于第一个。
+- **乱码 CRT/六维**：`c:"◼◼◼◼◼◼"` + `end:1` 触发乱码渲染——CRT 为 8 个生僻汉字乱码（`endGarbled(8)`），六维各 3 字符乱码（`endGarbled(3)`），约每 0.25 秒刷新；`startEndAbyss` 每次渲染只启动一轮、`renderAbilityArchive` 重渲染前 `stopEndAbyss()` 清理定时器。
+- **动态平滑雷达**：每次刷新随机 2~3 项达 **EX(5)**、其余 1~4（`endRadarStats()`）；雷达图用 **SMIL `<animate attributeName="points" fill="freeze">` + `beginElement()`** 从上一帧平滑过渡到新形态（辅助 `endPointsStr`/`endDotCoord`），多边形与 6 顶点圆点同步形变、无跳变；网格/轴线/标签为一次性骨架（仅首次 `endRadarSvg()` 注入容器）。
+- **黑洞黑框卡片**：`.ability-card-end`——纯黑 2px 描边 + `::before` 三团暗紫/暗蓝径向光晕按 `@keyframes endAbyss`（10s ease-in-out infinite alternate）旋转/缩放/明暗缓变，营造深邃压迫感；卡片内 CRT/六维乱码文字用等宽字体 + 辉光。
+- **标签与词表**：`tg:"\"圣灵\", 未知, 永恒院, 大后期"`——阵营 **`"圣灵"`（含字面双引号）**加入 `abilityTags.camps.values`（五页同步）；院区永恒院、卷目大后期为既有词表值，时间线暂取 `未知`（用户未指定，可后续调整）。`renderFilterBars` onclick 加 `v.replace(/"/g,'&quot;')` 转义，带引号的阵营值不再破坏筛选按钮属性。
+- **引文定稿**：`q:"“神若爱世人……”"`（用户连改两次：神爱世人 → 神若爱世人）。
+- **QQ 掉线根因（诊断，登录修复待用户扫码）**：08-17 00:43 日志 `[KickedOffLine] 登录已失效`、账号变离线——腾讯服务器端判定会话失效（QR 登录后约 2 小时定期失效），非封号/崩溃（进程树与 3000/3001 端口仍存活）；另有独立 Rkey SSL 报错（`secret-service.bietiaop.com` TLS alert 112）仅影响图片 URL 获取，与掉线无关。重新登录需二维码或密码+SMS，待用户操作后再向 2243448419 私聊汇报。
+
 ## 给接手 AI 的工作指引
 
 ### 当你听到"最新的批注已经修订，请根据批注进行修改"时：

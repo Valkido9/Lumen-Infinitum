@@ -921,6 +921,33 @@ body {
 .radar-dot { fill: var(--accent); }
 .radar-label { fill: var(--text-muted); font-size: 10px; text-anchor: middle; }
 
+/* ===== 终界余音(ab133)：黑洞卡片 =====
+   黑色边框 + 缓慢流动的深暗紫黑光晕（黑洞般的深邃与压迫感） */
+.ability-card-end { border: 2px solid #000; background: linear-gradient(180deg, #0a0a12, #000 42%, #070310); color: #cfd2e6; position: relative; overflow: hidden; box-shadow: 0 0 24px rgba(0,0,0,0.9), 0 0 46px rgba(15,0,42,0.55), inset 0 0 60px rgba(12,0,34,0.7); }
+.ability-card-end:hover { border-color: #2c1b3e; box-shadow: 0 0 32px rgba(0,0,0,0.95), 0 0 64px rgba(22,0,58,0.65), inset 0 0 72px rgba(14,0,44,0.8); }
+.ability-card-end::before { content: ''; position: absolute; inset: -40%; z-index: 0; pointer-events: none; background: radial-gradient(circle at 32% 38%, rgba(72,0,116,0.34), transparent 58%), radial-gradient(circle at 68% 62%, rgba(0,18,74,0.4), transparent 55%), radial-gradient(circle at 50% 50%, rgba(124,0,166,0.22), transparent 70%); animation: endAbyss 10s ease-in-out infinite alternate; }
+@keyframes endAbyss {
+  0%   { transform: rotate(0deg) scale(1.02);  filter: brightness(0.9); }
+  50%  { transform: rotate(5deg) scale(1.14);  filter: brightness(1.04); }
+  100% { transform: rotate(-4deg) scale(1.06); filter: brightness(0.8); }
+}
+.ability-card-end > * { position: relative; z-index: 1; }
+.ability-card-end .ability-card-top { border-bottom-color: rgba(255,255,255,0.12); }
+.ability-card-end .ability-name { color: #e9e5f6; text-shadow: 0 0 20px rgba(142,122,255,0.65); }
+.ability-card-end .ability-meta-bar { color: #b9bed6; }
+.ability-card-end .ability-meta-bar .ability-stats { color: #8f95b2; }
+.ability-card-end .ability-meta-bar .ability-faction-tag { color: #b9a8ff; border-color: #6a5abf; }
+.ability-card-end .ability-desc p { color: #c7cbe0; }
+.ability-card-end .ability-quote { border-left-color: #5a4abf; background: rgba(22,10,46,0.55); }
+.ability-card-end .ability-quote .quote-text { color: #e7e3ff; }
+.ability-card-end .ability-quote .quote-attribution { color: #9a92c2; }
+.ability-card-end .ability-note { color: #9aa0bd; }
+.ability-card-end .red-mark { color: #ff6b8a; }
+.ability-card-end .radar-data { fill: rgba(150,120,255,0.18); stroke: #8b6ef0; }
+.ability-card-end .radar-dot { fill: #9d80ff; }
+.end-crt { font-family: "Cascadia Code", "Consolas", monospace; letter-spacing: 2px; color: #c9c2ff; text-shadow: 0 0 10px rgba(140,120,255,0.8); }
+.end-stat { font-family: "Cascadia Code", "Consolas", monospace; letter-spacing: 1px; color: #b7aef5; text-shadow: 0 0 8px rgba(120,100,255,0.7); }
+
 .ability-empty { padding: 40px 16px; text-align: center; color: var(--text-muted); font-size: 0.95em; }
 
 @media (max-width: 768px) {
@@ -3471,6 +3498,11 @@ const abilityData = [
    q:"“你觉得一万年之后，时间线空间里还会有人记得任何一个‘冕卫’乃至‘巫魔’的名姓吗？！”\n——珀希对布格弥，洛琛顿高空",
    nt:"*半径35m",sz:1,
   },
+  {id:"ab133",tg:"\"圣灵\", 未知, 永恒院, 大后期",n:"终界余音",h:"希诃底斯·辉祀",c:"◼◼◼◼◼◼",end:1,
+   s:[0,0,0,0,0,0],
+   d:"立刻无效化能力范围内的一切基于指令之力的超能力形式。当有超能力者处在「终界余音」的作用范围内时，剥夺其所有能力，并根据受影响者携带指令之力的强度对其造成伤害。",
+   q:"“神若爱世人……”",
+  },
 ];
 
 // ===== ABILITY TAG SYSTEM =====
@@ -3479,7 +3511,7 @@ const abilityTags = {
   camps: { label: '阵营', values: [
     '第二代时之秩序','圣标联合','潮涌居士号','蓝河明船','浪庄游击队','圆翼党','深雾城阵营',
     '珀利贝尔实业 · 亲卫队','珀利贝尔实业 · 部门领导组','寒城工坊','长夜事务所','神国',
-    '牧人','爱丽丝马戏团','其他','初代时之秩序','基地其他部门','柯洛雯第三帝国','芬奈法拉战线','死神首席','卢纳森特军部','巫魔天国'
+    '牧人','爱丽丝马戏团','其他','初代时之秩序','基地其他部门','柯洛雯第三帝国','芬奈法拉战线','死神首席','卢纳森特军部','巫魔天国','"圣灵"'
   ]},
   tl:  { label: '时间线', values: ['卢纳森特','沃克加德','霍因佩兹','洛琛顿','柯洛雯','芬奈法拉','未知','其他时间线','尤克特勒夏'] },
   ward:{ label: '院区', values: ['永恒院','重构院','救赎院','生命院','勇气院','解放院','赦除院','真理院','均衡院','机遇院','绝望院','希冀院','决意院','无院区/未共鸣','特殊'] },
@@ -3536,7 +3568,7 @@ function renderFilterBars() {
     html += '<button class="tag-filter-btn' + (sel.length ? '' : ' active') + '" onclick="setAbilityFilter(\'' + cat + '\',\'\')">全部</button>';
     meta.values.forEach(v => {
       const on = sel.includes(v);
-      html += '<button class="tag-filter-btn' + (on ? ' active' : '') + '" onclick="setAbilityFilter(\'' + cat + '\',\'' + v.replace(/'/g, "\\'") + '\')">' + escHtml(v) + '</button>';
+      html += '<button class="tag-filter-btn' + (on ? ' active' : '') + '" onclick="setAbilityFilter(\'' + cat + '\',\'' + v.replace(/'/g, "\\'").replace(/"/g, '&quot;') + '\')">' + escHtml(v) + '</button>';
     });
     html += '</div>';
   });
@@ -3671,15 +3703,132 @@ function setupRadarReveal() {
   });
 }
 
+// ===== 终界余音(ab133)：乱码 CRT/六维 + 动态雷达，配合 .ability-card-end 黑洞卡片 =====
+var endAbyssTimer = null;
+function stopEndAbyss() {
+  if (endAbyssTimer) { clearInterval(endAbyssTimer); endAbyssTimer = null; }
+}
+// 生成长度为 n 的"乱码"字符串（生僻汉字池，模拟字符乱码）
+function endGarbled(n) {
+  var pool = '㠀㠁㠂㠃㠄㠅㠆㠇㠈㠉㠊㠋㠌㠍㠎㠏㠐㠑㠒㠓㠔㠕㠖㠗㠘㠙㠚㠛㠜㠝㠞㠟䀀䀁䀂䀃䀄䀅䀆䀇䀈䀉䀊䀋䀌䀍㐀㐁㐂㐃㐄㐅㐆㐇㐈㐉㐊㐋㐌㐍㐎㐏';
+  var s = '';
+  for (var i = 0; i < n; i++) s += pool.charAt(Math.floor(Math.random() * pool.length));
+  return s;
+}
+// 每次刷新随机 2~3 项达到 EX(5)，其余在 1~4 间随机
+function endRadarStats() {
+  var n = 2 + (Math.random() < 0.5 ? 1 : 0);
+  var idx = [];
+  while (idx.length < n) { var k = Math.floor(Math.random() * 6); if (idx.indexOf(k) < 0) idx.push(k); }
+  var st = [];
+  for (var i = 0; i < 6; i++) st.push(idx.indexOf(i) >= 0 ? 5 : 1 + Math.floor(Math.random() * 4));
+  return st;
+}
+// 由六维统计数组生成数据多边形顶点序列
+function endPointsStr(stats) {
+  var cx = 100, cy = 100, r = 78, levels = 4;
+  var pts = [];
+  for (var i = 0; i < 6; i++) {
+    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+    var v = Math.max(0.25, stats[i] || 0);
+    var d = (r / levels) * v;
+    pts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
+  }
+  return pts.join(' ');
+}
+// 顶点圆点坐标（axis: 'x' | 'y'）
+function endDotCoord(i, stats, axis) {
+  var cx = 100, cy = 100, r = 78, levels = 4;
+  var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+  var v = Math.max(0.25, stats[i] || 0);
+  var d = (r / levels) * v;
+  var x = (cx + d * Math.cos(a)).toFixed(1);
+  var y = (cy + d * Math.sin(a)).toFixed(1);
+  return axis === 'x' ? x : y;
+}
+// 动态雷达图骨架：网格/轴线/标签常显；数据多边形与顶点圆点用 SMIL <animate> 平滑过渡
+//（values 由 startEndAbyss 每帧更新后再 beginElement()，实现连续平滑形变，无跳变）
+function endRadarSvg() {
+  var svg = '<svg viewBox="0 0 200 200">';
+  for (var l = 1; l <= 4; l++) {
+    var pts = [];
+    for (var i = 0; i < 6; i++) {
+      var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+      var d = (78 / 4) * l;
+      pts.push((100 + d * Math.cos(a)).toFixed(1) + ',' + (100 + d * Math.sin(a)).toFixed(1));
+    }
+    svg += '<polygon points="' + pts.join(' ') + '" class="radar-bg"/>';
+  }
+  for (var i = 0; i < 6; i++) {
+    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+    svg += '<line x1="100" y1="100" x2="' + (100 + 78 * Math.cos(a)).toFixed(1) + '" y2="' + (100 + 78 * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
+  }
+  svg += '<polygon class="radar-data">';
+  svg += '<animate attributeName="points" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
+  svg += '</polygon>';
+  for (var i = 0; i < 6; i++) {
+    svg += '<circle r="3" class="radar-dot">';
+    svg += '<animate attributeName="cx" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
+    svg += '<animate attributeName="cy" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
+    svg += '</circle>';
+  }
+  for (var i = 0; i < 6; i++) {
+    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+    var lr = 78 + 16;
+    var lx = 100 + lr * Math.cos(a), ly = 100 + lr * Math.sin(a) + 4;
+    svg += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label">' + RADAR_LABELS[i] + '</text>';
+  }
+  svg += '</svg>';
+  return svg;
+}
+// 启动"终界余音"卡片动效：CRT 乱码、六维乱码约每 0.25 秒刷新；雷达图每帧平滑过渡到新形态
+function startEndAbyss(id) {
+  stopEndAbyss();
+  var card = document.getElementById('ab-' + id);
+  if (!card) return;
+  var crtEl = card.querySelector('.end-crt');
+  var statEls = card.querySelectorAll('.end-stat');
+  var radar = card.querySelector('.end-radar');
+  if (!crtEl || !radar) return;
+  radar.innerHTML = endRadarSvg(); // 骨架只建一次
+  var polyAnim = radar.querySelector('.radar-data animate');
+  var dotAnims = radar.querySelectorAll('.radar-dot animate');
+  var prevStats = null;
+  function tick() {
+    if (crtEl) crtEl.textContent = endGarbled(8);
+    for (var i = 0; i < statEls.length; i++) statEls[i].textContent = endGarbled(3);
+    var stats = endRadarStats();
+    // 多边形：从上一帧形状平滑过渡到新形状
+    if (polyAnim) {
+      polyAnim.setAttribute('values', (prevStats ? endPointsStr(prevStats) : endPointsStr(stats)) + ';' + endPointsStr(stats));
+      polyAnim.beginElement();
+    }
+    // 顶点圆点：同样平滑过渡
+    for (var i = 0; i < 6; i++) {
+      var x = endDotCoord(i, stats, 'x'), y = endDotCoord(i, stats, 'y');
+      var x0 = prevStats ? endDotCoord(i, prevStats, 'x') : x;
+      var y0 = prevStats ? endDotCoord(i, prevStats, 'y') : y;
+      var cxAn = dotAnims[2 * i], cyAn = dotAnims[2 * i + 1];
+      if (cxAn) { cxAn.setAttribute('values', x0 + ';' + x); cxAn.beginElement(); }
+      if (cyAn) { cyAn.setAttribute('values', y0 + ';' + y); cyAn.beginElement(); }
+    }
+    prevStats = stats;
+  }
+  tick();
+  endAbyssTimer = setInterval(tick, 250); // 约每 0.25 秒
+}
+
 function renderAbilityArchive() {
   const archive = document.getElementById('abilityArchive');
   if (!archive) return;
   renderFilterBars();
 
   // 按当前筛选过滤 → 按排序模式排序 → 扁平渲染
+  stopEndAbyss(); // 先终止上一轮的"终界余音"乱码定时器，避免重渲染后残留
   let list = abilityData.filter(matchesFilter);
-  if (abilitySort === 'crtAsc') list = list.slice().sort((x, y) => crtAbs(x) - crtAbs(y));
-  else if (abilitySort === 'crtDesc') list = list.slice().sort((x, y) => crtAbs(y) - crtAbs(x));
+  // 终界余音（end:1）在 CRT 正序/倒序两种排序中均恒居首位
+  if (abilitySort === 'crtAsc') list = list.slice().sort((x, y) => x.end ? -1 : (y.end ? 1 : crtAbs(x) - crtAbs(y)));
+  else if (abilitySort === 'crtDesc') list = list.slice().sort((x, y) => x.end ? -1 : (y.end ? 1 : crtAbs(y) - crtAbs(x)));
 
   let archiveHTML = '';
   if (!list.length) {
@@ -3689,6 +3838,8 @@ function renderAbilityArchive() {
   }
   archive.innerHTML = archiveHTML;
   setupRadarReveal();
+  // 若"终界余音"在这次渲染中可见（未被筛选排除），启动其乱码/雷达动效
+  abilityData.forEach(function (a) { if (a.end) startEndAbyss(a.id); });
   applyStoredEdits();
 }
 
@@ -3754,12 +3905,16 @@ function buildAbilityCard(a) {
   const isZpn = !!a.zn;                       // 镇压院区 (suppression-zone) ability
   const siege = maxCrt(a.c) >= 14;            // 攻城级 (siege-tier, |CRT| ≥ 14) -> 攻城级徽章（镇压院区能力同样适用）
   const shenqi = !!a.sz;                      // 神器能力 (artifact-weapon ability) -> gold frame
+  const isEnd  = !!a.end;                     // 终界余音：乱码动态能力卡片（黑洞样式，见 .ability-card-end）
   const labels = isZpn ? ZPN_LABELS : statLabels;
-  const statStr = a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
+  const statStr = isEnd
+    ? statLabels.map(l => l + '-<span class="end-stat"></span>').join('  ')
+    : a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
   let cls = 'ability-card';
   if (isZpn) cls += ' ability-card-zpn';
   if (siege) cls += ' ability-card-siege';
   if (shenqi) cls += ' ability-card-shenqi';
+  if (isEnd) cls += ' ability-card-end';
   let html = '<div class="' + cls + '" id="ab-' + a.id + '">';
   // Card top: name + badges + meta bar
   html += '<div class="ability-card-top">';
@@ -3775,14 +3930,14 @@ function buildAbilityCard(a) {
   if (tg.camps.length) html += '<span class="ability-faction-tag">' + tg.camps.map(escHtml).join('、') + '</span>';
   if (tg.ward) html += '<span class="ability-faction-tag">' + escHtml(tg.ward) + '</span>';
   html += '<span>👤 ' + escHtml(a.h) + '</span>';
-  if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
+  if (a.c) html += '<span>⚡ CRT ' + (isEnd ? '<span class="end-crt"></span>' : escHtml(a.c)) + '</span>';
   html += '<span class="ability-stats">' + statStr + '</span>';
   html += '</div></div>';
   // 镇压院区 note at the start of the card body
   if (a.zn) html += '<div class="zpn-note">' + escHtml(a.zn) + '</div>';
   // Card body: radar chart (left) + content (right)
   html += '<div class="ability-card-body">';
-  html += '<div class="radar-chart-wrap">' + drawRadarChart(a.s, isZpn) + '</div>';
+  html += '<div class="radar-chart-wrap' + (isEnd ? ' end-radar' : '') + '">' + (isEnd ? '' : drawRadarChart(a.s, isZpn)) + '</div>';
   html += '<div class="ability-content">';
   if (a.d) {
     html += '<div class="ability-desc">' + renderAbilityDesc(a.d) + '</div>';

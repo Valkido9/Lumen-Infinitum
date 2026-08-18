@@ -405,6 +405,7 @@ E:\永恒流光\永恒流光\
 - **黑洞黑框卡片**：`.ability-card-end`——纯黑 2px 描边 + `::before` 三团暗紫/暗蓝径向光晕按 `@keyframes endAbyss`（10s ease-in-out infinite alternate）旋转/缩放/明暗缓变，营造深邃压迫感；卡片内 CRT/六维乱码文字用等宽字体 + 辉光。
 - **标签与词表**：`tg:"\"圣灵\", 未知, 永恒院, 大后期"`——阵营 **`"圣灵"`（含字面双引号）**加入 `abilityTags.camps.values`（五页同步）；院区永恒院、卷目大后期为既有词表值，时间线暂取 `未知`（用户未指定，可后续调整）。`renderFilterBars` onclick 加 `v.replace(/"/g,'&quot;')` 转义，带引号的阵营值不再破坏筛选按钮属性。
 - **引文定稿**：`q:"“神若爱世人……”"`（用户连改两次：神爱世人 → 神若爱世人）。
+- **（2026-08-17 修订）动效拆分**：雷达图改回**每 0.25 秒整图重绘（跳变）**，放弃 SMIL 平滑形变（`endPointsStr`/`endDotCoord` 已删）；乱码 CRT/六维改为**高频刷新（约每 0.1 秒）**——独立双定时器 `endRadarTimer`(250ms 跳变雷达)/`endAbyssTimer`(100ms 乱码)，`stopEndAbyss()` 双双清理。
 - **QQ 掉线根因（诊断，登录修复待用户扫码）**：08-17 00:43 日志 `[KickedOffLine] 登录已失效`、账号变离线——腾讯服务器端判定会话失效（QR 登录后约 2 小时定期失效），非封号/崩溃（进程树与 3000/3001 端口仍存活）；另有独立 Rkey SSL 报错（`secret-service.bietiaop.com` TLS alert 112）仅影响图片 URL 获取，与掉线无关。重新登录需二维码或密码+SMS，待用户操作后再向 2243448419 私聊汇报。
 
 ## 给接手 AI 的工作指引

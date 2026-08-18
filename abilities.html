@@ -3704,9 +3704,10 @@ function setupRadarReveal() {
 }
 
 // ===== 终界余音(ab133)：乱码 CRT/六维 + 动态雷达，配合 .ability-card-end 黑洞卡片 =====
-var endAbyssTimer = null;
+var endAbyssTimer = null, endRadarTimer = null;
 function stopEndAbyss() {
   if (endAbyssTimer) { clearInterval(endAbyssTimer); endAbyssTimer = null; }
+  if (endRadarTimer) { clearInterval(endRadarTimer); endRadarTimer = null; }
 }
 // 生成长度为 n 的"乱码"字符串（生僻汉字池，模拟字符乱码）
 function endGarbled(n) {
@@ -3724,64 +3725,49 @@ function endRadarStats() {
   for (var i = 0; i < 6; i++) st.push(idx.indexOf(i) >= 0 ? 5 : 1 + Math.floor(Math.random() * 4));
   return st;
 }
-// 由六维统计数组生成数据多边形顶点序列
-function endPointsStr(stats) {
-  var cx = 100, cy = 100, r = 78, levels = 4;
-  var pts = [];
-  for (var i = 0; i < 6; i++) {
-    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    var v = Math.max(0.25, stats[i] || 0);
-    var d = (r / levels) * v;
-    pts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
-  }
-  return pts.join(' ');
-}
-// 顶点圆点坐标（axis: 'x' | 'y'）
-function endDotCoord(i, stats, axis) {
-  var cx = 100, cy = 100, r = 78, levels = 4;
-  var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-  var v = Math.max(0.25, stats[i] || 0);
-  var d = (r / levels) * v;
-  var x = (cx + d * Math.cos(a)).toFixed(1);
-  var y = (cy + d * Math.sin(a)).toFixed(1);
-  return axis === 'x' ? x : y;
-}
-// 动态雷达图骨架：网格/轴线/标签常显；数据多边形与顶点圆点用 SMIL <animate> 平滑过渡
-//（values 由 startEndAbyss 每帧更新后再 beginElement()，实现连续平滑形变，无跳变）
+// 动态雷达图：每 0.25 秒整图重绘（跳变），每次随机 2~3 项达 EX(5)、其余 1~4
 function endRadarSvg() {
+  var cx = 100, cy = 100, r = 78, levels = 4;
+  var stats = endRadarStats();
   var svg = '<svg viewBox="0 0 200 200">';
-  for (var l = 1; l <= 4; l++) {
+  for (var l = 1; l <= levels; l++) {
     var pts = [];
     for (var i = 0; i < 6; i++) {
       var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-      var d = (78 / 4) * l;
-      pts.push((100 + d * Math.cos(a)).toFixed(1) + ',' + (100 + d * Math.sin(a)).toFixed(1));
+      var d = (r / levels) * l;
+      pts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
     }
     svg += '<polygon points="' + pts.join(' ') + '" class="radar-bg"/>';
   }
   for (var i = 0; i < 6; i++) {
     var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    svg += '<line x1="100" y1="100" x2="' + (100 + 78 * Math.cos(a)).toFixed(1) + '" y2="' + (100 + 78 * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
+    svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
   }
-  svg += '<polygon class="radar-data">';
-  svg += '<animate attributeName="points" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
-  svg += '</polygon>';
+  var dpts = [];
   for (var i = 0; i < 6; i++) {
-    svg += '<circle r="3" class="radar-dot">';
-    svg += '<animate attributeName="cx" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
-    svg += '<animate attributeName="cy" dur="250ms" fill="freeze" calcMode="linear" begin="indefinite"/>';
-    svg += '</circle>';
+    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+    var v = Math.max(0.25, stats[i] || 0);
+    var d = (r / levels) * v;
+    dpts.push((cx + d * Math.cos(a)).toFixed(1) + ',' + (cy + d * Math.sin(a)).toFixed(1));
+  }
+  svg += '<polygon points="' + dpts.join(' ') + '" class="radar-data"/>';
+  for (var i = 0; i < 6; i++) {
+    var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+    var v = Math.max(0.25, stats[i] || 0);
+    var d = (r / levels) * v;
+    var px = (cx + d * Math.cos(a)).toFixed(1), py = (cy + d * Math.sin(a)).toFixed(1);
+    svg += '<circle cx="' + px + '" cy="' + py + '" r="3" class="radar-dot"/>';
   }
   for (var i = 0; i < 6; i++) {
     var a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    var lr = 78 + 16;
-    var lx = 100 + lr * Math.cos(a), ly = 100 + lr * Math.sin(a) + 4;
+    var lr = r + 16;
+    var lx = cx + lr * Math.cos(a), ly = cy + lr * Math.sin(a) + 4;
     svg += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label">' + RADAR_LABELS[i] + '</text>';
   }
   svg += '</svg>';
   return svg;
 }
-// 启动"终界余音"卡片动效：CRT 乱码、六维乱码约每 0.25 秒刷新；雷达图每帧平滑过渡到新形态
+// 启动"终界余音"卡片动效：乱码 CRT/六维高频刷新（约每 0.1 秒）；雷达图每 0.25 秒整图跳变
 function startEndAbyss(id) {
   stopEndAbyss();
   var card = document.getElementById('ab-' + id);
@@ -3790,32 +3776,14 @@ function startEndAbyss(id) {
   var statEls = card.querySelectorAll('.end-stat');
   var radar = card.querySelector('.end-radar');
   if (!crtEl || !radar) return;
-  radar.innerHTML = endRadarSvg(); // 骨架只建一次
-  var polyAnim = radar.querySelector('.radar-data animate');
-  var dotAnims = radar.querySelectorAll('.radar-dot animate');
-  var prevStats = null;
-  function tick() {
+  function refreshGarbled() {
     if (crtEl) crtEl.textContent = endGarbled(8);
     for (var i = 0; i < statEls.length; i++) statEls[i].textContent = endGarbled(3);
-    var stats = endRadarStats();
-    // 多边形：从上一帧形状平滑过渡到新形状
-    if (polyAnim) {
-      polyAnim.setAttribute('values', (prevStats ? endPointsStr(prevStats) : endPointsStr(stats)) + ';' + endPointsStr(stats));
-      polyAnim.beginElement();
-    }
-    // 顶点圆点：同样平滑过渡
-    for (var i = 0; i < 6; i++) {
-      var x = endDotCoord(i, stats, 'x'), y = endDotCoord(i, stats, 'y');
-      var x0 = prevStats ? endDotCoord(i, prevStats, 'x') : x;
-      var y0 = prevStats ? endDotCoord(i, prevStats, 'y') : y;
-      var cxAn = dotAnims[2 * i], cyAn = dotAnims[2 * i + 1];
-      if (cxAn) { cxAn.setAttribute('values', x0 + ';' + x); cxAn.beginElement(); }
-      if (cyAn) { cyAn.setAttribute('values', y0 + ';' + y); cyAn.beginElement(); }
-    }
-    prevStats = stats;
   }
-  tick();
-  endAbyssTimer = setInterval(tick, 250); // 约每 0.25 秒
+  refreshGarbled();
+  radar.innerHTML = endRadarSvg(); // 雷达立即出第一帧（整图，非平滑）
+  endRadarTimer = setInterval(function () { radar.innerHTML = endRadarSvg(); }, 250); // 约每 0.25 秒跳变
+  endAbyssTimer = setInterval(refreshGarbled, 100); // 乱码高频刷新（约每 0.1 秒）
 }
 
 function renderAbilityArchive() {

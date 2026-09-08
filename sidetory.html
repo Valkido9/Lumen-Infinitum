@@ -1217,6 +1217,68 @@ body {
   .timeline-grid { grid-template-columns: 1fr; }
   .timeline-panel { min-height: 140px; }
 }
+
+/* ===== SIDE STORY LIBRARY + HONGYING PROLOGUE ===== */
+.side-directory {
+  margin: 26px 0 34px; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, var(--bg-card), rgba(15,23,42,.36)); overflow: hidden;
+}
+.side-directory summary {
+  list-style: none; cursor: pointer; padding: 20px 24px; display: flex; align-items: center;
+  justify-content: space-between; gap: 18px; font-family: var(--font-serif); font-size: 1.18em;
+  font-weight: 700; color: var(--text);
+}
+.side-directory summary::-webkit-details-marker { display: none; }
+.side-directory summary::after { content: '展开选择'; color: var(--accent); font: 600 .72em/1 var(--font-sans); }
+.side-directory[open] summary::after { content: '收起目录'; }
+.side-directory-body { padding: 0 24px 24px; border-top: 1px solid var(--border); }
+.side-directory-controls { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
+.side-directory-controls label { color: var(--text-dim); font-size: .86em; white-space: nowrap; }
+.side-directory-controls select {
+  flex: 1; min-width: 0; padding: 10px 38px 10px 14px; color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 10px; font: inherit;
+}
+.side-index-story {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 16px 18px;
+  color: var(--text); text-decoration: none; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--bg-card); transition: .2s ease;
+}
+.side-index-story:hover { border-color: var(--accent); transform: translateY(-2px); }
+.side-index-icon { font-size: 1.8em; }
+.side-index-title { display: block; font-family: var(--font-serif); font-weight: 700; }
+.side-index-meta { color: var(--text-dim); font-size: .78em; margin-top: 3px; }
+.side-index-state { color: var(--accent); font-size: .78em; font-weight: 700; }
+.side-story-article { margin-top: 20px; }
+.side-story-hero {
+  padding: 34px 28px; text-align: center; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: radial-gradient(circle at 50% 0%, rgba(56,189,248,.13), transparent 55%), var(--bg-card);
+}
+.side-story-kicker { color: var(--accent); font-size: .8em; letter-spacing: .18em; font-weight: 700; }
+.side-story-hero h2 { margin: 10px 0 14px; font-family: var(--font-serif); font-size: 2em; letter-spacing: .06em; }
+.side-story-epigraph { margin: 0 auto; max-width: 34em; color: var(--text-dim); line-height: 1.9; }
+.side-story-toc { margin: 18px 0 28px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }
+.side-story-toc summary { cursor: pointer; padding: 15px 18px; color: var(--gold); font-weight: 700; }
+.side-story-toc-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; padding: 0 16px 18px; }
+.side-story-toc-grid a {
+  display: flex; gap: 8px; align-items: baseline; padding: 8px 10px; color: var(--text-dim);
+  text-decoration: none; border-radius: 8px; font-size: .82em;
+}
+.side-story-toc-grid a:hover { color: var(--accent); background: var(--accent-soft); }
+.side-story-toc-grid a span { color: var(--accent); font-variant-numeric: tabular-nums; }
+.side-story-content { max-width: 900px; margin: 0 auto; }
+.side-story-content > p { line-height: 1.92; margin: 0 0 16px; text-indent: 2em; color: var(--text); }
+.side-story-heading { scroll-margin-top: 84px; margin-top: 42px; }
+.side-story-ending { text-align: center; text-indent: 0 !important; color: var(--text-muted) !important; letter-spacing: .18em; }
+@media (max-width: 768px) {
+  .side-directory summary, .side-directory-body { padding-left: 16px; padding-right: 16px; }
+  .side-directory-controls { align-items: stretch; flex-direction: column; }
+  .side-index-story { grid-template-columns: auto 1fr; }
+  .side-index-state { grid-column: 2; }
+  .side-story-hero { padding: 26px 18px; }
+  .side-story-hero h2 { font-size: 1.55em; }
+  .side-story-toc-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -1283,28 +1345,28 @@ body {
         <div class="side-vol" id="vol-pro">
           <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>📖 序幕 · 异世的呼唤</button>
           <div class="side-vol-body">
-            <a href="index.html#pro-ch1" class="chap-link">第一章 礼奈的日常与云略降临</a>
-            <a href="index.html#pro-ch2" class="chap-link">第二至四章 基地日常与能力展现</a>
-            <a href="index.html#pro-ch3" class="chap-link">第五至七章 手杖之谜·粥娘实验室</a>
-            <a href="index.html#pro-ch4" class="chap-link">第八至九章 正义·前司长的哀伤</a>
-            <a href="index.html#pro-ch5" class="chap-link">第十至十一章 可乐之夜·马萨卡暴走</a>
-            <a href="index.html#pro-ch6" class="chap-link">第十二章 沃克加德任务·新的征途</a>
-            <a href="index.html#pro-ch7" class="chap-link">第十三至十六章 基地遇袭·燃烧的逃亡</a>
-            <a href="index.html#pro-ep" class="chap-link">序幕终章 附魔师与妖狐的棋局</a>
+            <a href="index.html#pro-ch01" class="chap-link">第一章 礼奈的日常与云略降临</a>
+            <a href="index.html#pro-ch02" class="chap-link">第二至四章 基地日常与能力展现</a>
+            <a href="index.html#pro-ch03" class="chap-link">第五至七章 手杖之谜·粥娘实验室</a>
+            <a href="index.html#pro-ch04" class="chap-link">第八至九章 正义·前司长的哀伤</a>
+            <a href="index.html#pro-ch05" class="chap-link">第十至十一章 可乐之夜·马萨卡暴走</a>
+            <a href="index.html#pro-ch06" class="chap-link">第十二章 沃克加德任务·新的征途</a>
+            <a href="index.html#pro-ch07" class="chap-link">第十三至十六章 基地遇袭·燃烧的逃亡</a>
+            <a href="index.html#pro-ch19" class="chap-link">序幕终章 附魔师与妖狐的棋局</a>
           </div>
         </div>
         <div class="side-vol" id="vol-wok">
           <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>⚓ 第一卷 · 星兆之海</button>
           <div class="side-vol-body">
-            <a href="index.html#wok-ch1" class="chap-link">第一章 迷雾商船·海盗登场</a>
-            <a href="index.html#wok-ch2" class="chap-link">第二章 灵魂投影·新的身份</a>
-            <a href="index.html#wok-ch3" class="chap-link">第三章 富家千金·通缉犯罗伊</a>
-            <a href="index.html#wok-ch4" class="chap-link">第四章 褐浪酒吧·意外频发</a>
-            <a href="index.html#wok-ch5" class="chap-link">第五章 船都之夜·优碧卡的悲剧</a>
-            <a href="index.html#wok-ch6" class="chap-link">第六章 云略vs优碧卡·意外的羁绊</a>
-            <a href="index.html#wok-ch7" class="chap-link">第七章 圆翼党地下基地·革命策源地</a>
-            <a href="index.html#wok-ch8" class="chap-link">第八章 亡灵兔与六八·双面博弈</a>
-            <a href="index.html#wok-ch9" class="chap-link">第九章 优碧卡的真相·英勇为怀，广济众生</a>
+            <a href="index.html#wok-ch01" class="chap-link">第一章 迷雾商船·海盗登场</a>
+            <a href="index.html#wok-ch02" class="chap-link">第二章 灵魂投影·新的身份</a>
+            <a href="index.html#wok-ch03" class="chap-link">第三章 富家千金·通缉犯罗伊</a>
+            <a href="index.html#wok-ch04" class="chap-link">第四章 褐浪酒吧·意外频发</a>
+            <a href="index.html#wok-ch05" class="chap-link">第五章 船都之夜·优碧卡的悲剧</a>
+            <a href="index.html#wok-ch06" class="chap-link">第六章 云略vs优碧卡·意外的羁绊</a>
+            <a href="index.html#wok-ch07" class="chap-link">第七章 圆翼党地下基地·革命策源地</a>
+            <a href="index.html#wok-ch08" class="chap-link">第八章 亡灵兔与六八·双面博弈</a>
+            <a href="index.html#wok-ch09" class="chap-link">第九章 优碧卡的真相·英勇为怀，广济众生</a>
             <a href="index.html#wok-ch10" class="chap-link">第十章 船都·骑士与医生</a>
             <a href="index.html#wok-ch11" class="chap-link">第十一章 无海·黑旗的拦截</a>
             <a href="index.html#wok-ch12" class="chap-link">第十二章 亚因森特·海洋之心</a>
@@ -1329,6 +1391,7 @@ body {
       <div class="side-group-body">
         <a href="sidetory.html#char-bg" class="chap-link">👤 人物背景</a>
         <a href="sidetory.html#prolog" class="chap-link">📜 前传</a>
+        <a href="sidetory.html#hongying-prologue" class="chap-link">🦊 鸿荧前传：桃花源没有季节</a>
         <a href="sidetory.html#bonus" class="chap-link">🎁 番外</a>
         <a href="sidetory.html#events" class="chap-link">⚡ 特殊事件</a>
       </div>
@@ -1358,6 +1421,29 @@ body {
     </div>
   </section>
 
+
+  <!-- ===== 可扩展的时空遗闻目录 ===== -->
+  <details class="side-directory" id="side-directory" open>
+    <summary><span>选择时空遗闻</span></summary>
+    <div class="side-directory-body">
+      <div class="side-directory-controls">
+        <label for="sideStorySelect">篇目目录</label>
+        <select id="sideStorySelect" onchange="if(this.value) location.hash=this.value">
+          <option value="">请选择要阅读的内容</option>
+          <optgroup label="人物背景"><option value="char-bg">人物背景（待收录）</option></optgroup>
+          <optgroup label="前传"><option value="hongying-prologue">鸿荧前传：桃花源没有季节</option></optgroup>
+          <optgroup label="番外"><option value="bonus">番外（待收录）</option></optgroup>
+          <optgroup label="特殊事件"><option value="events">特殊事件（待收录）</option></optgroup>
+        </select>
+      </div>
+      <a class="side-index-story" href="#hongying-prologue">
+        <span class="side-index-icon">🦊</span>
+        <span><span class="side-index-title">鸿荧前传：桃花源没有季节</span><span class="side-index-meta">前传 · 二十节 · 已完结</span></span>
+        <span class="side-index-state">开始阅读 →</span>
+      </a>
+    </div>
+  </details>
+
   <!-- ===== 人物背景 ===== -->
   <section class="side-section" id="char-bg">
     <h2><span class="icon">👤</span>人物背景</h2>
@@ -1369,7 +1455,275 @@ body {
   <section class="side-section" id="prolog">
     <h2><span class="icon">📜</span>前传</h2>
     <p class="sec-desc">正篇之前发生的故事，那些埋下因果的过往。</p>
-    <div class="side-card"><div class="side-placeholder">📝 内容筹备中，敬请期待……</div></div>
+    <article class="side-story-article" id="hongying-prologue">
+      <header class="side-story-hero">
+        <div class="side-story-kicker">时空遗闻 · 鸿荧前传</div>
+        <h2>桃花源没有季节</h2>
+        <p class="side-story-epigraph">“只有能够接纳无处可去的人，<br>让不同种族一同生活的地方，才应该被称作桃花源。”</p>
+      </header>
+      <details class="side-story-toc">
+        <summary>篇内目录 · 二十节</summary>
+        <nav class="side-story-toc-grid" aria-label="鸿荧前传篇内目录">
+          <a href="#hongying-ch01"><span>01</span>结界里的四季</a>
+          <a href="#hongying-ch02"><span>02</span>更换结界的那一天</a>
+          <a href="#hongying-ch03"><span>03</span>白色的血</a>
+          <a href="#hongying-ch04"><span>04</span>一年只有一天的朋友</a>
+          <a href="#hongying-ch05"><span>05</span>羊与尾巴</a>
+          <a href="#hongying-ch06"><span>06</span>结界上的假门</a>
+          <a href="#hongying-ch07"><span>07</span>明天带你离开</a>
+          <a href="#hongying-ch08"><span>08</span>雪夜里的两封信</a>
+          <a href="#hongying-ch09"><span>09</span>安全区</a>
+          <a href="#hongying-ch10"><span>10</span>母亲最后的结界</a>
+          <a href="#hongying-ch11"><span>11</span>雪没有融化</a>
+          <a href="#hongying-ch12"><span>12</span>像海一样的湖</a>
+          <a href="#hongying-ch13"><span>13</span>风雪里的陌生人</a>
+          <a href="#hongying-ch14"><span>14</span>两种诅咒</a>
+          <a href="#hongying-ch15"><span>15</span>狐火瓶里的过去</a>
+          <a href="#hongying-ch16"><span>16</span>再也不要见我</a>
+          <a href="#hongying-ch17"><span>17</span>「世界的宏愿」</a>
+          <a href="#hongying-ch18"><span>18</span>碎片之下</a>
+          <a href="#hongying-ch19"><span>19</span>强大到足以杀死我</a>
+          <a href="#hongying-ch20"><span>20</span>第二个桃花源</a>
+        </nav>
+      </details>
+      <div class="side-story-content">
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch01">01  结界里的四季</h3>
+      <p><span class="char-link" onclick="openChar('hongying')">鸿荧</span>出生在一处被结界从尘世中完整裁去的山谷。数百名妖狐世代居住于此，以呼风唤雨的妖术维持水土与收成，又由神社祭师将外界的战争、饥荒与异族一并隔绝。谷中四季如春，庄稼不会歉收，几乎没有人因疾病夭折；这里因此拥有一个再美好不过的名字——桃花源。</p>
+      <p>她的母亲芦芝是主持结界修建的首席祭师，父亲鸿钧负责以妖术耕作。家中四个孩子依次是鸿明、鸿荧，以及年幼的双生子鸿光与鸿灵。妖狐寿命漫长，兄妹间的年岁相隔以几十年计算；但在鸿荧的记忆里，一家六口围坐吃饭时从来没有谁显得太老，也没有谁真正长大。</p>
+      <p>芦芝很早便把女儿带在身边，教她辨认结界的纹路与节点。鸿荧学得极快，却远比起封闭一道边界更喜欢操纵天气、催熟花木的法术。母亲对此没有任何意见，只要鸿荧能幸福快乐地成长，就是孩子对她最大的礼物。桃花源永远只有同一种风、同一种温度；她每次跟随母亲走到结界之外，都会惊讶于鸟羽、树叶乃至泥土颜色的变化。她那时还不知道春夏秋冬的名字，只知道围墙外的世界似乎每天都不一样。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch02">02  更换结界的那一天</h3>
+      <p>鸿荧长大一点后，桃花源迎来一次规模空前的结界更换。芦芝与祭师们昼夜赶工，精壮的妖狐则分散到山谷边缘警戒。无人看管的鸿荧趁机越过尚未闭合的边界，循着从未见过的鸟兽一路向山中走去。</p>
+      <p>幻觉毫无征兆地出现。她听见已经离得很远的弟妹在林中呼喊，看见树木像被无形的水流折弯；等脚下的山路忽然消失，她已经来不及分清哪一块岩石真实存在。鸿荧从峭壁滚落，腿部被一块狭长的白色晶体划开。村民找到她时，那枚碎片已经嵌入伤口深处。</p>
+      <p>桃花源最好的医者取出晶体，替她处理伤口，却没能令高烧消退。鸿荧清醒了几日，随后陷入长达近一个月的昏迷；芦芝赶在结界完成后回到床边，几乎已经被要求为女儿准备后事。最终，体温在一个清晨缓慢下降。鸿荧活了下来，伤口也开始愈合——只有从绷带下渗出的血，变成了从未有人见过的白色。</p>
+      <div class="story-quote">
+      <div class="quote-line">芦芝在床边坐了一整夜。天快亮时，鸿荧终于睁开眼睛。</div>
+      <div class="quote-line">“娘。”她的声音很轻，“我是不是又闯祸了？”</div>
+      <div class="quote-line">芦芝没有回答，只是把她伸出被子的手重新握住。那只手已经不再滚烫，却冷得不像一个刚从高烧中活下来的人。</div>
+      <div class="quote-line">“好孩子。别害怕……”芦芝说，“别多想这些。你还活着，娘就放心了。”</div>
+      <div class="quote-source">——芦芝、鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch03">03  白色的血</h3>
+      <p>最先病倒的是拿走晶体研究的医者。他出现了与鸿荧相似的高烧，却没能像她一样醒来。紧接着，与鸿荧共同劳作的妖狐开始反胃、虚弱，依靠妖术驱动的耕具与水车也在她触碰后彻底失灵。没人知道那是什么，只能把所有异状都归结到她从结界外带回的“疾病”。</p>
+      <p>鸿钧仍试图让女儿回到正常生活。他陪她检查损坏的农具，告诉同伴不要责怪一个刚能下床的孩子，因此也成了与她接触最久、使用妖术最频繁的人。等鸿荧意识到他的病比其他人严重时，父亲已经无法从床上坐起。</p>
+      <p>鸿钧死了。短短几周之间，一个家庭因顶梁柱的轰然倒塌而摇摇欲坠。鸿钧的死亡使所有猜测变成了指控。村民要求处死鸿荧，或把她赶出结界；但结界之外正进行着人类与亚人的灭绝战争，一旦踏出结界，人类就会把她当作异怪杀死，鸿荧那双白色的狐耳不会给她留下辩解的机会。温驯的芦芝原本要立刻赶回家，却被更冷静的鸿明拦住。剩余家人整整两周没有使用任何妖术，才敢走近已经被隔离的鸿荧。那也是他们直到父亲下葬后，第一次真正见面。</p>
+      <p>鸿明无法原谅妹妹，更无法理解母亲为何还要保护她。在一次近乎决裂的争吵后，芦芝辞去祭师职务、自行禁绝妖术，带鸿荧搬到桃花源最偏远的边缘；鸿明则留在旧宅，照顾鸿光与鸿灵。曾经的六口之家就这样从此被拆成两半。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch04">04  一年只有一天的朋友</h3>
+      <p>失去妖术的芦芝很难独自维持生活。最初几年，母女只能依靠鸿明与少数村民送来的物资；后来鸿荧发现自己的妖术并不会反过来伤害自己，便逼着自己学习耕作、狩猎和过去并不感兴趣的生活类法术。她越学越快，也越来越不愿走近任何人。</p>
+      <p>她与母亲在山谷边缘生活了十余年。鸿荧很少离开住处，偶尔坐在河边，看同一轮太阳从山后升起又沉下。村中的孩子知道她是“灾星”，远远地看见白发便绕路；她也逐渐相信自己就是毁掉一切的罪人，不与任何人接触，或许就是自己唯一能为别人做的好事。</p>
+      <p>每年只有新年例外。鸿明会提前让家人停用妖术，再带弟妹来看望芦芝。鸿光仍会下意识躲开她，鸿灵却从不肯把姐姐当作怪物。女孩会把积攒一年的话一口气说完，又承诺等自己长大、不再受大哥管束以后，每个月都来一次。</p>
+      <p>然而，鸿灵同样被芦芝留下的位置束缚。她被神社的几位资深祭师共同培养，被要求学习远超年龄的结界术，也被迫一次次表明自己与身为“灾星”的姐姐立场不同。鸿荧只在一年一度的重逢中看见她长高，却不知道那张越来越强气的脸下面，也有一只被关在前程里的狐狸。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch05">05  羊与尾巴</h3>
+      <p>多年后，结界再度出现不稳。尚未完成训练的鸿灵无法承担维护任务，村里只得请身体已经虚弱的芦芝回到神社。鸿荧被独自留在边缘住处一两个月，也正是在这段时间，一个牵着羊群的黑发人类少女误入了尚未修复的边界。</p>
+      <p>两人听不懂彼此的语言。少女起初把白色狐耳当成亚人的特征，直到发现鸿荧不仅没有敌意，还对羊这种随处可见的牲畜目瞪口呆，才试探着让她伸手。鸿荧小心地摸了摸羊毛；下一刻，对方也伸手摸向了鸿荧的尾巴。</p>
+      <div class="story-quote">
+      <div class="quote-line">鸿荧蹲在羊群边，手指刚刚陷进蓬松的白毛，尾巴便忽然被什么东西握住。</div>
+      <div class="quote-line">她猛地回头。黑发女孩也吓得松开手，两个人隔着完全听不懂的语言僵持了片刻。她先指了指鸿荧手中的羊，又指了指鸿荧的尾巴。</div>
+      <div class="quote-line">鸿荧低头看了看那只羊，又看了看自己。</div>
+      <div class="quote-line">“……明明就不一样！”</div>
+      <div class="quote-line">这个头发颜色与鸿荧相反的女孩当然听不懂，只是捂住嘴笑了起来。</div>
+      <div class="quote-source">——鸿荧、灼晦，《鸿荧前传》</div>
+      </div>
+      <p>少女名叫灼晦。以后的日子里，她每天都会带来结界外的水果与食物，鸿荧则用结界里的佳肴、妖术制造出的微风与忽然绽放的花朵回礼。两个人先靠图画和手势交流，后来又花了几个月的时间互相学习对方的语言。已经多年没再见过家人之外的其他人的鸿荧觉得这个黑色的访客无比可贵，更重要的是，灼晦不会任何形式的法术，所以她自然也不会受到“诅咒”的影响。只要灼晦希望，她和灼晦就可以一直一直做最好的、唯一的朋友。</p>
+      <p>灼晦带鸿荧去看结界外的山洞、石笋、与月光下反光的钙华湖，教她分辨结界内永远看不到的季节变化；灼晦总是因为家人的要求，凌晨就起床来山上放羊。偶尔她实在太困，还会趁芦芝不在，直接睡在鸿荧的床上。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch06">06  结界上的假门</h3>
+      <p>结界即将重新闭合时，鸿荧第一次对结界术产生近乎疯狂的热情。如果结界就这样被修复了，她就再也见不到自己唯一的朋友了。她不可能在短时间内胜过芦芝，却可以利用自己熟悉边缘节点的优势，在结界完成以前留下一个不会被自动修复的空洞：从外面看，它与真正的屏障毫无区别，实际上只要沿着特定方向穿行，就能抵达山谷之外。</p>
+      <p>秘密的假门让两人的友情持续了许多年。灼晦从比鸿荧矮一些的牧羊女孩，长成比她高出一个头的少女；鸿荧的容貌却几乎没有变化。灼晦带来的羊越来越少，笑容也越来越少，后来甚至只剩她独自前来。直到她亲口说出自己的村落正在被亚人逼近、所有人都必须逃亡，鸿荧才真正理解结界外的四季并不只有美丽。</p>
+      <p>鸿荧暗示芦芝，为什么不能把无家可归的人接进桃花源。芦芝没有否认外界的苦难，只告诉她：封闭使妖狐像生活在笼中，却也是这个聚落避开灭绝的根基。若把战争中的任何一方带进来，另一方终会循迹而至。鸿荧无法接受这个答案。一个只能保护本族、却不能容下她唯一的朋友的地方，在她看来根本不配被称作桃花源。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch07">07  明天带你离开</h3>
+      <p>灼晦此后失踪了很长时间。与此同时，芦芝因长期与鸿荧共同生活而日渐衰弱，村中的耐心也濒临极限：有人再次要求把鸿荧放逐到结界之外，有人提出让鸿灵亲手建造一座更小的结界，把姐姐永远关在里面，每日只留下送饭的入口。芦芝拒绝了所有方案，但日薄西山的她却已经没有力量给出新的办法。</p>
+      <p>正当一切逼近绝路，灼晦突然回来了。她没有带羊，也没有带食物，身上遍布新旧伤痕，只说所有的事情已经处理完，明天便可以带鸿荧离开。她的表情不像一个赢得战争的人；可鸿荧只想到自己终于不会再伤害母亲，便扑过去抱住她。</p>
+      <p>灼晦也抱紧她，随后毫无征兆地哭了起来。鸿荧把那场痛哭理解成劫后余生，反过来安慰了她很久。她没有追问那些伤从何而来，也没有发现灼晦始终不敢朝结界缺口的方向看。</p>
+      <div class="story-quote">
+      <div class="quote-line">“明天。”灼晦说，“明天我来接你。”</div>
+      <div class="quote-line">“你们终于打赢了吗？你们愿意接纳我了吗？你们……”</div>
+      <div class="quote-line">灼晦没有回答。鸿荧却已经抱住了她，尾巴在两人身后慌乱地收拢，像是终于护住了一件失而复得的东西。</div>
+      <div class="quote-line">“别哭呀。”她笨拙地拍着灼晦的背，“以后不用再回来了。我也不回来了……我们两个以后的日子可以干很多很多事，很多我留在这里不可能经历的事，很多你想做却需要我的帮助才能做到的事……”</div>
+      <div class="quote-line">灼晦把脸埋在她肩上，哭得更厉害了。</div>
+      <div class="quote-source">——鸿荧、灼晦，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch08">08  雪夜里的两封信</h3>
+      <p>鸿荧给芦芝与鸿明各留下一封长信。她亲自把写给兄长的那封送回旧宅，借此最后看一次自己曾经生活的村庄。孩子们躲开她，大人在身后低声议论；童年里熟悉的路没有改变，那里却已经没有任何位置属于她。</p>
+      <p>风雪加剧的夜晚，鸿荧等母亲睡下，背起行囊准备离开。门刚打开，她看见鸿灵穿着学宫的衣服站在雪里，鞋底已经磨破。妹妹读过留给鸿明的信，一路从村子中央赶来，要求鸿荧若要走就必须带上自己。</p>
+      <p>鸿荧试图用“前程”劝她回去：鸿灵会继承芦芝的位置，成为整个桃花源最受敬仰的结界祭师；跟一个灾星逃亡，只会毁掉本可光鲜的一生。鸿灵却说，这与鸿明拆散家庭、召集村民追捕亲妹妹时使用的是同一套说辞。再好的前程也终究通向坟墓，她不愿为了某个被安排好的明天再也见不到自己的姐姐。</p>
+      <div class="story-quote">
+      <div class="quote-line">“为什么你们总要拿明天会怎么样，来规划我今天的人生？”鸿灵的声音在风里发颤，“为什么一定要用以后的前程，挤掉我现在仅存的这一点抓都抓不住的最珍视的东西？！”</div>
+      <div class="quote-line">鸿荧伸手去擦她睫毛上的雪。鸿灵却抓住那只手，死死按在自己脸侧。</div>
+      <div class="quote-line">“现在这一秒，还有以后的每一秒，我只想知道我最亲最爱的姐姐还在这个世界上活着！”</div>
+      <div class="quote-line">“一年见你一次已经让我很难过了，我不想以后再也见不到你。我不想，我不想呀……”</div>
+      <div class="quote-source">——鸿灵，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch09">09  安全区</h3>
+      <p>鸿明读完信后立刻发现，鸿荧既然敢出逃，手中必然掌握穿过结界的方法。他无法确定妹妹会不会在离开时破坏整座屏障，更无法承担外界军队趁机闯入的后果，于是敲响警钟，把鸿荧与鸿灵的去向告知全村。这成为他此后一生最想改变、却永远无法撤回的决定。</p>
+      <p>姐妹赶在追兵合围前穿过假门。结界外同样下着雪，却混着冰碴、烟尘和火药的气味；灰色天空下的树木被烧得只剩焦黑枝干。灼晦站在林间，一言不发地捂住脸，随后软倒在地。她背后不是等待迁徙的几个亲人，而是一整支携带弓弩与武器的人类队伍。</p>
+      <p>鸿灵听不懂他们的语言。鸿荧却清楚听见，有人在灼晦背后喊：“最后的安全区就在前面。”紧接着，另一道声音说：“我们杀进去。”</p>
+      <p>她终于明白灼晦为什么遍体鳞伤，又为什么在昨天抱着自己哭得无法呼吸。人类从来就没有战胜过异怪。灼晦从来就没能争取到带她离开的机会。鸿荧从来就没有那个能和最好的朋友一起离开这个永生永世囚禁她的桃花源，过上美好而幸福的日子的未来……有的只是在某个晚上的会面不小心被暴露给村庄里的其他人类，被殴打、被逼迫、被要挟着指认出通往桃花源的唯一入口的灼晦。有的只是一个不得不背叛自己最好的朋友的，无法以一己之力同“大人的话”相抗争的普通的人类女孩。</p>
+      <p>可通往结界的唯一道路已经暴露了。姐妹俩在一篇混乱中转身退回结界，迎面撞上追来的妖狐；人类也在同一刻越过缺口。双方都把她们视作阻碍，弓箭、爆炸、火焰、雷电、狂风……这些足以致死的东西，在姐妹两人的身前与身后同时爆发。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch10">10  母亲最后的结界</h3>
+      <p>人类依靠数量与弓弩不断涌入，长期从事生产的妖狐则用生疏的攻击性法术仓促抵抗。鸿荧与鸿灵被夹在两道阵线之间：妖狐认定鸿荧通敌，人类也不会因为她能说自己的语言便停止攻击。鸿灵替姐姐撑开结界，却被数支流矢贯穿；鸿荧看见她倒下后近乎失控，开始向两边同时释放妖术。</p>
+      <p>混战即将冲入山谷深处时，整座屏障忽然以前所未有的速度旋转。芦芝没有奔向两个受伤的女儿，而是站在另一端，把最后的力量灌入被撕开的节点。刺目的光将缺口周围的人全部抛开，边界重新闭合；闯入者被困在山谷中，又被围攻上来的妖狐彻底杀死；尚未来得及进入的人则彻底挡在外面。</p>
+      <p>芦芝的身体在光中崩解。妖灵死后神识与躯体回归自然，她化作漫天蒲公英，在风雪中掠过鸿荧鼻尖。鸿荧只来得及感到歉意、泪水、痛苦、爱、感谢与祝福……漫天的蒲公英消散之后，她便再也分不清哪一片属于母亲。</p>
+      <p>……结界完整了。</p>
+      <p>芦芝最终仍在女儿与整个桃花源之间选择了后者，也用自己的死亡把不再能够打破结界的鸿荧永久留在里面。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch11">11  雪没有融化</h3>
+      <div class="story-quote">
+      <div class="quote-line">鸿荧抱起鸿灵，逃向一处不再交火的山坡。妹妹穿得太薄，伤口又与鸿荧的身体直接接触；一路上，她的体温降得比落雪更快。没有人敢接近她们。鸿荧一次次呼救，得到的只有远处仍在持续的爆炸。</div>
+      <div class="quote-line">鸿灵在她怀中短暂醒来。她说自己记得父亲怎样死去，也曾经恨过姐姐；后来她终于明白，那不是鸿荧的错。她不再要求姐姐把自己带去外面的世界，只希望像小时候一样被她抱着。</div>
+      <div class="quote-line">雪粒扑上鸿荧裸露的肌肤，她却觉得有火在烧五脏六腑。风刮起的阴影越来越大，几乎遮住了妹妹的脸庞。</div>
+      <div class="quote-line">“其实，我也恨过你……姐姐。”鸿灵突然笑了，唇角溢出血沫。“恨你什么表率都没有，恨你就那样想要逃避……想要，把我……抛在，孤身一人的世界里……”</div>
+      <div class="quote-line">远处传来爆裂声，结界缺口处腾起猩红的光焰。鸿荧搂着怀里的鸿灵往冰湖深处挪，呜咽和哽咽从她冰冷的指尖向外颤出。</div>
+      <div class="quote-line">“但是，我现在，只想让你，像这样，抱着我……”</div>
+      <div class="quote-line">在冰上蹒跚的身影猛然止步——她似乎听到了某种让人悲痛欲绝的自白。</div>
+      <div class="quote-line">鸿灵的手指勾住她的衣襟，像幼时攥着糖果纸般虔诚。</div>
+      <div class="quote-line">“冷吗……灵儿？……灵儿，快说话呀，肯定很冷吧……？”几乎是赎罪一般，昏黑之下，传来一阵失声的哀求。</div>
+      <div class="quote-line">“热。好热……像被太阳晒着。”鸿灵的声音轻得像雪落，眼皮缓缓垂了下去。</div>
+      <div class="quote-line">“姐姐，以前，出去玩的时候……”</div>
+      <div class="quote-line">最后一粒雪落在她睫毛上，没有融化。</div>
+      <div class="quote-line">鸿荧跪倒在一片荒芜中央，掌心贴住鸿灵的心口。</div>
+      <div class="quote-line">那里寂静如封冻的湖。</div>
+      <div class="quote-source">——鸿灵、鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch12">12  像海一样的湖</h3>
+      <p>鸿荧抱着妹妹回到结界边缘，试图用最猛烈的妖术轰开屏障。她能趁着结界还开启的时候不让结界闭合，却找不到方法把已经锁死的结界打开。鸿灵与芦芝永远地离开了她，灼晦似乎也死在了刚才的冲突中。她只能背靠母亲用生命完成的围墙，搂住妹妹的遗体直到天亮。</p>
+      <p>赶来的村民想带走鸿灵，却没人敢靠近悲痛欲绝的鸿荧。她以法术阻止所有人，没有人再敢上前。混乱平息后，闯入桃花源的人类终于被全部杀死，尸体就地在桃花源的边缘焚烧；剩余的人被隔绝在外结界里的狐妖不会在意他们的死活。人类失败了。</p>
+      <p>鸿灵曾经听姐姐讲过大海，一直想亲眼看看。桃花源里没有海，鸿荧便把她葬在山谷最大的湖边，告诉自己这里就是鸿灵想看的大海。从那以后，她不再回家，靠狩猎与村民偶尔施舍给她的食物生存。村民因芦芝与鸿灵之死感到愧疚，却仍害怕与她说话；长兄鸿明更在那个让他失去两位至亲的决定中反复煎熬，逐渐变得疯癫。</p>
+      <p>那些曾随人群要求处死她的人，也会在她饥饿时留下衣物与粮食。鸿荧想憎恨所有人，却始终做不到真的去恨。她只能继续在桃花源里流浪，既不相信任何人，也没有真正放弃帮助别人。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch13">13  风雪里的陌生人</h3>
+      <p>一个冬日，有孩子跌入结冰的河流。鸿荧把人救上岸，没有等待孩子的家人赶来便独自离开；她害怕对方睁眼后看见自己，也不在意湿透的身体还能走多远。小雪很快变成暴雪，她在饥饿与失温中倒下，任由冰霜将身体一点点封住。</p>
+      <p>撞破芦芝结界的人看起来只是一个落魄的人类男子，实际上却正被某种过于庞大的力量拖向死亡。他把芦芝留下的结界当作几乎不存在的阻碍，随意地便来到了桃源之中；难得清醒时，他想要捡一些树枝生火取暖，却发现冰层下面露出了一截白色狐尾。</p>
+      <p><span class="char-link" onclick="openChar('daojiesi')">道杰斯</span>把鸿荧从冰中挖出，带进山洞生火。暴雪封住道路，两名都认为自己命不久矣的人因此被迫同行。鸿荧对人类仍怀有戒心，却很快发现这个男人所知道的世界远比灼晦讲述的更辽阔：他能辨认星象，精通一切野外生存技巧，懂得一些已经不存在的国家的历史，知道这个世界之外还有名为“时间线空间”的更广袤的地方，也能用近乎平静的语气谈起持续了数百年的失败。</p>
+      <div class="story-quote">
+      <div class="quote-line">“你为什么要把我挖出来？”</div>
+      <div class="quote-line">刚刚醒来的鸿荧缩到火堆另一侧，双手紧紧护住身后的白色尾巴。</div>
+      <div class="quote-line">道杰斯沉默了一会。</div>
+      <div class="quote-line">“积雪太厚了。”他说，“……我以为，那是某种可以食用的肉质直根。比如白萝卜。”</div>
+      <div class="quote-line">“谁家的萝卜长毛？”</div>
+      <div class="quote-line">“所以我及时修正了判断。”</div>
+      <div class="quote-line">鸿荧盯着这个差点把自己当作晚饭的救命恩人，第一次怀疑他所谓的博学也许并不包括常识。</div>
+      <div class="quote-source">——鸿荧、道杰斯，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch14">14  两种诅咒</h3>
+      <p>鸿荧很快发现，自己的力量在道杰斯身边会变得安静；道杰斯那些不断侵蚀肉体与理智的力量，也因她的存在受到压制。两种相互对抗的诅咒抵消了彼此的伤害，使本该很快爆体而亡的道杰斯获得喘息，也让鸿荧第一次可以在不害怕杀死对方的情况下与人相处。</p>
+      <p>最初一段日子里，鸿荧外出狩猎或向村民讨取食物，道杰斯负责处理猎物、做饭与照料住处。他会告诉鸿荧哪里能找到越冬的食物，自己却经常在白日神秘消失。附近的树林随之出现大片毁坏，巨型野猪被整齐地劈成两半；村民以为山谷里出现了怪物，鸿荧则只高兴当天终于能吃到肉。</p>
+      <p>夜晚，道杰斯给她讲述一些煎蛋的法术与他撰写的“睡前故事”。从诸神黄昏、早期战线到巫魔的战争，他的故事一讲便是整夜。鸿荧所失去的一切，与道杰斯曾经拥有又失去的一切在山洞里交错；她重新生出离开一成不变生活的渴望，也第一次开始想象，自己或许还能拥有比死亡更遥远的未来。</p>
+      <p>道杰斯答应打造一条能够压制鸿荧力量的项链，让她重新接近族人。但鸿荧很快听出这份礼物也是告别：他想把她送回正常生活，自己则离开桃花源，独自走向最后一次失控。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch15">15  狐火瓶里的过去</h3>
+      <p>鸿荧用一只空罐作为项链的回礼。妖狐可以把彼此的羁绊化作狐火，只要关系尚未断绝，瓶中的蓝焰便不会熄灭。她没有告诉道杰斯，狐火还会保存持有者的一部分记忆。正是这些记忆，让她在故事讲到第三代芬奈法拉战线的溃败前夕便提前看见了答案。</p>
+      <p>当时战线只剩道杰斯与布格弥仍能行动。为了阻止死神及其首席，道杰斯决定完全解放自身力量，又命令布格弥拆解与之相对的希冀院作为缓冲。战斗没有使世界立刻毁灭，却让院区碎片散落出去。多年以前划开鸿荧腿部、毁掉她家庭的白色晶体，正是其中之一。</p>
+      <p>鸿荧无法接受自己最信赖、最崇拜的人就是一切厄运的源头，更无法确认道杰斯的照料究竟出于真心，还是一个将死之人对受害者的补偿。道杰斯本打算在最后一次讲述中亲口说明，她却没有走进山洞，只在洞外骂他是骗子，要求他永远不要再出现。</p>
+      <p>山洞里没有火光。鸿荧后来从狐火保存的记忆中看见，那一天的道杰斯确实没有赴约。他沿着她的人生轨迹走过芦芝的旧神社、河边、与灼晦初遇的结界外侧、鸿灵死去的雪地与湖边坟墓；在理智彻底崩断以前，他避开人群，独自冲向山谷深处。那些村民惊恐地望着他的眼神，与他们望向鸿荧时一模一样。</p>
+      <div class="story-quote">
+      <div class="quote-line">“你救我，是因为你觉得对不起我吗？”</div>
+      <div class="quote-line">山洞外没有灯，只有被雪映亮的石壁。鸿荧没有踏进去一步。</div>
+      <div class="quote-line">“你把我当成什么了？一件在临死以前补好的东西？只要给我一条项链，再把我送回去，你就能觉得自己没有做错那么多事了吗？”</div>
+      <div class="quote-line">里面始终没有回答。鸿荧用力擦掉眼泪，她甚至不知道自己已经抽搐着跪倒在地上。</div>
+      <div class="quote-line">“道杰斯……你这个骗子。我会永远憎恨你的。”</div>
+      <div class="quote-line">山洞里始终没有亮起火光。不知过了多久，她扶着沿途的树木转身离开，两条腿在正在融化的积雪里蹚出一道痕迹。</div>
+      <div class="quote-source">——鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch16">16  再也不要见我</h3>
+      <p>鸿荧嘴上要求道杰斯消失，却仍保存着狐火瓶。村民开始报告山谷深处出现无法解释的破坏，她发现瓶中的火焰时明时暗，最终还是循着痕迹找到正在失控的道杰斯。她已经理解他的离开并非冷漠，也并不代表那些被毁掉的人生可以一笔勾销。</p>
+      <p>鸿荧的介入让道杰斯恢复片刻清醒。已如风中残烛的他没有替当年的决定辩护，只告诉她可以动手。鸿荧也确实动了手：以尾巴化作锁链将他摔向岩壁，打断一条腿，又用自己最擅长的天气与战斗妖术把这位极度虚弱的“最强附魔师”打得几乎再次断气。</p>
+      <p>怒火耗尽后，她没有补上最后一击。她仍然无法说出原谅，却已经看清，道杰斯救她不只是为了赎罪；而自己赶来，也不是为了杀死他。两个人重新同行的理由暂时只剩一个：只要鸿荧还在附近，道杰斯就不会那么快变成彻底失去理智的怪物。</p>
+      <div class="story-quote">
+      <div class="quote-line">道杰斯靠在碎裂的岩壁下，低头看了一眼自己不自然弯折的腿。</div>
+      <div class="quote-line">“好些了吗？”</div>
+      <div class="quote-line">“你问的是你，还是我？”</div>
+      <div class="quote-line">“你。”</div>
+      <div class="quote-line">“没有。”鸿荧吸了吸鼻子，“所以你先别死。等我哪天真的想明白了，再决定要不要杀了你。”</div>
+      <div class="quote-source">——道杰斯、鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch17">17  「世界的宏愿」</h3>
+      <p>“我‘希望’阻隔我和我最好的朋友相见的这道结界，立刻打开一道缺口。”</p>
+      <p>真正结束鸿荧童年的敌人，最终从结界之外归来。灼晦没有死。她的身旁不再有羊群与那些想要闯进桃花源的村民。她携带着与鸿荧同源的希冀院碎片，一路上让无数桃花源的守卫不战而降，甚至让这些想要攻击她的人莫名其妙地自我了结——她获得了能够心想事成的超能力。希望疼痛消失，希望手中出现武器，希望获得保护某个人的力量……每一个愿望都会实现，也都会由她的身心偿还代价。</p>
+      <p>村民们根本无法抵抗这样的存在，只能去祈求鸿荧来抵抗她。两人相见后，灼晦并没有主动攻击，而是向她解释当年的一切。鸿荧这才从灼晦口中得知全部经过：灼晦与她的某次会面遭到跟踪，逃难的人类逼迫、殴打她，要求她说出进入桃花源的方法；进攻失败后，所有罪责又落回她一人身上。濒临崩溃的灼晦本来想要就此了断，但却在偶然之间接触到了当时刺伤鸿荧的那块碎片，自那之后，她的一切愿望都成为了对世界发动的命令。在完全掌握了自己的能力之后，她“‘希望’周围所有人立刻结束自己的生命”，于是，那个村庄里的人——包括她的父母，依次举起武器，杀死了他们自己。</p>
+      <p>灼晦认为自己终于有能力完成未竟之事：杀死所有伤害鸿荧的人，把她从虚假的桃花源中带走。她无法理解鸿荧为何保护那些曾经要求处死她的村民，也无法接受自己承受的一切背叛，在最重要的人眼中仍然只是新的屠杀。</p>
+      <div class="story-quote">
+      <div class="quote-line">“请你加入我吧，鸿荧。”</div>
+      <div class="quote-line">灼晦向她伸出手。那只手上遍布被她的愿望反噬留下的裂痕，白色的血顺着指尖落进雪里。</div>
+      <div class="quote-line">“他们让你失去父亲、母亲和妹妹，把你关在这里，又假装几袋粮食就能偿还一切。为什么你还要保护他们呢？我们应该把他们全部杀掉才对。”</div>
+      <div class="quote-line">鸿荧没有握住她。</div>
+      <div class="quote-line">“……我想要你带我走。”她的声音明显在因恐惧而颤抖。“但不是让你把所有人都杀光以后，再从尸体中间拉住我的手。”</div>
+      <div class="quote-line">灼晦脸上的笑一点点消失。</div>
+      <div class="quote-line">“……为什么。我们可以让世界的一切回到它本应是的模样的。”</div>
+      <div class="quote-source">——灼晦、鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch18">18  碎片之下</h3>
+      <p>两人的对话没有换来任何退让。灼晦仍要杀死所有伤害过鸿荧的人，鸿荧则必须阻止她继续靠近村庄。战斗从结界边缘一路抬升到山顶。鸿荧试图用狐火与锁链逼近碎片，灼晦却始终站在十余步外，把每一句恳切说出的“希望”变成世界必须遵守的事实。</p>
+      <p>鸿荧很快发现，灼晦根本没有把这场交锋当作一场能够彼此留手的争执。愿望每实现一次，灼晦手臂上的伤口便会向上撕开一些；她明明也在被自己的力量杀死，却仍然选择把下一句话说得更完整、更明确。</p>
+      <div class="story-quote">
+      <div class="quote-line">“我希望——鸿荧身边的火焰，全部熄灭。”</div>
+      <div class="quote-line">没有火焰迎面袭来，也没有任何能力碰到她。围绕鸿荧旋转的狐火却同时失去颜色，像被一只看不见的手掐灭，连灰烬都没能落到雪上。</div>
+      <div class="quote-line">鸿荧立刻向前。短刃才刚离开鞘口，灼晦已经说出了第二句话。</div>
+      <div class="quote-line">“我希望鸿荧放下武器。”</div>
+      <div class="quote-line">五指忽然失去了握住东西的资格。刀柄从鸿荧掌中弹出，横着飞过十几步，深深钉进岩石。她用尾巴化成的锁链卷住刀柄，另一股力量却沿锁链倒撞回来，把她整个人掀向山壁。</div>
+      <div class="quote-line">“灼晦，停下来！”</div>
+      <div class="quote-line">“为什么又是我要停下来？”灼晦向前走了一步。她的手仍朝鸿荧伸着，掌心的裂口一直延伸到腕骨，白色的血从袖口一滴滴落下，“我只是要你选我。以前是他们逼我放弃你，现在……为什么连你也要我放弃你？”</div>
+      <div class="quote-line">“我没有要你放弃我……我是要你别再杀人了！”</div>
+      <div class="quote-line">“那就没有区别了。”</div>
+      <div class="quote-line">灼晦合拢手指。</div>
+      <div class="quote-line">“我希望鸿荧再也站不起来。”</div>
+      <div class="quote-line">压力从四面同时挤来。鸿荧的膝盖砸进雪里，脚下的岩层随之绽开裂纹；她试图用锁链支住身体，肩骨却被更沉重的力量一点点压向地面。那不是风，也不是某种可以被看见、被挡开的冲击——只是这个世界突然认定，她理应跪在那里。</div>
+      <div class="quote-line">灼晦看着她挣扎，嘴唇颤了一下。她的瞳孔正在闪光。那是院区的碎片发动力量的展示，还是一滴没能落下的泪水呢？</div>
+      <div class="quote-line">随后，她仍然说了下去。</div>
+      <div class="quote-line">“我希、我希望……从现在开始，没有一口空气能够进入鸿荧的身体。”</div>
+      <div class="quote-line">山顶的风还在刮。雪尘擦过鸿荧的脸颊，吹动她散乱的白发；可她张开嘴，胸腔里只剩下一次无法完成的抽搐。即便她强行唤来新的气流，那些空气也会在接近鼻尖以前骤然分开，像世上的每一缕风都在躲避她。</div>
+      <div class="quote-line">视野很快开始发黑。鸿荧看见灼晦站在模糊的雪中，身体被愿望的反噬切出越来越多的裂痕；又看见许多年前的鸿灵躺在自己怀里，睫毛上的雪怎么也捂不化。两道身影在窒息中重叠，仿佛她正被迫在同一个夜晚里，再看着她们死去一次。</div>
+      <div class="quote-line">她朝灼晦伸出手。灼晦没有走近。</div>
+      <div class="quote-line">“你为什么要，这么坚决地站在我的对立面……”她的眼泪从脸侧滑过，声音却没有退缩，“即然这样、我希望、鸿荧的心脏、现在就停止跳动。”</div>
+      <div class="quote-line">鸿荧的心脏猛地停了一拍。压在身体上的力量骤然收紧，骨骼与内脏一同发出近乎破裂的疼痛；与此同时，灼晦胸前的碎片也迸开一道惊惧的裂缝，反噬沿着她的脖颈直抵脸侧。</div>
+      <div class="quote-source">——灼晦、鸿荧，《鸿荧前传》</div>
+      </div>
+      <p>直接让鸿荧死亡的愿望远远超过此前每一次改写，灼晦也因此承受了最强烈的反噬；但鸿荧同源的希冀院力量仍在抵抗，没能让那句话立刻成为结果。鸿荧放弃与无形的压力角力，任由身体伏低，用藏在雪下的最后一条狐火锁链缠住灼晦的脚踝。灼晦被猛然拉近，一瞬之间，所有的愿望全都停止运作。锁链已经勒住她的喉咙。鸿荧终于夺回短刃，以仅剩的一口气迎了上去。</p>
+      <div class="story-quote">
+      <div class="quote-line">刀尖从灼晦背后穿出。两个人同时停了下来。</div>
+      <div class="quote-line">“……我希望，刚才那些愿望，不会发生。”</div>
+      <div class="quote-line">压住心脏的力量骤然松动。鸿荧终于吸进一小口混着血腥味的空气，灼晦的呼吸却随之变得更轻。死里逃生的狐狸仍保持着向前送刃的姿势，但人类却没有推开她。那只一直向她伸出的手终于能够绕过鸿荧的肩膀，把她死死抱进怀里。</div>
+      <div class="quote-line">那把短刀因此刺得更深。灼晦的身体颤了一下，手臂却收得更紧，像是只要稍微松开，她们之间就会重新长出当年隔断她们的结界。</div>
+      <div class="quote-line">“为什么……你撤回了……那些……”鸿荧惊恐地看着没有还手的灼晦，声音仍在因缺氧而发抖。</div>
+      <div class="quote-line">灼晦把下巴抵在她肩上。碎片的裂光从两人身体之间透出，照亮不断扩大的白色的血迹。</div>
+      <div class="quote-line">“……我希望鸿荧活下来。”</div>
+      <div class="quote-line">“我希望，鸿荧再也不会……被任何人关起来。”</div>
+      <div class="quote-line">山谷上空的结界发出悠远的嗡鸣。</div>
+      <div class="quote-line">“我希望……鸿荧不必……再因为爱着谁……就只能看着谁死去……”</div>
+      <div class="quote-line">她说到这里时咳出一口白色的血。鸿荧想捂住那道伤口，双手却只能碰到自己送进去的刀。这个愿望没有把正在死去的灼晦拉住，只是让她脖子上挂着的那块碎片再度碎裂。</div>
+      <div class="quote-line">“别说了。”鸿荧终于哭了出来，“灼晦，撤回它。你把这些话都撤回去呀……”</div>
+      <div class="quote-line">灼晦像是没有听见。</div>
+      <div class="quote-line">“我希望……鸿荧能够……离开这里，去看真正的大海。”</div>
+      <div class="quote-line">“我希望……鸿荧能够，找到她说过的……真正的桃花源。”</div>
+      <div class="quote-line">“我希望……我希望我……我希望我永远不会离开鸿荧……”</div>
+      <div class="quote-line">世界没有再回应灼晦的任何一个愿望。鸿荧又一次抱住了一具正在失去温度的身体。她失声地喊灼晦的名字，像很多年前在雪地里喊着鸿灵；怀里的人没有再回答，只在彻底失去力气以前，把脸更深地埋进了她的肩窝。</div>
+      <div class="quote-line">灼晦曾经背叛她一次。这次她再也没有松开鸿荧。</div>
+      <div class="quote-source">——灼晦、鸿荧，《鸿荧前传》</div>
+      </div>
+      <p>彼此冲突的愿望、灼晦被刺穿的身体与已经超出承受极限的碎片终于失去平衡。爆炸已不可避免。鸿荧在惊愕与绝望中搂住灼晦，一如很久以前，她在雪地里搂住自己的妹妹；她无法判断最后那些愿望究竟是在保护自己，还是要把两个人一同拖进碎片深处。</p>
+      <p>碎片在两人之间坍缩。鸿荧突然感觉一双手从白光外抓住了自己——那是道杰斯，他赶在最后一刻拉住了鸿荧。光芒随即吞没山顶。等村民重新看清那里，鸿荧、灼晦与道杰斯都已经消失，地面只剩一个边缘仍在融化的巨大空洞。没有人知道三人去了哪里，也没人能确认谁还活着。</p>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch19">19  强大到足以杀死我</h3>
+      <p>鸿荧再次醒来时，身边只有几乎耗尽力量的道杰斯。灼晦没有留下能够确认的踪迹；旧桃花源与母亲完成的结界也已在视野之外。她终于以最惨烈的方式实现了离开的愿望，却没有因此得到任何的释怀。</p>
+      <p>道杰斯把自己的处置权交给鸿荧。他承认若没有狐火中的意识，自己已经成为只会破坏的怪物；这条被她救回的命，无论拿来偿还还是结束都由她决定。鸿荧没有杀他。单纯的复仇无法让鸿灵回来，也无法实现她与灼晦最初谈论的那个桃花源。</p>
+      <p>她要求史上最强的附魔师收自己为学生，把能教的全部教给她。她要先强大到能够保护身边的人，再去建立一个不靠围墙排除异类、不需要弱者互相争夺生存位置的理想乡。道杰斯答应带她离开，也给出一个并不温和的承诺：他会一直教下去，直到鸿荧强大到足以杀死自己。</p>
+      <div class="story-quote">
+      <div class="quote-line">“我在对你做过那些事情之后，你还恨我吗？”</div>
+      <div class="quote-line">鸿荧低头看着刀上的血，她始终没有把它擦掉。</div>
+      <div class="quote-line">“现在恨你做什么？……以后还有几百年、几千年。”她把刀收回鞘中，“我有的是时间恨你。”</div>
+      <div class="quote-line">道杰斯没有笑，只向她伸出手。</div>
+      <div class="quote-line">这一次，鸿荧握住了。</div>
+      <div class="quote-source">——道杰斯、鸿荧，《鸿荧前传》</div>
+      </div>
+      <h3 class="chapter-heading side-story-heading" id="hongying-ch20">20  第二个桃花源</h3>
+      <p>鸿荧跟随道杰斯在不同时间线间流浪百余年。她学习附魔、战斗与各地的政治文化，也协助他寻找同伴、重建第四代芬奈法拉战线。最初几年，道杰斯还会帮助她分辨能力侵蚀造成的幻觉，以及偶尔从意识深处响起的、鸿灵与灼晦的声音；她后来也从往来者口中得知，鸿光成年后带着双刀离开山谷，开始寻找并毁掉散落各处的院区碎片，不让另一个家庭重演他们的命运。</p>
+      <p>昔日只会独坐河边的妖狐逐渐成为队伍的粘合剂：战线开始更频繁地聚在一起，而道杰斯也在她的影响下重新审视那些以牺牲无辜者为代价的胜利。第四代战线取胜后，道杰斯拒绝让鸿荧继续为战线冒着随时都会失去生命的风险，催促她去完成雪夜里反复谈及的理想。鸿荧由此在芬奈法拉建立新的桃花源：它向所有时间线、种族与流亡者开放。这个地方不把封闭视作存续的希望，也不会把任何人的弱小视为罪过。她成了桃花源的“见习神明”，亲自调节风雨、审阅律法、向政治门生授课与处理灾情。</p>
+      <p>在两人组建第四代芬奈法拉战线之前的某个下午，道杰斯忽然带她回到最初的时间线。两人没有靠近旧山谷，而是在远离桃花源的一座普通人类城镇停下。他领鸿荧来到一间种满鲜花的小屋前，只说有一件迟到了很多年的事，应当由她自己推门确认。</p>
+      <div class="story-quote">
+      <div class="quote-line">门轴发出很轻的摩擦声。屋里的老人从花架旁转过身，黑发已经全部变白，脸上的皱纹也让鸿荧花了很久才认出她。</div>
+      <div class="quote-line">鸿荧只比两人分别时显得更加成熟了一点。她站在门口，尾巴尖无意识地碰倒了一盆花。</div>
+      <div class="quote-line">老人望着她，嘴唇颤动着，却几乎花了很久才说出那句话。</div>
+      <div class="quote-line">“……也许这次，我的愿望实现了。”</div>
+      <div class="quote-line">鸿荧没有回答。她跨过散落的花瓣，走进那间很小、却没有任何结界的屋子。</div>
+      <div class="quote-source">——鸿荧、灼晦，《鸿荧前传》</div>
+      </div>
+      <p class="side-story-ending">（全文完）</p>
+      </div>
+    </article>
   </section>
 
   <!-- ===== 番外 ===== -->
@@ -1642,7 +1996,7 @@ const characters = {
       { with: '斯卡娜', type: '晚辈', desc: '把这位年轻的伦茨斯特王女视作最受照顾的孩子，却又信任她足以肩负起国家的重担。' }
     ],
     quotes: ['"若您在战线或桃源有事相托，请尽管与我诉说。"'],
-    appearances: ['序幕·19：在桃源梦境中与道杰斯对弈，讨论十一年后的灾难'],
+    appearances: ['时空遗闻·鸿荧前传：桃花源没有季节', '序幕·19：在桃源梦境中与道杰斯对弈，讨论十一年后的灾难'],
     abilityDetail: '希冀院能力持有者——与「绝望院」相对，拥有压制痛苦、激发希望的力量，也是唯一能够将完全解放的道杰斯从深渊中拉回的存在。兼修妖灵一族操纵天候的妖术，能精密调节整片土地的降雨与季风。作为整个时间线空间内近乎全部超能力形式领域的资深学者，是名副其实的妖术大师。',
     tg: '芬奈法拉战线, 芬奈法拉, 希冀院, 第五卷'
   },
@@ -2147,6 +2501,10 @@ function openChar(key) {
       <div class="info-label">主要出场</div>
       ${c.appearances.map(a => `<div class="info-value" style="margin:2px 0;">• ${a}</div>`).join('')}
     </div>
+    ${key === 'hongying' ? `
+    <div class="wiki-jump">
+      <a href="sidetory.html#hongying-prologue">🦊 阅读鸿荧前传：桃花源没有季节 →</a>
+    </div>` : ''}
     ${hasWiki ? `
     <div class="wiki-jump">
       <a href="characters.html#char-wiki-${key}">📖 进入角色百科 · 深入了解「${c.name}」→</a>
@@ -2316,7 +2674,7 @@ function renderOrgStructure(content) {
         { label: '三室', items: [['中控室','莱诺'], ['机要室','本尼艾诺'], ['苛志室','SA']] },
         { label: '两院', items: [['日保院','杏子'], ['检察院','奇比']] },
         { label: '四司', items: [['情报司','正义'], ['科研司','Twikyo'], ['镇暴司','普兰奇昂'], ['财政司','仟咩']] },
-        { label: '中央核心', items: [['正长官','零与薇奥拉'], ['副长官','郁兴'], ['外交部','Fish']] },
+        { label: '中央核心', items: [['正长官','埃尔贝勒与瑟丝尔沐'], ['副长官','郁兴'], ['外交部','Fish']] },
         { label: '直属部门', items: [['兵部','—'], ['特别行动部','—']] },
       ],
       note: '除了正义、本尼艾诺、莱诺、杏子、奇比、普兰奇昂、Twikyo以外，部门领导组的所有人都不是能力使。',
@@ -3490,7 +3848,7 @@ const abilityData = [
   },
   {id:"ab15",tg:"蓝河明船, 沃克加德, 赦除院, 第一卷",n:"陆生禁区",h:"昆汀【窃用者】",c:"12.6",
    s:[3,4,4,3,2,4],
-   d:"使范围内的所有空气全部被缓慢置换为海水，组成一片水域。水域中的弹射物会被减速。当海水达到一定的体积之后，能力使将可以操纵水的各种形态与水体本身的物理强度，从而对敌方发动攻击；也可以用场上的水体为自己组成护盾，抵挡外来的打击。\n场上流出的血液会极大幅度地刺激置换的速度。如果水域中已被转化的水又被外力变为了“非水”物质，则会被立刻重新置换为水，但这会消耗能力的持久力。\n除非能力使自己释放，置换出的水不会因为任何外力的影响而脱离水域。水域整体会缓慢地随着能力使一起移动，但如果要开展一场长距离追击，则需要能力使反复解除并启动能力，形成类搜i冲浪。\n试图逃出「陆生禁区」的敌人会受到海水的拖拽并被卷入漩涡，但在海水处在稀薄状态时仍可以快速脱身。能力使也可以将一部分海水释放到能力范围之外来进行高速追击，届时他将需要进行一系列攻击来制造新的海水。\n能力使在水中会获得力量、速度等全方面的强化，但其自身并不能在水中呼吸。因此昆汀需要频繁解除能力来进行换气，而身穿潜水服的亚因森特则可以保持能力十分钟之久。\n在水域之中，能力使的攻击方式往往遵循“发动攻击制造水域，利用水域制造护盾，打破护盾发动攻击”的连续循环，依靠这种方法，可以死死地擒住自身的攻击目标，快速灌满整个区域。海水区域一旦被填满，被袭击者将很难再逃离这片水域。",
+   d:"使范围内的所有空气全部被缓慢置换为海水，组成一片水域。水域中的弹射物会被减速。当海水达到一定的体积之后，能力使将可以操纵水的各种形态与水体本身的物理强度，从而对敌方发动攻击；也可以用场上的水体为自己组成护盾，抵挡外来的打击。\n场上流出的血液会极大幅度地刺激置换的速度。如果水域中已被转化的水又被外力变为了“非水”物质，则会被立刻重新置换为水，但这会消耗能力的持久力。\n除非能力使自己释放，置换出的水不会因为任何外力的影响而脱离水域。水域整体会缓慢地随着能力使一起移动，但如果要开展一场长距离追击，则需要能力使反复解除并启动能力，形成类似冲浪的移动方式。\n试图逃出「陆生禁区」的敌人会受到海水的拖拽并被卷入漩涡，但在海水处在稀薄状态时仍可以快速脱身。能力使也可以将一部分海水释放到能力范围之外来进行高速追击，届时他将需要进行一系列攻击来制造新的海水。\n能力使在水中会获得力量、速度等全方面的强化，但其自身并不能在水中呼吸。因此昆汀需要频繁解除能力来进行换气，而身穿潜水服的亚因森特则可以保持能力十分钟之久。\n在水域之中，能力使的攻击方式往往遵循“发动攻击制造水域，利用水域制造护盾，打破护盾发动攻击”的连续循环，依靠这种方法，可以死死地擒住自身的攻击目标，快速灌满整个区域。海水区域一旦被填满，被袭击者将很难再逃离这片水域。",
    q:"“来，来，来！”\n——《沃克加德史诗》 第26页 昆汀",nt:"最大以自己为中心棱长7m的正方体",
   },
   {id:"ab16",tg:"蓝河明船, 沃克加德, 均衡院, 第一卷",n:"唤起",h:"诺阿",c:"9.9",

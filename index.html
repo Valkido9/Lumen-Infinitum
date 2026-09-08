@@ -1089,81 +1089,57 @@ body {
   .tag-filter-btn { padding: 3px 10px; font-size: 0.72em; }
 }
 
-/* ===== TIMELINE OVERVIEW ===== */
-.timeline-overview { margin: 28px 0 10px; }
-.timeline-overview .tl-ov-head { text-align: center; margin-bottom: 20px; }
-.timeline-overview .tl-ov-head h2 {
-  font-family: var(--font-serif);
-  font-size: 1.8em;
-  font-weight: 800;
-  letter-spacing: 4px;
-  color: var(--text);
-  background: linear-gradient(135deg, #ffffff 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 16px var(--gold-glow));
-  margin: 0 0 6px;
+/* ===== COMPACT HOMEPAGE SECTIONS + TIMELINE OVERVIEW ===== */
+.home-sections { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 30px 0 36px; }
+.home-section-link, .timeline-overview {
+  color: var(--text); text-decoration: none; border: 1px solid var(--border); border-radius: 14px;
+  background: linear-gradient(145deg,var(--bg-card),rgba(15,23,42,.34)); box-shadow: var(--shadow-sm);
 }
-.timeline-overview .tl-ov-head p { font-size: 0.9em; color: var(--text-dim); margin: 0; }
-.timeline-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-  gap: 22px;
-}
+.home-section-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; transition: .2s ease; }
+.home-section-link:hover { border-color: var(--accent); transform: translateY(-2px); }
+.home-section-copy { min-width: 0; }
+.home-section-title { display: block; font-family: var(--font-serif); font-weight: 800; font-size: 1.15em; letter-spacing: .08em; }
+.home-section-desc { display: block; color: var(--text-dim); font-size: .8em; margin-top: 4px; }
+.home-section-arrow { color: var(--accent); font-weight: 700; flex: 0 0 auto; }
+.timeline-overview { grid-column: 1 / -1; margin: 0; overflow: hidden; }
+.timeline-summary { list-style: none; cursor: pointer; padding: 18px 20px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; }
+.timeline-summary::-webkit-details-marker { display: none; }
+.timeline-summary-title { font-family: var(--font-serif); font-weight: 800; letter-spacing: .08em; }
+.timeline-name-strip { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.timeline-name-strip span { padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--text-dim); font-size: .72em; white-space: nowrap; }
+.timeline-toggle-label { color: var(--accent); font-size: .76em; font-weight: 700; }
+.timeline-toggle-label::before { content: '展开'; }
+.timeline-overview[open] .timeline-toggle-label::before { content: '收起'; }
+.timeline-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; padding: 0 16px 16px; border-top: 1px solid var(--border); }
 .timeline-panel {
-  position: relative;
-  background: linear-gradient(145deg, var(--bg-card), rgba(15, 23, 42, 0.4));
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 28px 24px;
-  cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  min-height: 170px;
-  display: flex; flex-direction: column; justify-content: flex-start;
+  position: relative; min-height: 0; margin-top: 14px; padding: 15px; cursor: pointer; overflow: hidden;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 11px; transition: .2s ease;
 }
-.timeline-panel:hover {
-  transform: translateY(-5px);
-  background: linear-gradient(145deg, var(--bg-card-hover), rgba(30, 41, 69, 0.6));
-  border-color: var(--accent);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-soft);
-}
-.timeline-panel .tl-panel-icon {
-  font-size: 2.2em; margin-bottom: 12px;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
-}
-.timeline-panel .tl-panel-name {
-  font-family: var(--font-serif);
-  font-size: 1.3em; font-weight: 700; color: var(--text);
-  margin-bottom: 6px;
-}
-.timeline-panel .tl-panel-tag {
-  display: inline-block; font-size: 0.72em;
-  color: var(--accent); background: var(--accent-soft);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: 12px; padding: 2px 10px; margin-bottom: 12px;
-  font-weight: 600;
-}
-.timeline-panel .tl-panel-short {
-  font-size: 0.88em; color: var(--text-dim); line-height: 1.7;
-}
-.timeline-panel .tl-panel-cta { font-size: 0.78em; color: var(--accent); margin-top: auto; padding-top: 12px; font-weight: 600; }
+.timeline-panel:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
+.timeline-panel .tl-panel-top { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.timeline-panel .tl-panel-icon { font-size: 1.25em; margin: 0; }
+.timeline-panel .tl-panel-name { font-family: var(--font-serif); font-size: .98em; font-weight: 700; color: var(--text); margin: 0; }
+.timeline-panel .tl-panel-tag { margin-left: auto; margin-bottom: 0; padding: 2px 7px; font-size: .64em; color: var(--accent); background: var(--accent-soft); border-radius: 8px; }
+.timeline-panel .tl-panel-short { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: .76em; color: var(--text-dim); line-height: 1.55; }
+.timeline-panel .tl-panel-cta { margin-top: 9px; padding: 0; font-size: .7em; color: var(--accent); font-weight: 700; }
 .timeline-modal .tlm-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .timeline-modal .tlm-header .tl-icon { font-size: 2em; }
-.timeline-modal .tl-stories { font-size: 0.95em; line-height: 1.8; color: var(--text); margin-bottom: 18px; }
+.timeline-modal .tl-stories { font-size: .95em; line-height: 1.8; color: var(--text); margin-bottom: 18px; }
 .timeline-modal .tl-section { margin: 16px 0; }
 .timeline-modal .tl-section-title { font-size: 1.05em; color: var(--gold); font-weight: bold; margin-bottom: 8px; padding-left: 10px; border-left: 3px solid var(--accent); }
 .timeline-modal .tl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.timeline-modal .tl-chip { display: inline-block; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); font-size: 0.82em; color: var(--text); cursor: pointer; transition: all 0.2s; }
+.timeline-modal .tl-chip { display: inline-block; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); font-size: .82em; color: var(--text); cursor: pointer; transition: all .2s; }
 .timeline-modal .tl-chip:hover { border-color: var(--accent); color: var(--accent); }
-.timeline-modal .tl-jump { display: inline-block; margin-top: 8px; padding: 8px 18px; border-radius: 18px; background: var(--accent); color: #fff; font-size: 0.85em; cursor: pointer; border: none; transition: all 0.2s; }
-.timeline-modal .tl-jump:hover { opacity: 0.85; }
+.timeline-modal .tl-jump { display: inline-block; margin-top: 8px; padding: 8px 18px; border-radius: 18px; background: var(--accent); color: #fff; font-size: .85em; cursor: pointer; border: none; transition: all .2s; }
+.timeline-modal .tl-jump:hover { opacity: .85; }
+.story-main-marker { margin: 8px 0 18px; padding-top: 8px; scroll-margin-top: 82px; }
 @media (max-width: 768px) {
+  .home-sections { grid-template-columns: 1fr; }
+  .timeline-summary { grid-template-columns: 1fr auto; gap: 10px; }
+  .timeline-name-strip { grid-column: 1 / -1; grid-row: 2; }
   .timeline-grid { grid-template-columns: 1fr; }
-  .timeline-panel { min-height: 140px; }
 }
+
 </style>
 </head>
 <body>
@@ -1327,15 +1303,29 @@ body {
       </div>
     </section>
 
-    <!-- ===== TIMELINE OVERVIEW ===== -->
-    <section class="timeline-overview" id="timeline-overview">
-      <div class="tl-ov-head">
-        <h2><span class="icon">🗺️</span>时间线一览</h2>
-        <p>横跨无数平行世界的宏大故事——选择一条时间线，进入它的世界</p>
-      </div>
-      <div class="timeline-grid" id="timelineGrid"></div>
+    <!-- ===== HOMEPAGE CONTENT GATEWAY ===== -->
+    <section class="home-sections" aria-label="主页内容分区">
+      <details class="timeline-overview" id="timeline-overview">
+        <summary class="timeline-summary">
+          <span class="timeline-summary-title">🗺️ 时间线概况</span>
+          <span class="timeline-name-strip" aria-label="六条主要时间线">
+            <span>卢纳森特</span><span>沃克加德</span><span>霍因佩兹</span><span>洛琛顿</span><span>柯洛雯</span><span>芬奈法拉</span>
+          </span>
+          <span class="timeline-toggle-label" aria-hidden="true"></span>
+        </summary>
+        <div class="timeline-grid" id="timelineGrid"></div>
+      </details>
+      <a class="home-section-link" href="sidetory.html">
+        <span class="home-section-copy"><span class="home-section-title">时空遗闻</span><span class="home-section-desc">人物背景、前传、番外与特殊事件</span></span>
+        <span class="home-section-arrow">进入 →</span>
+      </a>
+      <a class="home-section-link" href="#story-main">
+        <span class="home-section-copy"><span class="home-section-title">故事主线</span><span class="home-section-desc">从序幕开始阅读《永恒流光》</span></span>
+        <span class="home-section-arrow">阅读 ↓</span>
+      </a>
     </section>
 
+    <div class="story-main-marker" id="story-main"></div>
     <!-- ===== PROLOGUE SECTION ===== -->
     <h2 class="section-title" id="prologue-main"><span class="icon">📖</span>序幕 · 异世的呼唤</h2>
     <div class="chapter-body">
@@ -2028,7 +2018,7 @@ body {
 
     <p>礼奈与 boundary恰好已经在内城腹地。这既可能是一次毫无意义的困兽之局，也可能是全队距离斯帕里森最近的一刻。撤退意味着穿过正在形成的战线，并主动放弃这一位置优势；继续留下，则是在没有证据的情况下追逐一个猜想。礼奈最终选择后者。只要亚因森特还活着，斯帕里森就仍有现身的可能。她甚至第一次如此希望，梅纳德那个疯狂的计划真的能够奏效。</p>
 
-    <p>礼奈随即重新安排队伍。自己与 boundary继续留在内城追查斯帕里森；克诺、亡灵兔与云略设法突破封锁向内城靠拢；刚刚经历连番苦战的马萨卡与优碧卡则优先脱离军务部追捕，再寻找会合机会。云略想起琉璐珀临别前留下的提醒：如果无法穿过禁卫军与巡游骑士的封锁，可以前往教条院地下寻找那个古怪的男人。boundary指出那里通向危险的灰色地带“深雾城”，但似乎除了。</p>
+    <p>礼奈随即重新安排队伍。自己与 boundary继续留在内城追查斯帕里森；克诺、亡灵兔与云略设法突破封锁向内城靠拢；刚刚经历连番苦战的马萨卡与优碧卡则优先脱离军务部追捕，再寻找会合机会。云略想起琉璐珀临别前留下的提醒：如果无法穿过禁卫军与巡游骑士的封锁，可以前往教条院地下寻找那个古怪的男人。boundary指出那里通向危险的灰色地带“深雾城”。</p>
 
     <h3 class="chapter-heading wokgard" id="wok-ch23">23  正午之下的内城</h3>
 
@@ -2545,7 +2535,7 @@ const characters = {
       { with: '斯卡娜', type: '晚辈', desc: '把这位年轻的伦茨斯特王女视作最受照顾的孩子，却又信任她足以肩负起国家的重担。' }
     ],
     quotes: ['"若您在战线或桃源有事相托，请尽管与我诉说。"'],
-    appearances: ['序幕·19：在桃源梦境中与道杰斯对弈，讨论十一年后的灾难'],
+    appearances: ['时空遗闻·鸿荧前传：桃花源没有季节', '序幕·19：在桃源梦境中与道杰斯对弈，讨论十一年后的灾难'],
     abilityDetail: '希冀院能力持有者——与「绝望院」相对，拥有压制痛苦、激发希望的力量，也是唯一能够将完全解放的道杰斯从深渊中拉回的存在。兼修妖灵一族操纵天候的妖术，能精密调节整片土地的降雨与季风。作为整个时间线空间内近乎全部超能力形式领域的资深学者，是名副其实的妖术大师。',
     tg: '芬奈法拉战线, 芬奈法拉, 希冀院, 第五卷'
   },
@@ -3050,6 +3040,10 @@ function openChar(key) {
       <div class="info-label">主要出场</div>
       ${c.appearances.map(a => `<div class="info-value" style="margin:2px 0;">• ${a}</div>`).join('')}
     </div>
+    ${key === 'hongying' ? `
+    <div class="wiki-jump">
+      <a href="sidetory.html#hongying-prologue">🦊 阅读鸿荧前传：桃花源没有季节 →</a>
+    </div>` : ''}
     ${hasWiki ? `
     <div class="wiki-jump">
       <a href="characters.html#char-wiki-${key}">📖 进入角色百科 · 深入了解「${c.name}」→</a>
@@ -3219,7 +3213,7 @@ function renderOrgStructure(content) {
         { label: '三室', items: [['中控室','莱诺'], ['机要室','本尼艾诺'], ['苛志室','SA']] },
         { label: '两院', items: [['日保院','杏子'], ['检察院','奇比']] },
         { label: '四司', items: [['情报司','正义'], ['科研司','Twikyo'], ['镇暴司','普兰奇昂'], ['财政司','仟咩']] },
-        { label: '中央核心', items: [['正长官','零与薇奥拉'], ['副长官','郁兴'], ['外交部','Fish']] },
+        { label: '中央核心', items: [['正长官','埃尔贝勒与瑟丝尔沐'], ['副长官','郁兴'], ['外交部','Fish']] },
         { label: '直属部门', items: [['兵部','—'], ['特别行动部','—']] },
       ],
       note: '除了正义、本尼艾诺、莱诺、杏子、奇比、普兰奇昂、Twikyo以外，部门领导组的所有人都不是能力使。',
@@ -3344,11 +3338,9 @@ function renderTimelineOverview() {
   if (!grid) return;
   grid.innerHTML = timelineData.map(t => `
     <div class="timeline-panel" onclick="openTimeline('${t.key}')">
-      <div class="tl-panel-icon">${t.icon}</div>
-      <div class="tl-panel-tag">${t.tag}</div>
-      <div class="tl-panel-name">${t.name}</div>
+      <div class="tl-panel-top"><span class="tl-panel-icon">${t.icon}</span><span class="tl-panel-name">${t.name}</span><span class="tl-panel-tag">${t.tag}</span></div>
       <div class="tl-panel-short">${t.short}</div>
-      <div class="tl-panel-cta">进入这条时间线 →</div>
+      <div class="tl-panel-cta">查看详情 →</div>
     </div>
   `).join('');
 }
@@ -4394,7 +4386,7 @@ const abilityData = [
   },
   {id:"ab15",tg:"蓝河明船, 沃克加德, 赦除院, 第一卷",n:"陆生禁区",h:"昆汀【窃用者】",c:"12.6",
    s:[3,4,4,3,2,4],
-   d:"使范围内的所有空气全部被缓慢置换为海水，组成一片水域。水域中的弹射物会被减速。当海水达到一定的体积之后，能力使将可以操纵水的各种形态与水体本身的物理强度，从而对敌方发动攻击；也可以用场上的水体为自己组成护盾，抵挡外来的打击。\n场上流出的血液会极大幅度地刺激置换的速度。如果水域中已被转化的水又被外力变为了“非水”物质，则会被立刻重新置换为水，但这会消耗能力的持久力。\n除非能力使自己释放，置换出的水不会因为任何外力的影响而脱离水域。水域整体会缓慢地随着能力使一起移动，但如果要开展一场长距离追击，则需要能力使反复解除并启动能力，形成类搜i冲浪。\n试图逃出「陆生禁区」的敌人会受到海水的拖拽并被卷入漩涡，但在海水处在稀薄状态时仍可以快速脱身。能力使也可以将一部分海水释放到能力范围之外来进行高速追击，届时他将需要进行一系列攻击来制造新的海水。\n能力使在水中会获得力量、速度等全方面的强化，但其自身并不能在水中呼吸。因此昆汀需要频繁解除能力来进行换气，而身穿潜水服的亚因森特则可以保持能力十分钟之久。\n在水域之中，能力使的攻击方式往往遵循“发动攻击制造水域，利用水域制造护盾，打破护盾发动攻击”的连续循环，依靠这种方法，可以死死地擒住自身的攻击目标，快速灌满整个区域。海水区域一旦被填满，被袭击者将很难再逃离这片水域。",
+   d:"使范围内的所有空气全部被缓慢置换为海水，组成一片水域。水域中的弹射物会被减速。当海水达到一定的体积之后，能力使将可以操纵水的各种形态与水体本身的物理强度，从而对敌方发动攻击；也可以用场上的水体为自己组成护盾，抵挡外来的打击。\n场上流出的血液会极大幅度地刺激置换的速度。如果水域中已被转化的水又被外力变为了“非水”物质，则会被立刻重新置换为水，但这会消耗能力的持久力。\n除非能力使自己释放，置换出的水不会因为任何外力的影响而脱离水域。水域整体会缓慢地随着能力使一起移动，但如果要开展一场长距离追击，则需要能力使反复解除并启动能力，形成类似冲浪的移动方式。\n试图逃出「陆生禁区」的敌人会受到海水的拖拽并被卷入漩涡，但在海水处在稀薄状态时仍可以快速脱身。能力使也可以将一部分海水释放到能力范围之外来进行高速追击，届时他将需要进行一系列攻击来制造新的海水。\n能力使在水中会获得力量、速度等全方面的强化，但其自身并不能在水中呼吸。因此昆汀需要频繁解除能力来进行换气，而身穿潜水服的亚因森特则可以保持能力十分钟之久。\n在水域之中，能力使的攻击方式往往遵循“发动攻击制造水域，利用水域制造护盾，打破护盾发动攻击”的连续循环，依靠这种方法，可以死死地擒住自身的攻击目标，快速灌满整个区域。海水区域一旦被填满，被袭击者将很难再逃离这片水域。",
    q:"“来，来，来！”\n——《沃克加德史诗》 第26页 昆汀",nt:"最大以自己为中心棱长7m的正方体",
   },
   {id:"ab16",tg:"蓝河明船, 沃克加德, 均衡院, 第一卷",n:"唤起",h:"诺阿",c:"9.9",

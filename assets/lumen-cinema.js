@@ -126,32 +126,6 @@
         line(p[0],p[1],q[0],q[1],'#9caf8e55',.65);
       }
     }
-    // Constructivist composition: off-axis prisms, vermilion planes and
-    // repeated architectural beams, with translucent faces sorted by depth.
-    const faces=[];
-    for(let i=0;i<14;i++){
-      const a=i*TAU/14+t*.015;
-      const radius=510+(i%3)*72;
-      const ox=Math.cos(a)*radius,oy=Math.sin(a)*radius*.75;
-      const oz=Math.sin(a*2+t*.12)*150;
-      const w=i%4===0?130:30+(i%3)*20,h=i%4===0?19:60+(i%4)*35,d=24+(i%3)*28;
-      const rot=-.52+Math.sin(t*.08+i)*.14;
-      const corners=[];
-      for(const z of [-d,d])for(const y of [-h,h])for(const x of [-w,w])
-        corners.push([ox+x*Math.cos(rot)-y*Math.sin(rot),oy+x*Math.sin(rot)+y*Math.cos(rot),oz+z]);
-      for(const indices of [[0,1,3,2],[4,6,7,5],[0,4,5,1],[2,3,7,6],[0,2,6,4],[1,5,7,3]]){
-        const vertices=indices.map(j=>corners[j]);
-        faces.push({vertices,depth:vertices.reduce((sum,v)=>sum+project(v)[2],0)/4,red:i%5===0});
-      }
-    }
-    faces.sort((a,b)=>b.depth-a.depth).forEach(face=>{
-      path(face.vertices,face.red?'#cc846162':'#acc9ab40',face.red?'#813e292b':'#6689790d');
-    });
-    for(let i=0;i<3;i++){
-      const x=-620+i*56;
-      path([[x,-320,60],[x+35,-330,60],[x+460,360,-100],[x+425,370,-100]],'#c4ba8430','#b5a46c08');
-    }
-    path([[460,-330,110],[670,-220,0],[370,-95,-70]],'#c6836060','#b562381b',1);
     // Stars have depth and follow the camera instead of sliding in screen space.
     for(const m of motes){
       const a=m.a+t*.006,p=project([Math.cos(a)*(200+m.r*1100),Math.sin(a)*(200+m.r*900),(m.z-.5)*450]);

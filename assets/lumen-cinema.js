@@ -14,7 +14,7 @@
   const TAU = Math.PI * 2;
   let state = 'playing', raf = 0, previous = 0, fallbackTime = 0;
   let silent = true, busy = false, disposed = false, width = 0, height = 0;
-  let current = 0, clockOffset = 0, blocked = false, unlockAt = 0;
+  let current = 0, clockOffset = 0, blocked = false, gated = true, startedAt = 0;
   let pointerX = 0, pointerY = 0;
   const priorInert = new Map();
   const clamp = v => Math.max(0, Math.min(1, v));
@@ -301,7 +301,7 @@
       clockOffset=current-audio.currentTime;
     }
     reveal();draw(current);
-    // A click both skips the visual prologue and unlocks sound where permitted.
+    // The skip click is a user gesture — retry a soundtrack that failed to load.
     if(silent || blocked)start(true);
   }
   function leave(){
@@ -326,31 +326,34 @@
     },reduced.matches?0:650);
   }
   enter.addEventListener('click',e=>{e.stopPropagation();leave();});
-  // Fresh visits can't autoplay sound, so the FIRST pointer/key gesture only
-  // starts the music (aligned to the running clock, no skip). A later gesture
-  // skips / enters as usual. Returning visitors — whose origin autoplay is
-  // already allowed — never hit this path (`blocked` stays false).
-  function unlockSound(){
-    if(disposed || state!=='playing' || !blocked || !silent) return false;
-    unlockAt = performance.now();
-    start(true).then(()=>{ if(blocked || silent) unlockAt = 0; });
-    return true;
+  // Click-to-start prologue: until the first gesture the film is frozen on its
+  // opening frame behind a blinking "点击屏幕"; one click (or Enter / Space)
+  // launches the visuals and the soundtrack together from 0.
+  function begin(){
+    if(disposed || !gated) return;
+    gated=false;startedAt=performance.now();
+    root.classList.add('started');
+    previous=0;
+    start(false);
+    raf=requestAnimationFrame(tick);
   }
-  function unlockGesture(ev){
-    if(!unlockSound()) return;
-    // Enter/Space double as "skip" — keep that gesture from also skipping.
-    if(ev.type==='keydown' && (ev.key==='Enter'||ev.key===' ')) ev.preventDefault();
+  function gateGesture(ev){
+    if(!gated) return;
+    if(ev.type==='pointerdown' && ev.button!==0) return;
+    if(ev.type==='keydown' && ev.key!=='Enter' && ev.key!==' ') return;
+    if(ev.type==='keydown') ev.preventDefault();
+    begin();
   }
-  document.addEventListener('pointerdown', unlockGesture, true);
-  document.addEventListener('keydown', unlockGesture, true);
+  document.addEventListener('pointerdown', gateGesture, true);
+  document.addEventListener('keydown', gateGesture, true);
   root.addEventListener('click',()=>{
-    if(unlockAt && performance.now()-unlockAt<900){unlockAt=0;return;}
+    // The click that began playback must not be counted as a skip.
+    if(startedAt && performance.now()-startedAt<900){startedAt=0;return;}
     if(state!=='ready')skip();
-    else if(blocked)start(true);
   });
   root.addEventListener('keydown',e=>{
     if((e.key==='Enter'||e.key===' ') && e.target===root){
-      if(unlockAt && performance.now()-unlockAt<900){unlockAt=0;return;}
+      if(startedAt && performance.now()-startedAt<900){startedAt=0;return;}
       e.preventDefault();skip();
     }
   });
@@ -363,6 +366,7 @@
   audio.addEventListener('ended',()=>{if(!disposed)runSilent();});
   function resume(){
     if(disposed)return;
+    if(gated)return; // still frozen on the click-to-start screen
     previous=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
     if(!silent)start(true);
   }
@@ -373,5 +377,5 @@
   });
   addEventListener('pagehide',()=>{audio.pause();cancelAnimationFrame(raf);});
   addEventListener('pageshow',e=>{if(e.persisted)resume();});
-  addEventListener('resize',resize);resize();raf=requestAnimationFrame(tick);start();
+  addEventListener('resize',resize);resize();
 })();

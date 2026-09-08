@@ -17,3 +17,10 @@ html.cinema-locked,html.cinema-locked body{overflow:hidden!important;overscroll-
 @media print{.cinema{display:none!important}html.cinema-locked,html.cinema-locked body{overflow:visible!important;height:auto}}
 
 .cinema:not(.ready){cursor:pointer}
+
+/* Click-to-start prompt shown on the frozen opening frame. */
+.cinema-start{position:absolute;left:0;right:0;bottom:max(20%,56px);z-index:3;margin:0;pointer-events:none;text-align:center;color:#e3e9d2;font:400 clamp(12px,1.5vw,17px)/1 var(--font-serif);letter-spacing:.6em;text-indent:.6em;text-shadow:0 0 22px #d3dcb926;animation:cinema-blink 1.4s step-end infinite}
+.cinema.started .cinema-start{display:none}
+@keyframes cinema-blink{0%,52%{opacity:1}53%,100%{opacity:0}}
+@media(max-width:768px){.cinema-start{bottom:max(14%,46px);font-size:clamp(11px,3.6vw,15px);letter-spacing:.4em;text-indent:.4em}}
+@media(prefers-reduced-motion:reduce){.cinema-start{animation:none}}

@@ -408,12 +408,16 @@ E:\永恒流光\永恒流光\
 - **（2026-08-17 修订）动效拆分**：雷达图改回**每 0.25 秒整图重绘（跳变）**，放弃 SMIL 平滑形变（`endPointsStr`/`endDotCoord` 已删）；乱码 CRT/六维改为**高频刷新（约每 0.1 秒）**——独立双定时器 `endRadarTimer`(250ms 跳变雷达)/`endAbyssTimer`(100ms 乱码)，`stopEndAbyss()` 双双清理。
 - **QQ 掉线根因（诊断，登录修复待用户扫码）**：08-17 00:43 日志 `[KickedOffLine] 登录已失效`、账号变离线——腾讯服务器端判定会话失效（QR 登录后约 2 小时定期失效），非封号/崩溃（进程树与 3000/3001 端口仍存活）；另有独立 Rkey SSL 报错（`secret-service.bietiaop.com` TLS alert 112）仅影响图片 URL 获取，与掉线无关。重新登录需二维码或密码+SMS，待用户操作后再向 2243448419 私聊汇报。
 
-### 第 28 次更新 — 开屏音乐"首次交互开声"（浏览器自动播放策略）
-**提交**: `（本次）`，`assets/lumen-cinema.js`
-- **问题**：现代浏览器禁止无用户操作的 audible 自动播放，开屏《开幕》音乐在首次访问时被 `NotAllowedError` 拦截（`blocked=true` → `runSilent()` 静音跑时钟），导致"开屏音乐不会自动播放"。
-- **方案（用户选定：首次点击只开声不跳过）**：新增 `unlockSound()` + 文档级捕获监听（`pointerdown`/`keydown`），当 `blocked && silent`（且未静音、`state==='playing'`）时，**第一个**手势仅调用 `start(true)` 把音乐从动画时钟当前时刻接上（先 `audio.currentTime=current` 对齐再 play，动画无缝不跳），**不触发跳过**；`unlockAt` 时间戳 + root click/keydown 内 `<900ms` 判断吞掉同一手势的跳过意图，第二次手势才照常 `skip()`/进入。
-- **回访用户不受影响**：浏览器已对本站放行自动播放时 `blocked=false`，该路径永不触发，进站即响、首点即跳过（原行为）。移动端 play() 在捕获处理器内同步调用，符合 iOS 手势要求。
-- 注：浏览器策略意味着"无任何操作的真自动播放"在首次访问不可能实现；此方案让开屏音乐在第一次点击/按键即起、且不截断开场动画。
+### 第 28 次更新 — 开屏改为"点击屏幕"门屏，点击后动画+音乐同时开始
+**提交**: `（本次）`，`index.html` / `assets/lumen-cinema.js` / `assets/lumen-cinema.css` / `CLAUDE.md`
+- **背景**：浏览器禁止无用户操作的 audible 自动播放，开屏《开幕》音乐不可能首次访问即响。
+- **设计（用户选定）**：开场不再进站即播。加载后定格在首帧，屏上仅显示闪烁的「点击屏幕」；**第一次点击（或 Enter/Space）同时从 0 开始播放动画与音乐**——用一次手势换取"画面与声音同启"，彻底绕开自动播放限制。
+- **实现**：
+  - HTML 新增 `.cinema-start`（「点击屏幕」提示）；CSS 新增其闪烁动画（`step-end` 明暗切换）+ `.cinema.started .cinema-start{display:none}` + 移动端/`prefers-reduced-motion` 适配（禁用动画）。
+  - JS 新增 `gated` 门屏态 + `begin()`：`document` 捕获层 `pointerdown`/`keydown(Enter/空格)` → `begin()`（置 `started` 类隐藏提示 → `start(false)` 播放音乐 → 启动 rAF 时钟）。加载底部不再 `tick()`/`start()`，仅 `resize()` 定格首帧；`resume()`（标签页切回）在 `gated` 时直接返回。
+  - `startedAt` 时间戳吞掉同一次手势的 click/keydown「跳过」意图（<900ms 判定），故首次点击只开播不跳过；第二次点击照常 `skip()` 跳至标题，再点「点击阅读」进入。`gateGesture` 在非 `gated` 时直接返回，不影响之后 Enter/Space 的默认键位。
+  - `skip()` 内 `if(silent||blocked)start(true)` 保留作手势内重试（音乐加载失败场景）。
+- 移除此前 `unlockSound`/`unlockGesture`/`unlockAt`"首次交互开声"方案（已被门屏取代）。
 
 ## 给接手 AI 的工作指引
 

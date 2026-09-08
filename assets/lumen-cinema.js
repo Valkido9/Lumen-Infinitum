@@ -14,7 +14,7 @@
   const TAU = Math.PI * 2;
   let state = 'playing', raf = 0, previous = 0, fallbackTime = 0;
   let silent = true, busy = false, disposed = false, width = 0, height = 0;
-  let current = 0, clockOffset = 0, blocked = false;
+  let current = 0, clockOffset = 0, blocked = false, unlockAt = 0;
   let pointerX = 0, pointerY = 0;
   const priorInert = new Map();
   const clamp = v => Math.max(0, Math.min(1, v));
@@ -326,9 +326,33 @@
     },reduced.matches?0:650);
   }
   enter.addEventListener('click',e=>{e.stopPropagation();leave();});
-  root.addEventListener('click',()=>{if(state!=='ready')skip();else if(blocked)start(true);});
+  // Fresh visits can't autoplay sound, so the FIRST pointer/key gesture only
+  // starts the music (aligned to the running clock, no skip). A later gesture
+  // skips / enters as usual. Returning visitors — whose origin autoplay is
+  // already allowed — never hit this path (`blocked` stays false).
+  function unlockSound(){
+    if(disposed || state!=='playing' || !blocked || !silent) return false;
+    unlockAt = performance.now();
+    start(true).then(()=>{ if(blocked || silent) unlockAt = 0; });
+    return true;
+  }
+  function unlockGesture(ev){
+    if(!unlockSound()) return;
+    // Enter/Space double as "skip" — keep that gesture from also skipping.
+    if(ev.type==='keydown' && (ev.key==='Enter'||ev.key===' ')) ev.preventDefault();
+  }
+  document.addEventListener('pointerdown', unlockGesture, true);
+  document.addEventListener('keydown', unlockGesture, true);
+  root.addEventListener('click',()=>{
+    if(unlockAt && performance.now()-unlockAt<900){unlockAt=0;return;}
+    if(state!=='ready')skip();
+    else if(blocked)start(true);
+  });
   root.addEventListener('keydown',e=>{
-    if((e.key==='Enter'||e.key===' ') && e.target===root){e.preventDefault();skip();}
+    if((e.key==='Enter'||e.key===' ') && e.target===root){
+      if(unlockAt && performance.now()-unlockAt<900){unlockAt=0;return;}
+      e.preventDefault();skip();
+    }
   });
   root.addEventListener('pointermove',e=>{
     pointerX=(e.clientX/width-.5)*2;pointerY=(e.clientY/height-.5)*2;

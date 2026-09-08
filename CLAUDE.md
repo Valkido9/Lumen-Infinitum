@@ -418,6 +418,8 @@ E:\永恒流光\永恒流光\
   - `startedAt` 时间戳吞掉同一次手势的 click/keydown「跳过」意图（<900ms 判定），故首次点击只开播不跳过；第二次点击照常 `skip()` 跳至标题，再点「点击阅读」进入。`gateGesture` 在非 `gated` 时直接返回，不影响之后 Enter/Space 的默认键位。
   - `skip()` 内 `if(silent||blocked)start(true)` 保留作手势内重试（音乐加载失败场景）。
 - 移除此前 `unlockSound`/`unlockGesture`/`unlockAt`"首次交互开声"方案（已被门屏取代）。
+- **（移动端修复）** 部分手机浏览器只认 *click*（不认 pointerdown）才放行 audio：首次点按可能只有动画无声。新增 `startSoundAtCurrent()`（先把 `audio.currentTime` 对齐到动画时钟 `current` 再 `start(false)`）；`begin()` 用它启动；root click 里若"想有声但还没响起"（`wantsSound() && !soundOn() && !audioError`）就把该次点击当作**开声**（从当前进度接上，绝不跳到 `REVEAL` 高潮、绝不跳过），一旦音乐已响，点击才恢复为 `skip()`。新增 `audioError` 标记（audio `error`/`ended` 置位、`start` 成功清零），避免音频损坏时点击被卡死在"开声"分支而无法跳过。
+
 
 ## 给接手 AI 的工作指引
 

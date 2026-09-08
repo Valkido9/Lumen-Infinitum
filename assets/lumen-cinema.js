@@ -14,7 +14,7 @@
   const TAU = Math.PI * 2;
   let state = 'playing', raf = 0, previous = 0, fallbackTime = 0;
   let silent = true, busy = false, disposed = false, width = 0, height = 0;
-  let current = 0, clockOffset = 0, blocked = false, gated = true, startedAt = 0;
+  let current = 0, clockOffset = 0, blocked = false, gated = true, startedAt = 0, audioError = false;
   let pointerX = 0, pointerY = 0;
   const priorInert = new Map();
   const clamp = v => Math.max(0, Math.min(1, v));
@@ -288,7 +288,7 @@
       await audio.play();
       if(disposed){audio.pause();return;}
       clockOffset=(align || state==='ready')?current-audio.currentTime:0;
-      blocked=false;silent=false;
+      blocked=false;silent=false;audioError=false;
     }catch(error){
       if(!disposed){blocked=error.name==='NotAllowedError';runSilent();}
     }finally{busy=false;}
@@ -329,12 +329,21 @@
   // Click-to-start prologue: until the first gesture the film is frozen on its
   // opening frame behind a blinking "点击屏幕"; one click (or Enter / Space)
   // launches the visuals and the soundtrack together from 0.
+  const wantsSound = () => localStorage.getItem('lumen-music-muted') !== '1';
+  const soundOn = () => !audio.paused;
+  function startSoundAtCurrent(){
+    // Begin at the film's current clock position so a late start never leaps
+    // to a loud cue; on the very first gesture the clock is still ~0.
+    if(disposed) return;
+    try{ if(audio.readyState>0) audio.currentTime = current; }catch(_){}
+    start(false);
+  }
   function begin(){
     if(disposed || !gated) return;
     gated=false;startedAt=performance.now();
     root.classList.add('started');
     previous=0;
-    start(false);
+    startSoundAtCurrent();
     raf=requestAnimationFrame(tick);
   }
   function gateGesture(ev){
@@ -347,9 +356,16 @@
   document.addEventListener('pointerdown', gateGesture, true);
   document.addEventListener('keydown', gateGesture, true);
   root.addEventListener('click',()=>{
-    // The click that began playback must not be counted as a skip.
-    if(startedAt && performance.now()-startedAt<900){startedAt=0;return;}
-    if(state!=='ready')skip();
+    const justStarted = startedAt && performance.now()-startedAt<900;
+    if(justStarted) startedAt=0;
+    if(state!=='ready'){
+      // Some mobile browsers release the audio element only on a *click*, so the
+      // first pointerdown may play the film muted. Until the soundtrack is truly
+      // running, a click just turns it on from the film's current time — never a
+      // skip, never a jump to the reveal cue. Once music is playing, a click skips.
+      if(wantsSound() && !soundOn() && !audioError){ startSoundAtCurrent(); return; }
+      if(!justStarted) skip();
+    }
   });
   root.addEventListener('keydown',e=>{
     if((e.key==='Enter'||e.key===' ') && e.target===root){
@@ -361,9 +377,9 @@
     pointerX=(e.clientX/width-.5)*2;pointerY=(e.clientY/height-.5)*2;
   },{passive:true});
   root.addEventListener('pointerleave',()=>{pointerX=0;pointerY=0;});
-  audio.addEventListener('error',()=>{if(!disposed)runSilent();});
+  audio.addEventListener('error',()=>{if(!disposed){audioError=true;runSilent();}});
   audio.addEventListener('seeked',()=>{if(!disposed && !silent)clockOffset=current-audio.currentTime;});
-  audio.addEventListener('ended',()=>{if(!disposed)runSilent();});
+  audio.addEventListener('ended',()=>{if(!disposed){audioError=true;runSilent();}});
   function resume(){
     if(disposed)return;
     if(gated)return; // still frozen on the click-to-start screen

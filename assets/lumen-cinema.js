@@ -269,14 +269,11 @@
   }
   function skip(){
     if(disposed || state==='ready')return;
-    current=Math.max(current,REVEAL);fallbackTime=current;
-    if(!silent){
-      try{audio.currentTime=REVEAL;}catch(_){}
-      clockOffset=current-audio.currentTime;
-    }
-    reveal();draw(current);
-    // The skip click is a user gesture — retry a soundtrack that failed to load.
-    if(silent || blocked)start(true);
+    // "Skip" only reveals the title early. It must never touch the soundtrack or
+    // the film clock — otherwise a second click would leap the music to the loud
+    // reveal cue. Music simply keeps playing from wherever it is and reaches the
+    // swell only when it naturally arrives there.
+    reveal();
   }
   function leave(){
     if(state!=='ready' || disposed)return;
@@ -344,7 +341,9 @@
   root.addEventListener('keydown',e=>{
     if((e.key==='Enter'||e.key===' ') && e.target===root){
       if(startedAt && performance.now()-startedAt<900){startedAt=0;return;}
-      e.preventDefault();skip();
+      e.preventDefault();
+      if(wantsSound() && !soundOn() && !audioError) startSoundAtCurrent();
+      skip();
     }
   });
   root.addEventListener('pointermove',e=>{

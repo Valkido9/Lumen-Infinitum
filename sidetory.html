@@ -1249,6 +1249,15 @@ body {
 .side-index-meta { color: var(--text-dim); font-size: .78em; margin-top: 3px; }
 .side-index-state { color: var(--accent); font-size: .78em; font-weight: 700; }
 .side-story-article { margin-top: 20px; }
+.side-story-article > summary { list-style: none; cursor: pointer; position: relative; }
+.side-story-article > summary::-webkit-details-marker { display: none; }
+.side-story-article > summary::after {
+  content: '展开阅读'; position: absolute; right: 18px; bottom: 15px; color: var(--accent);
+  font: 700 .72em/1 var(--font-sans); letter-spacing: .08em;
+}
+.side-story-article[open] > summary::after { content: '收起正文'; }
+.side-story-article:not([open]) > summary { transition: border-color .2s, transform .2s; }
+.side-story-article:not([open]) > summary:hover { border-color: var(--accent); transform: translateY(-2px); }
 .side-story-hero {
   padding: 34px 28px; text-align: center; border: 1px solid var(--border); border-radius: var(--radius-lg);
   background: radial-gradient(circle at 50% 0%, rgba(56,189,248,.13), transparent 55%), var(--bg-card);
@@ -1282,6 +1291,7 @@ body {
 </style>
 <link rel="stylesheet" href="assets/lumen-design.css">
 <script defer src="assets/lumen-design.js"></script>
+<script defer src="assets/lumen-music.js"></script>
 </head>
 <body>
 
@@ -1388,11 +1398,35 @@ body {
         </div>
       </div>
     </div>
-    <div class="side-group" id="g-side">
+    <div class="side-group collapsed" id="g-side">
       <button class="side-group-head" type="button"><span class="sg-arrow">▾</span>SideStory · 时空遗闻</button>
       <div class="side-group-body">
         <a href="sidetory.html#char-bg" class="chap-link">👤 人物背景</a>
-        <a href="sidetory.html#hongying-story" class="chap-link">🦊 时空遗闻·鸿荧</a>
+        <div class="side-vol collapsed" id="side-hongying-nav">
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>🦊 鸿荧前传</button>
+          <div class="side-vol-body">
+            <a href="#hongying-ch01" class="chap-link">01 结界里的四季</a>
+            <a href="#hongying-ch02" class="chap-link">02 更换结界的那一天</a>
+            <a href="#hongying-ch03" class="chap-link">03 白色的血</a>
+            <a href="#hongying-ch04" class="chap-link">04 一年只有一天的朋友</a>
+            <a href="#hongying-ch05" class="chap-link">05 羊与尾巴</a>
+            <a href="#hongying-ch06" class="chap-link">06 结界上的假门</a>
+            <a href="#hongying-ch07" class="chap-link">07 明天带你离开</a>
+            <a href="#hongying-ch08" class="chap-link">08 雪夜里的两封信</a>
+            <a href="#hongying-ch09" class="chap-link">09 安全区</a>
+            <a href="#hongying-ch10" class="chap-link">10 母亲最后的结界</a>
+            <a href="#hongying-ch11" class="chap-link">11 雪没有融化</a>
+            <a href="#hongying-ch12" class="chap-link">12 像海一样的湖</a>
+            <a href="#hongying-ch13" class="chap-link">13 风雪里的陌生人</a>
+            <a href="#hongying-ch14" class="chap-link">14 两种诅咒</a>
+            <a href="#hongying-ch15" class="chap-link">15 狐火瓶里的过去</a>
+            <a href="#hongying-ch16" class="chap-link">16 再也不要见我</a>
+            <a href="#hongying-ch17" class="chap-link">17 「世界的宏愿」</a>
+            <a href="#hongying-ch18" class="chap-link">18 碎片之下</a>
+            <a href="#hongying-ch19" class="chap-link">19 强大到足以杀死我</a>
+            <a href="#hongying-ch20" class="chap-link">20 第二个桃花源</a>
+          </div>
+        </div>
         <a href="sidetory.html#bonus" class="chap-link">🎁 番外</a>
         <a href="sidetory.html#events" class="chap-link">⚡ 特殊事件</a>
       </div>
@@ -1424,7 +1458,7 @@ body {
 
 
   <!-- ===== 可扩展的时空遗闻目录 ===== -->
-  <details class="side-directory" id="side-directory" open>
+  <details class="side-directory" id="side-directory">
     <summary><span>选择时空遗闻</span></summary>
     <div class="side-directory-body">
       <div class="side-directory-controls">
@@ -1448,12 +1482,12 @@ body {
   <section class="side-section" id="char-bg">
     <h2><span class="icon">👤</span>人物背景</h2>
     <p class="sec-desc">角色在正篇之外的身世、旧事与未被主线记录的人生。</p>
-    <article class="side-story-article" id="hongying-story">
-      <header class="side-story-hero">
+    <details class="side-story-article" id="hongying-story" data-music-src="music/桃花源没有季节.mp3">
+      <summary class="side-story-hero">
         <div class="side-story-kicker">时空遗闻 · 鸿荧</div>
         <h2>桃花源没有季节</h2>
         <p class="side-story-epigraph">“只有能够接纳无处可去的人，<br>让不同种族一同生活的地方，才应该被称作桃花源。”</p>
-      </header>
+      </summary>
       <details class="side-story-toc">
         <summary>篇内目录 · 二十节</summary>
         <nav class="side-story-toc-grid" aria-label="时空遗闻·鸿荧篇内目录">
@@ -1649,24 +1683,24 @@ body {
       <div class="quote-line">鸿荧立刻向前。短刃才刚离开鞘口，灼晦已经说出了第二句话。</div>
       <div class="quote-line">“我希望鸿荧放下武器。”</div>
       <div class="quote-line">五指忽然失去了握住东西的资格。刀柄从鸿荧掌中弹出，横着飞过十几步，深深钉进岩石。她用尾巴化成的锁链卷住刀柄，另一股力量却沿锁链倒撞回来，把她整个人掀向山壁。</div>
-      <div class="quote-line">“灼晦，停下来！”</div>
+      <div class="quote-line">“灼晦，快停下来！”</div>
       <div class="quote-line">“为什么又是我要停下来？”灼晦向前走了一步。她的手仍朝鸿荧伸着，掌心的裂口一直延伸到腕骨，白色的血从袖口一滴滴落下，“我只是要你选我。以前是他们逼我放弃你，现在……为什么连你也要我放弃你？”</div>
       <div class="quote-line">“我没有要你放弃我……我是要你别再杀人了！”</div>
       <div class="quote-line">“那就没有区别了。”</div>
       <div class="quote-line">灼晦合拢手指。</div>
       <div class="quote-line">“我希望鸿荧再也站不起来。”</div>
-      <div class="quote-line">压力从四面同时挤来。鸿荧的膝盖砸进雪里，脚下的岩层随之绽开裂纹；她试图用锁链支住身体，肩骨却被更沉重的力量一点点压向地面。那不是风，也不是某种可以被看见、被挡开的冲击——只是这个世界突然认定，她理应跪在那里。</div>
+      <div class="quote-line">压力从四面同时挤来。鸿荧的膝盖砸进雪里，脚下的岩层随之绽开裂纹；她试图用双手支住身体，肩骨却被更沉重的力量一点点压向地面。——仿佛这个世界突然认定，她理应跪在那里。</div>
       <div class="quote-line">灼晦看着她挣扎，嘴唇颤了一下。她的瞳孔正在闪光。那是院区的碎片发动力量的展示，还是一滴没能落下的泪水呢？</div>
       <div class="quote-line">随后，她仍然说了下去。</div>
-      <div class="quote-line">“我希、我希望……从现在开始，没有一口空气能够进入鸿荧的身体。”</div>
+      <div class="quote-line">“我希望……从现在开始，没有一口空气能够进入鸿荧的身体。”</div>
       <div class="quote-line">山顶的风还在刮。雪尘擦过鸿荧的脸颊，吹动她散乱的白发；可她张开嘴，胸腔里只剩下一次无法完成的抽搐。即便她强行唤来新的气流，那些空气也会在接近鼻尖以前骤然分开，像世上的每一缕风都在躲避她。</div>
-      <div class="quote-line">视野很快开始发黑。鸿荧看见灼晦站在模糊的雪中，身体被愿望的反噬切出越来越多的裂痕；又看见许多年前的鸿灵躺在自己怀里，睫毛上的雪怎么也捂不化。两道身影在窒息中重叠，仿佛她正被迫在同一个夜晚里，再看着她们死去一次。</div>
-      <div class="quote-line">她朝灼晦伸出手。灼晦没有走近。</div>
+      <div class="quote-line">什么都没有。视野很快开始发黑。鸿荧看见灼晦站在模糊的雪中，身体被愿望的反噬切出越来越多的裂痕；又看见许多年前的鸿灵躺在自己怀里，睫毛上的雪无论如何都擦不掉。两道身影正在在窒息中重叠。</div>
+      <div class="quote-line">她朝灼晦伸出手。灼晦没有停下她的愿望，只是缓缓走近。</div>
       <div class="quote-line">“你为什么要，这么坚决地站在我的对立面……”她的眼泪从脸侧滑过，声音却没有退缩，“即然这样、我希望、鸿荧的心脏、现在就停止跳动。”</div>
       <div class="quote-line">鸿荧的心脏猛地停了一拍。压在身体上的力量骤然收紧，骨骼与内脏一同发出近乎破裂的疼痛；与此同时，灼晦胸前的碎片也迸开一道惊惧的裂缝，反噬沿着她的脖颈直抵脸侧。</div>
       <div class="quote-source">——灼晦、鸿荧，《时空遗闻·鸿荧》</div>
       </div>
-      <p>直接让鸿荧死亡的愿望远远超过此前每一次改写，灼晦也因此承受了最强烈的反噬；但鸿荧同源的希冀院力量仍在抵抗，没能让那句话立刻成为结果。鸿荧放弃与无形的压力角力，任由身体伏低，用藏在雪下的最后一条狐火锁链缠住灼晦的脚踝。灼晦被猛然拉近，一瞬之间，所有的愿望全都停止运作。锁链已经勒住她的喉咙。鸿荧终于夺回短刃，以仅剩的一口气迎了上去。</p>
+      <p>直接让鸿荧死亡的愿望远远超过此前每一次改写，灼晦也因此承受了最强烈的反噬；但鸿荧同源的希冀院力量仍在抵抗，没能让那句话立刻成为结果。鸿荧放弃与无形的压力角力，任由身体伏低，用藏在雪下的最后一条狐火锁链缠住灼晦的脚踝。灼晦被猛然拉近，鸿荧终于夺回短刃，以仅剩的一口气迎了上去。</p>
       <div class="story-quote">
       <div class="quote-line">刀尖从灼晦背后穿出。两个人同时停了下来。</div>
       <div class="quote-line">“……我希望，刚才那些愿望，不会发生。”</div>
@@ -1716,7 +1750,7 @@ body {
       </div>
       <p class="side-story-ending">（全文完）</p>
       </div>
-    </article>
+    </details>
   </section>
 
   <!-- ===== 番外 ===== -->
@@ -2874,6 +2908,70 @@ document.querySelectorAll('.side-vol-head').forEach(function(h) {
     h.parentElement.classList.toggle('collapsed');
   });
 });
+
+// ===== SIDE STORY: OPEN CURRENT STORY + FOLLOW ITS INNER DIRECTORY =====
+const hongyingStory = document.getElementById('hongying-story');
+const hongyingSideNav = document.getElementById('side-hongying-nav');
+const sideStoryGroup = document.getElementById('g-side');
+const hongyingHeadings = Array.from(document.querySelectorAll('#hongying-story .side-story-heading'));
+const hongyingNavLinks = Array.from(document.querySelectorAll('#side-hongying-nav .chap-link'));
+let storyWasInView = false;
+let storyNavFrame = 0;
+
+function openStoryForHash(shouldScroll) {
+  const id = location.hash.slice(1);
+  if (!hongyingStory || (id !== 'hongying-story' && !id.startsWith('hongying-ch'))) return;
+  hongyingStory.open = true;
+  if (shouldScroll) {
+    requestAnimationFrame(function() {
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
+function updateSideStoryNavigation() {
+  storyNavFrame = 0;
+  if (!hongyingStory) return;
+  const rect = hongyingStory.getBoundingClientRect();
+  const inView = hongyingStory.open && rect.bottom > 100 && rect.top < innerHeight * .72;
+  if (inView !== storyWasInView) {
+    storyWasInView = inView;
+    if (inView) {
+      sideStoryGroup.classList.remove('collapsed');
+      hongyingSideNav.classList.remove('collapsed');
+    } else {
+      hongyingSideNav.classList.add('collapsed');
+      sideStoryGroup.classList.add('collapsed');
+    }
+  }
+  if (!inView) {
+    hongyingNavLinks.forEach(function(link) { link.classList.remove('active'); });
+    return;
+  }
+  let current = hongyingHeadings[0];
+  const marker = Math.max(230, innerHeight * .4);
+  hongyingHeadings.forEach(function(heading) {
+    if (heading.getBoundingClientRect().top <= marker) current = heading;
+  });
+  hongyingNavLinks.forEach(function(link) {
+    link.classList.toggle('active', current && link.getAttribute('href') === '#' + current.id);
+  });
+}
+
+function scheduleSideStoryNavigation() {
+  if (!storyNavFrame) storyNavFrame = requestAnimationFrame(updateSideStoryNavigation);
+}
+
+document.querySelectorAll('a[href^="#hongying-"]').forEach(function(link) {
+  link.addEventListener('click', function() { if (hongyingStory) hongyingStory.open = true; });
+});
+if (hongyingStory) hongyingStory.addEventListener('toggle', scheduleSideStoryNavigation);
+addEventListener('hashchange', function() { openStoryForHash(true); });
+addEventListener('scroll', scheduleSideStoryNavigation, { passive: true });
+addEventListener('resize', scheduleSideStoryNavigation);
+openStoryForHash(false);
+updateSideStoryNavigation();
 
 // ===== SIDEBAR: MOBILE DRAWER =====
 function openMobileSidebar() {

@@ -7,12 +7,55 @@
   audio.loop = true;
   audio.preload = 'auto';
   const MASTER_VOLUME = 0.35;
+  const PROGRESS_KEY = 'lumen-music-progress-v1';
   let activeZone = null;
+  let activeTrackKey = '';
+  let pendingResumeTime = null;
+  let lastProgressWrite = 0;
   let fadeFrame = 0;
   let transitionId = 0;
   let userPaused = localStorage.getItem('lumen-music-muted') === '1';
   let autoplayBlocked = false;
   let blockedClickArmed = false;
+
+  function keyFor(src) {
+    try { return new URL(src, document.baseURI).pathname; }
+    catch (_) { return src; }
+  }
+
+  function readProgress(key) {
+    try {
+      const value = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}')[key];
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    } catch (_) { return 0; }
+  }
+
+  function writeProgress(key, value) {
+    if (!key || !Number.isFinite(value) || value < 0) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
+      saved[key] = value;
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(saved));
+    } catch (_) {}
+  }
+
+  function saveProgress(force = false) {
+    if (!activeTrackKey || !Number.isFinite(audio.currentTime)) return;
+    const now = performance.now();
+    if (!force && now - lastProgressWrite < 1000) return;
+    lastProgressWrite = now;
+    writeProgress(activeTrackKey, audio.currentTime);
+  }
+
+  function restoreProgress() {
+    if (pendingResumeTime == null || audio.readyState === 0) return;
+    let position = pendingResumeTime;
+    if (Number.isFinite(audio.duration) && audio.duration > 0) position %= audio.duration;
+    try {
+      audio.currentTime = position;
+      pendingResumeTime = null;
+    } catch (_) {}
+  }
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -60,8 +103,11 @@
     const src = new URL(zone.dataset.musicSrc, document.baseURI).href;
     const instant = zone.dataset.musicMode === 'instant';
     if (audio.src !== src) {
+      saveProgress(true);
+      activeTrackKey = keyFor(src);
+      pendingResumeTime = readProgress(activeTrackKey);
       audio.src = src;
-      audio.currentTime = 0;
+      restoreProgress();
     }
     audio.volume = instant ? MASTER_VOLUME : 0;
     try {
@@ -83,8 +129,8 @@
     activeZone = zone;
     const id = ++transitionId;
     const next = () => {
+      saveProgress(true);
       audio.pause();
-      audio.currentTime = 0;
       updateButton();
       if (zone) beginZone(zone, id);
     };
@@ -143,7 +189,7 @@
     autoplayBlocked = false;
     if (userPaused) {
       ++transitionId;
-      fadeTo(0, 500, () => { audio.pause(); audio.currentTime = 0; updateButton(); });
+      fadeTo(0, 500, () => { saveProgress(true); audio.pause(); updateButton(); });
     } else {
       activeZone = null;
       syncZone();
@@ -159,6 +205,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelFade();
+      saveProgress(true);
       audio.pause();
       updateButton();
     } else {
@@ -167,6 +214,9 @@
     }
   });
   zones.filter(zone => zone.matches('details')).forEach(zone => zone.addEventListener('toggle', scheduleSync));
+  audio.addEventListener('loadedmetadata', restoreProgress);
+  audio.addEventListener('timeupdate', () => saveProgress(false));
+  addEventListener('pagehide', () => saveProgress(true));
   addEventListener('scroll', scheduleSync, { passive: true });
   addEventListener('resize', scheduleSync);
   updateButton();

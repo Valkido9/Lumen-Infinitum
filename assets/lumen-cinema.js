@@ -11,39 +11,15 @@
   const title = root.querySelector('.cinema-title');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const REVEAL = Number(root.dataset.revealTime) || 14.6;
-  const PROGRESS_KEY = 'lumen-music-progress-v1';
-  const trackKey = (() => {
-    try { return new URL(audio.getAttribute('src') || audio.src, document.baseURI).pathname; }
-    catch (_) { return audio.getAttribute('src') || audio.src; }
-  })();
   const TAU = Math.PI * 2;
   let state = 'playing', raf = 0, previous = 0, fallbackTime = 0;
   let silent = true, busy = false, disposed = false, width = 0, height = 0;
   let current = 0, clockOffset = 0, blocked = false, gated = true, startedAt = 0, audioError = false;
-  let lastProgressWrite = 0;
   let pointerX = 0, pointerY = 0;
   const priorInert = new Map();
   const clamp = v => Math.max(0, Math.min(1, v));
   const phase = (t, a, b) => clamp((t-a)/(b-a));
   const ease = x => x*x*(3-2*x);
-  function readProgress() {
-    try {
-      const value = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}')[trackKey];
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    } catch (_) { return 0; }
-  }
-  function saveProgress(force = false) {
-    if (!trackKey || !Number.isFinite(audio.currentTime)) return;
-    const now = performance.now();
-    if (!force && now - lastProgressWrite < 1000) return;
-    lastProgressWrite = now;
-    try {
-      const saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-      saved[trackKey] = audio.currentTime;
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(saved));
-    } catch (_) {}
-  }
-  current = fallbackTime = readProgress();
   // Seeded coordinates remain stable through resizing, seeking and screenshots.
   let seed = 71837;
   const random = () => {seed = (seed*1664525+1013904223)>>>0;return seed/4294967296;};
@@ -282,15 +258,7 @@
     busy=true;
     try{
       if(localStorage.getItem('lumen-music-muted')==='1'){runSilent();return;}
-      if(align && audio.readyState===0)await new Promise(resolve=>{
-        const done=()=>resolve();
-        audio.addEventListener('loadedmetadata',done,{once:true});
-        audio.addEventListener('error',done,{once:true});
-      });
-      if(align && audio.readyState>0){
-        const limit=Number.isFinite(audio.duration)&&audio.duration>0?Math.max(0,audio.duration-.05):current;
-        audio.currentTime=Math.min(current,limit);
-      }
+      if(align && audio.readyState>0)audio.currentTime=current;
       await audio.play();
       if(disposed){audio.pause();return;}
       clockOffset=(align || state==='ready')?current-audio.currentTime:0;
@@ -315,7 +283,7 @@
     const volume=audio.volume,startTime=performance.now();
     function fade(now){
       const p=clamp((now-startTime)/600);audio.volume=volume*(1-p);
-      if(p<1)requestAnimationFrame(fade);else{saveProgress(true);audio.pause();}
+      if(p<1)requestAnimationFrame(fade);else audio.pause();
     }requestAnimationFrame(fade);
     setTimeout(()=>{
       root.hidden=true;audio.pause();
@@ -331,14 +299,15 @@
   enter.addEventListener('click',e=>{e.stopPropagation();leave();});
   // Click-to-start prologue: until the first gesture the film is frozen on its
   // opening frame behind a blinking "点击屏幕"; one click (or Enter / Space)
-  // launches the visuals and soundtrack together from their saved breakpoint.
+  // launches the visuals and the soundtrack together from 0.
   const wantsSound = () => localStorage.getItem('lumen-music-muted') !== '1';
   const soundOn = () => !audio.paused;
   function startSoundAtCurrent(){
     // Begin at the film's current clock position so a late start never leaps
     // to a loud cue; on the very first gesture the clock is still ~0.
     if(disposed) return;
-    start(true);
+    try{ if(audio.readyState>0) audio.currentTime = current; }catch(_){}
+    start(false);
   }
   function begin(){
     if(disposed || !gated) return;
@@ -383,8 +352,7 @@
   root.addEventListener('pointerleave',()=>{pointerX=0;pointerY=0;});
   audio.addEventListener('error',()=>{if(!disposed){audioError=true;runSilent();}});
   audio.addEventListener('seeked',()=>{if(!disposed && !silent)clockOffset=current-audio.currentTime;});
-  audio.addEventListener('timeupdate',()=>saveProgress(false));
-  audio.addEventListener('ended',()=>{saveProgress(true);if(!disposed){audioError=true;runSilent();}});
+  audio.addEventListener('ended',()=>{if(!disposed){audioError=true;runSilent();}});
   function resume(){
     if(disposed)return;
     if(gated)return; // still frozen on the click-to-start screen
@@ -394,9 +362,9 @@
   document.addEventListener('visibilitychange',()=>{
     cancelAnimationFrame(raf);previous=0;
     if(disposed)return;
-    if(document.hidden){saveProgress(true);audio.pause();}else resume();
+    if(document.hidden)audio.pause();else resume();
   });
-  addEventListener('pagehide',()=>{saveProgress(true);audio.pause();cancelAnimationFrame(raf);});
+  addEventListener('pagehide',()=>{audio.pause();cancelAnimationFrame(raf);});
   addEventListener('pageshow',e=>{if(e.persisted)resume();});
   addEventListener('resize',resize);resize();
 })();

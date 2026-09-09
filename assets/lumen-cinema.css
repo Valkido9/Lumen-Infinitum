@@ -1,6 +1,6 @@
 /* A full-screen, click-only prologue. The reading layout never moves. */
 html.cinema-locked,html.cinema-locked body{overflow:hidden!important;overscroll-behavior:none;height:100%}
-.opening.cinema{position:fixed;inset:0;z-index:5000;width:100%;height:100dvh;min-height:0;background:#071517;display:block;isolation:isolate;touch-action:none;transition:opacity .65s ease,filter .65s ease}
+.opening.cinema{overflow:hidden;-webkit-font-smoothing:antialiased;position:fixed;inset:0;z-index:5000;width:100%;height:100dvh;min-height:0;background:#071517;display:block;isolation:isolate;touch-action:none;transition:opacity .65s ease,filter .65s ease}
 .opening.cinema::before{display:none}.cinema[hidden]{display:none!important}
 .cinema .cinema-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 .cinema-grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.84' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23888' filter='url(%23n)' opacity='.5' d='M0 0h180v180H0z'/%3E%3C/svg%3E")}
@@ -11,8 +11,8 @@ html.cinema-locked,html.cinema-locked body{overflow:hidden!important;overscroll-
 .cinema-enter{position:absolute;left:50%;bottom:max(12%,44px);transform:translateX(-50%);z-index:3;appearance:none;border:0;border-bottom:1px solid #b3b89a66;border-radius:0;background:transparent;color:#d9dfc9;padding:13px 24px;font:400 13px/1.5 var(--font-serif);letter-spacing:5px;text-indent:5px;white-space:nowrap;cursor:pointer;opacity:0;visibility:hidden;transition:color .25s,border-color .25s,opacity .6s}
 .cinema.ready .cinema-enter{opacity:1;visibility:visible}.cinema.ready .cinema-enter{transition-delay:.45s}.cinema.awaiting .cinema-enter{color:#394b43;border-color:#394b4370}.cinema-enter:hover{color:#fff;border-color:#e6e9d5}.cinema.awaiting .cinema-enter:hover{color:#0b2019;border-color:#0b2019}.cinema-enter:focus-visible{outline:1px solid currentColor;outline-offset:8px}
 .cinema.leaving{opacity:0;filter:blur(8px);pointer-events:none}
-.has-opening .header{position:fixed}.has-opening .layout{margin-top:82px}.has-opening.at-opening .music-toggle,.has-opening.at-opening .reading-progress{visibility:hidden;pointer-events:none}
-@media(max-width:768px){.has-opening .layout{margin-top:104px}.cinema .cinema-title h1{font-size:clamp(40px,14vw,90px);letter-spacing:.16em;text-indent:.16em}.cinema .opening-en{font-size:11px;letter-spacing:.32em;text-indent:.32em;margin-top:20px}.cinema-enter{bottom:max(15%,50px);font-size:12px}.cinema-title{padding-bottom:25px}}
+.has-opening.at-opening .music-toggle,.has-opening.at-opening .theme-toggle,.has-opening.at-opening .review-dock{visibility:hidden;pointer-events:none}
+@media(max-width:768px){.cinema .cinema-title h1{font-size:clamp(40px,14vw,90px);letter-spacing:.16em;text-indent:.16em}.cinema .opening-en{font-size:11px;letter-spacing:.32em;text-indent:.32em;margin-top:20px}.cinema-enter{bottom:max(15%,50px);font-size:12px}.cinema-title{padding-bottom:25px}}
 @media(prefers-reduced-motion:reduce){.opening.cinema,.cinema-title,.cinema.ready .cinema-title,.cinema-enter{transition:none!important;filter:none!important;transform:none}.cinema-enter{transform:translateX(-50%)}.cinema.leaving{filter:none}}
 @media print{.cinema{display:none!important}html.cinema-locked,html.cinema-locked body{overflow:visible!important;height:auto}}
 

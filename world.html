@@ -2139,69 +2139,14 @@ function filterCharacters() {
 
 // ===== OPEN CHARACTER MODAL =====
 function openChar(key) {
-  const c = characters[key];
-  if (!c) return;
-  const avatarClass = c.avatar === 'F' ? 'female' : c.avatar === 'M' ? 'male' : 'other';
-  const abilityHtml = (typeof getCharAbilityHtml === 'function')
-    ? getCharAbilityHtml(key)
-    : (c.abilityDetail || (c.ability ? `<strong>${c.ability}</strong> (CRT ${c.crt})` : '暂无详细能力档案'));
-  // 已收录角色百科（时空遗闻）的角色，提供跳转链接
-  const wikiCovered = ['yunlue','linai','masaka','youbika','wanglingtu','kenuo','laikesi','zhouniang','zhengyi','wuming','boundary','gieniefa','liulupo','liuba','liang','lukasen','sipalisen','meinade','yayinsente','hongying','daojiesi','kangmingde'];
-  const hasWiki = wikiCovered.includes(key);
-
   const html = `
     <button class="close-btn" onclick="closeCharCard()">&times;</button>
-    <div class="char-header">
-      <div class="char-avatar ${avatarClass}">${c.avatarText}</div>
+    <div class="char-header" style="margin-bottom:0;">
       <div>
-        <div class="char-name">${c.name}</div>
-        <div class="char-title">${c.title}</div>
-        ${c.crt !== 'N/A' ? `<span class="crt-badge">CRT ${c.crt}</span>` : ''}
+        <div class="char-name">维护中</div>
+        <div class="char-title" style="margin-top:10px;">人物简介正在整理与校订，暂时无法查看。</div>
       </div>
-    </div>
-    <div class="info-block">
-      <div class="info-label">标志性台词</div>
-      ${c.quotes.map(q => `<div class="info-value" style="color:var(--gold); margin:4px 0;">${q}</div>`).join('')}
-    </div>
-    <div class="info-block">
-      <div class="info-label">身份</div>
-      <div class="info-value">${c.identity}</div>
-    </div>
-    ${c.aliases && c.aliases.length ? `
-    <div class="info-block">
-      <div class="info-label">其他称呼</div>
-      <div class="info-value">${c.aliases.map(a => `<span class="alias-tag">${a}</span>`).join('')}</div>
-    </div>` : ''}
-    <div class="info-block">
-      <div class="info-label">人物侧写</div>
-      <div class="info-value">${c.personality}</div>
-    </div>
-    <div class="info-block">
-      <div class="info-label">能力</div>
-      <div class="info-value">${abilityHtml}</div>
-    </div>
-    ${c.bonds.length ? `
-    <div class="info-block">
-      <div class="info-label">核心羁绊</div>
-      ${c.bonds.map(b => `<div class="relation-card" style="margin:8px 0;">
-        <div class="rel-chars">${b.with}</div>
-        <div class="rel-type">${b.type}</div>
-        <div class="rel-desc">${b.desc}</div>
-      </div>`).join('')}
-    </div>` : ''}
-    <div class="info-block">
-      <div class="info-label">主要出场</div>
-      ${c.appearances.map(a => `<div class="info-value" style="margin:2px 0;">• ${a}</div>`).join('')}
-    </div>
-    ${key === 'hongying' ? `
-    <div class="wiki-jump">
-      <a href="sidetory.html#hongying-story">🦊 阅读时空遗闻·鸿荧：桃花源没有季节 →</a>
-    </div>` : ''}
-    ${hasWiki ? `
-    <div class="wiki-jump">
-      <a href="characters.html#char-wiki-${key}">📖 进入角色百科 · 深入了解「${c.name}」→</a>
-    </div>` : ''}
-  `;
+    </div>`;
   if (drawerEnabled()) {
     closeAllDrawers('charDrawer');
     document.getElementById('charDrawerContent').innerHTML = html;
@@ -2210,7 +2155,6 @@ function openChar(key) {
     document.getElementById('charModalContent').innerHTML = html;
     document.getElementById('charModal').classList.add('show');
   }
-  applyStoredEdits(drawerEnabled() ? document.getElementById('charDrawerContent') : document.getElementById('charModalContent'));
 }
 
 // ===== OPEN TERM MODAL =====

@@ -12,6 +12,8 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const REVEAL = Number(root.dataset.revealTime) || 14.6;
   const TAU = Math.PI * 2;
+  const OPENING_LAST_PLAYED_KEY = 'lumen-opening-seen-v1';
+  const OPENING_REPLAY_INTERVAL = 10 * 60 * 1000;
   let state = 'playing', raf = 0, previous = 0, fallbackTime = 0;
   let silent = true, busy = false, disposed = false, width = 0, height = 0;
   let current = 0, clockOffset = 0, blocked = false, gated = true, startedAt = 0, audioError = false;
@@ -28,9 +30,15 @@
   function dismissImmediately() {
     disposed = true; state = 'entered'; root.hidden = true; audio.pause();
     document.body.classList.remove('at-opening');
+    window.dispatchEvent(new CustomEvent('lumen:opening-dismissed'));
   }
   // Existing chapter/ability links must open their destination directly.
-  if (location.hash && location.hash !== '#opening-title') {dismissImmediately();return;}
+  let openingRecentlyPlayed = false;
+  try {
+    const lastPlayedAt = Number(localStorage.getItem(OPENING_LAST_PLAYED_KEY)) || 0;
+    openingRecentlyPlayed = Date.now() - lastPlayedAt < OPENING_REPLAY_INTERVAL;
+  } catch (_) {}
+  if (openingRecentlyPlayed || (location.hash && location.hash !== '#opening-title')) {dismissImmediately();return;}
   document.documentElement.classList.add('cinema-locked');
   for (const el of document.body.children) {
     if (el === root || /^(SCRIPT|STYLE|LINK)$/.test(el.tagName)) continue;
@@ -290,9 +298,11 @@
       for(const [el,inert] of priorInert)el.inert=inert;
       document.documentElement.classList.remove('cinema-locked');
       document.body.classList.remove('at-opening');
+      try { localStorage.setItem(OPENING_LAST_PLAYED_KEY, String(Date.now())); } catch (_) {}
       window.scrollTo({top:0,behavior:'instant'});
       document.getElementById('reading-interface').focus({preventScroll:true});
       window.dispatchEvent(new Event('scroll'));
+      window.dispatchEvent(new CustomEvent('lumen:opening-dismissed'));
       removeEventListener('resize',resize);
     },reduced.matches?0:650);
   }
@@ -312,6 +322,7 @@
   function begin(){
     if(disposed || !gated) return;
     gated=false;startedAt=performance.now();
+    try { localStorage.setItem(OPENING_LAST_PLAYED_KEY, String(Date.now())); } catch (_) {}
     root.classList.add('started');
     previous=0;
     startSoundAtCurrent();

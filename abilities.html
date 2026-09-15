@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/lumen-archive-ui.css?v=20260916">
 <style>
 /* ===== Reset & Variables ===== */
 :root {
@@ -1363,13 +1364,31 @@ body {
 
 <!-- ===== ABILITY ARCHIVE SECTION ===== -->
     <h2 class="section-title" id="abilities" style="color:var(--accent);"><span class="icon">⚡</span>能力档案</h2>
-    <div class="ability-nav-bar" id="abilityNav"></div>
-    <div class="ability-sort-bar" id="abilitySortBar">
-      <span class="ability-sort-label">排序：</span>
-      <button class="ability-sort-btn active" data-sort="order" onclick="setAbilitySort('order')">按出场顺序</button>
-      <button class="ability-sort-btn" data-sort="crtAsc" onclick="setAbilitySort('crtAsc')">按CRT高低 · 正序</button>
-      <button class="ability-sort-btn" data-sort="crtDesc" onclick="setAbilitySort('crtDesc')">按CRT高低 · 倒序</button>
-    </div>
+    <section class="archive-controls" aria-label="能力检索与筛选">
+      <label class="archive-search-box" for="abilitySearch">
+        <span aria-hidden="true">⌕</span>
+        <input id="abilitySearch" type="search" autocomplete="off" placeholder="搜索能力 / 人物……" oninput="setAbilitySearch(this.value)">
+      </label>
+      <div class="archive-actions">
+        <button class="archive-action-btn" id="abilityFilterToggle" type="button" aria-expanded="false" aria-controls="abilityFilterDrawer" onclick="toggleAbilityFilters()">筛选<span class="archive-filter-count" id="abilityFilterCount" hidden></span></button>
+        <label class="archive-sort-select" for="abilitySortSelect"><span>排序</span>
+          <select id="abilitySortSelect" onchange="setAbilitySort(this.value)">
+            <option value="order">出场顺序</option>
+            <option value="crtAsc">CRT 由低到高</option>
+            <option value="crtDesc">CRT 由高到低</option>
+          </select>
+        </label>
+        <button class="archive-action-btn archive-reset-btn" id="abilityResetBtn" type="button" onclick="resetAbilitySearch()">重置</button>
+      </div>
+      <div class="active-filter-row" id="abilityActiveFilters" aria-live="polite"></div>
+      <div class="ability-filter-drawer" id="abilityFilterDrawer" hidden>
+        <div class="ability-nav-bar" id="abilityNav"></div>
+      </div>
+      <div class="archive-result-line">
+        <strong id="abilityResultCount">正在整理档案……</strong>
+        <span>可检索能力名称、持有者与正文关键词</span>
+      </div>
+    </section>
     <div class="ability-archive" id="abilityArchive"></div>
 
 
@@ -4063,6 +4082,7 @@ function loadCustomCategoryValues() {
 
 // 当前筛选状态：空数组 = 该行不限（全部）；每行内多选 OR，跨行 AND
 const abilityFilter = { camps: [], tl: [], ward: [], vol: [] };
+let abilitySearchQuery = '';
 
 // 解析 tg 字符串为 4 个字段；多个阵营 / 多条时间线用 | 分隔
 function parseTg(a) {
@@ -4082,10 +4102,18 @@ function matchesFilter(a) {
   if (abilityFilter.tl.length   && !t.tl.some(x => abilityFilter.tl.includes(x))) return false;
   if (abilityFilter.ward.length && !abilityFilter.ward.includes(t.ward)) return false;
   if (abilityFilter.vol.length  && !abilityFilter.vol.includes(t.vol)) return false;
+  if (abilitySearchQuery) {
+    const haystack = [a.n, a.h, a.d, a.q, a.nt, a.tg].filter(Boolean).join(' ').toLocaleLowerCase('zh-CN');
+    if (!haystack.includes(abilitySearchQuery)) return false;
+  }
   return true;
 }
 
-// 渲染 4 行筛选条（阵营/时间线/院区/初登场卷目）
+function filterValueToken(value) {
+  return encodeURIComponent(value).replace(/'/g, '%27');
+}
+
+// 渲染折叠抽屉中的 4 组筛选项，并在抽屉外展示当前条件。
 function renderFilterBars() {
   const nav = document.getElementById('abilityNav');
   if (!nav) return;
@@ -4093,16 +4121,72 @@ function renderFilterBars() {
   ['camps', 'tl', 'ward', 'vol'].forEach(cat => {
     const meta = abilityTags[cat];
     const sel = abilityFilter[cat];
-    html += '<div class="tag-filter-bar">';
-    html += '<span class="tag-filter-label">' + escHtml(meta.label) + '</span>';
-    html += '<button class="tag-filter-btn' + (sel.length ? '' : ' active') + '" onclick="setAbilityFilter(\'' + cat + '\',\'\')">全部</button>';
+    html += '<div class="archive-filter-group" role="group" aria-label="' + escHtml(meta.label) + '"><div class="archive-filter-label">' + escHtml(meta.label) + (sel.length ? '<span>' + sel.length + '</span>' : '') + '</div><div class="archive-filter-options">';
+    html += '<button class="tag-filter-btn' + (sel.length ? '' : ' active') + '" type="button" aria-pressed="' + (!sel.length) + '" onclick="setAbilityFilter(\'' + cat + '\',\'\')"><i aria-hidden="true"></i>全部</button>';
     meta.values.forEach(v => {
       const on = sel.includes(v);
-      html += '<button class="tag-filter-btn' + (on ? ' active' : '') + '" onclick="setAbilityFilter(\'' + cat + '\',\'' + v.replace(/'/g, "\\'").replace(/"/g, '&quot;') + '\')">' + escHtml(v) + '</button>';
+      html += '<button class="tag-filter-btn' + (on ? ' active' : '') + '" type="button" aria-pressed="' + on + '" onclick="setAbilityFilter(\'' + cat + '\',decodeURIComponent(\'' + filterValueToken(v) + '\'))"><i aria-hidden="true"></i>' + escHtml(v) + '</button>';
     });
-    html += '</div>';
+    html += '</div></div>';
   });
   nav.innerHTML = html;
+  renderActiveAbilityFilters();
+}
+
+function renderActiveAbilityFilters() {
+  const row = document.getElementById('abilityActiveFilters');
+  const count = document.getElementById('abilityFilterCount');
+  if (!row || !count) return;
+  let html = '';
+  if (abilitySearchQuery) {
+    html += '<button type="button" onclick="clearAbilitySearch()">搜索：' + escHtml(document.getElementById('abilitySearch').value.trim()) + '<span aria-hidden="true">×</span></button>';
+  }
+  let selectedCount = 0;
+  ['camps', 'tl', 'ward', 'vol'].forEach(cat => {
+    abilityFilter[cat].forEach(v => {
+      selectedCount++;
+      html += '<button type="button" onclick="setAbilityFilter(\'' + cat + '\',decodeURIComponent(\'' + filterValueToken(v) + '\'))">' + escHtml(v) + '<span aria-hidden="true">×</span></button>';
+    });
+  });
+  row.innerHTML = html;
+  row.classList.toggle('is-empty', !html);
+  count.textContent = selectedCount;
+  count.hidden = !selectedCount;
+  const reset = document.getElementById('abilityResetBtn');
+  if (reset) reset.disabled = !html && abilitySort === 'order';
+}
+
+function toggleAbilityFilters() {
+  const drawer = document.getElementById('abilityFilterDrawer');
+  const button = document.getElementById('abilityFilterToggle');
+  const willOpen = drawer.hidden;
+  drawer.hidden = !willOpen;
+  button.setAttribute('aria-expanded', String(willOpen));
+  button.classList.toggle('active', willOpen);
+}
+
+function setAbilitySearch(value) {
+  abilitySearchQuery = value.trim().toLocaleLowerCase('zh-CN');
+  renderAbilityArchive();
+}
+
+function clearAbilitySearch() {
+  abilitySearchQuery = '';
+  const input = document.getElementById('abilitySearch');
+  if (input) input.value = '';
+  renderAbilityArchive();
+  if (input) input.focus();
+}
+
+function resetAbilitySearch() {
+  abilitySearchQuery = '';
+  Object.keys(abilityFilter).forEach(cat => { abilityFilter[cat] = []; });
+  abilitySort = 'order';
+  const input = document.getElementById('abilitySearch');
+  const select = document.getElementById('abilitySortSelect');
+  if (input) input.value = '';
+  if (select) select.value = 'order';
+  renderAbilityArchive();
 }
 
 // 切换筛选：val='' 清空该行；否则切换该值的选中状态（多选叠加）
@@ -4140,9 +4224,8 @@ function crtAbs(a) {
 
 function setAbilitySort(mode) {
   abilitySort = mode;
-  document.querySelectorAll('.ability-sort-btn').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-sort') === mode);
-  });
+  const select = document.getElementById('abilitySortSelect');
+  if (select && select.value !== mode) select.value = mode;
   renderAbilityArchive();
 }
 
@@ -4330,11 +4413,14 @@ function renderAbilityArchive() {
 
   let archiveHTML = '';
   if (!list.length) {
-    archiveHTML = '<div class="ability-empty">没有符合条件的能力。</div>';
+    archiveHTML = '<div class="ability-empty"><strong>没有找到相符的档案</strong><span>可以减少筛选条件，或换一个人物、能力名称再试。</span></div>';
   } else {
     list.forEach(a => { archiveHTML += buildAbilityCard(a); });
   }
   archive.innerHTML = archiveHTML;
+  const result = document.getElementById('abilityResultCount');
+  if (result) result.textContent = '显示 ' + list.length + ' / ' + abilityData.length + ' 项';
+  renderActiveAbilityFilters();
   setupRadarReveal();
   // 若"终界余音"在这次渲染中可见（未被筛选排除），启动其乱码/雷达动效
   abilityData.forEach(function (a) { if (a.end) startEndAbyss(a.id); });

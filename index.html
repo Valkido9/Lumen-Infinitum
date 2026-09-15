@@ -1191,9 +1191,11 @@ body {
 
 </style>
 <link rel="stylesheet" href="assets/lumen-cinema.css">
-<script defer src="assets/lumen-cinema.js?v=20260909-restart"></script>
+<script defer src="assets/lumen-cinema.js?v=20260916-10min"></script>
 <link rel="stylesheet" href="assets/lumen-music.css">
 <script defer src="assets/lumen-music.js?v=20260909-resume"></script>
+<link rel="stylesheet" href="assets/lumen-reader.css?v=20260916">
+<script defer src="assets/lumen-reader.js?v=20260916"></script>
 </head>
 <body class="has-opening at-opening">
 
@@ -1395,6 +1397,19 @@ body {
     </section>
 
     <div class="story-main-marker" id="story-main"></div>
+    <section class="reader-toolbar" id="readerToolbar" aria-label="章节阅读控制" hidden>
+      <button class="reader-overview-btn" id="readerOverviewBtn" type="button">← 返回总览</button>
+      <div class="reader-location" aria-live="polite">
+        <span id="readerVolume">序幕</span>
+        <strong id="readerPosition">第 1 / 55 章</strong>
+      </div>
+      <div class="reader-actions">
+        <button id="readerTocBtn" type="button" aria-label="打开章节目录">目录</button>
+        <button id="readerPrevBtn" type="button">上一章</button>
+        <button id="readerNextBtn" type="button">下一章</button>
+      </div>
+      <div class="reader-progress-track" aria-hidden="true"><span id="readerProgressBar"></span></div>
+    </section>
     <!-- ===== PROLOGUE SECTION ===== -->
     <h2 class="section-title" id="prologue-main"><span class="icon">📖</span>序幕 · 异世的呼唤</h2>
     <div class="chapter-body">
@@ -3567,6 +3582,10 @@ function openTimeline(key) {
 
 // ===== SCROLL TO SECTION =====
 function scrollToSection(id) {
+  if (window.LumenReader && /^((pro)|(wok))-ch\d+$/.test(id)) {
+    window.LumenReader.open(id);
+    return;
+  }
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   if (event && event.target) event.target.classList.add('active');
   const el = document.getElementById(id);

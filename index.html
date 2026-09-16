@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="assets/lumen-theme.js?v=20260916"></script>
 <style>
 /* ===== 重构后：星轨与时空编年史色彩系统 ===== */
 :root {
@@ -2477,7 +2478,7 @@ body {
     <p>梅纳德也承认自己输得心服口服，与马萨卡碰拳后独自离开；他脸上仍压着一口无法消解的郁气，一部分黑旗舰水手随他退场，一些人虽然仍有微词，也没有阻止其他人加入庆祝。斯帕里森趁势把冷餐会延长至日出，礼奈当场拒绝了饮酒到天明的邀请，要求所有队员立刻返回客舱休息。她的话音还未落，云略已经看见刚才被打进木箱的马萨卡坐上了另一张酒桌。</p>
 
     <div class="story-quote"><div class="quote-line">“我们再敬各位一次。”斯帕里森举起酒杯，目光越过宴会厅中尚未散去的烟雾，“我们敬敢于驶进陌生海域、敢于迎击强敌，也敢于把性命交给同伴的第二代时之秩序的英雄们！”</div><div class="quote-line">四周的木杯先后举起。女巫们欢笑着把能够喷出紫色火星的药剂倒向半空，居然搞出了类似于烟花的效果。整座宴会厅随即被欢呼与彩烟淹没。</div><div class="quote-line">“今晚喝到日出！”斯帕里森高声宣布。</div><div class="quote-line">“不行！”礼奈立即转身看向自己的队员，“我不允许！我们都已经快二十四小时没睡觉了。所有人都给我回去休息。今天谁也不准再——”</div><div class="quote-line">大厅另一端忽然传来木杯碰撞的声音。马萨卡还坐在箱子里，却已经在和那个头顶缠着绷带的黑旗舰水手碰杯；缺了下颌的骷髅海盗则托着自己的头颅，正把一大瓶酒往他嘴里灌。</div><div class="quote-line">好不容易搞到白开水的云略又尖叫起来。</div><div class="quote-line">“礼奈！你赶紧管管马萨卡！别让他喝了——他都已经开始和骨头架子称兄道弟了！”</div><div class="quote-source">——斯帕里森、礼奈与云略，《第一卷》正文</div></div>
-+    <h3 class="chapter-heading wokgard" id="wok-ch36">36  两颗子弹之间</h3>
+    <h3 class="chapter-heading wokgard" id="wok-ch36">36  两颗子弹之间</h3>
 
     <p>宴会结束后的第一个清晨，潮涌居士号像一座刚刚打完巷战的城市。船员们把断成两截的长桌抬出大厅，从吊灯上取下酒瓶，用木桶接住被弯刀劈开的水管；昨夜还为每一次打砸放声喝彩的海盗，如今正对家具的损失痛心疾首。马萨卡抱着水桶坐在墙边宿醉，云略也因那根无法卸下的手杖硌了整夜，天刚亮便顶着乱糟糟的头发来到甲板。老水手还真没忘记她昨晚索要的饮料，竟然真搞到了“果粒橙”。</p>
 
@@ -3594,19 +3595,10 @@ function scrollToSection(id) {
 
 // ===== THEME TOGGLE =====
 function initTheme() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') {
-    document.documentElement.classList.add('dark');
-    document.getElementById('themeToggle').textContent = '🌙';
-  } else {
-    document.documentElement.classList.remove('dark');
-    document.getElementById('themeToggle').textContent = '☀️';
-  }
+  if (window.LumenTheme) window.LumenTheme.init();
 }
 function toggleTheme() {
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
+  if (window.LumenTheme) window.LumenTheme.toggle();
 }
 
 // ===== SIDEBAR: MULTI-LEVEL COLLAPSE =====

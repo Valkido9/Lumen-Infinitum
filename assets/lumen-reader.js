@@ -49,10 +49,14 @@
 
   function chapterScrollData() {
     if (currentIndex < 0) return { ratio: 0 };
-    const container = chapters[currentIndex].container;
-    const top = container.getBoundingClientRect().top + window.scrollY;
-    const range = Math.max(1, container.offsetHeight - window.innerHeight * .62);
-    return { ratio: Math.max(0, Math.min(1, (window.scrollY - top) / range)), top, range };
+    const chapter = chapters[currentIndex];
+    const container = chapter.container;
+    const heading = chapter.nodes[0];
+    const toolbarBottom = toolbar.getBoundingClientRect().bottom + 12;
+    const start = heading.getBoundingClientRect().top + window.scrollY - toolbarBottom;
+    const end = container.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 24;
+    const range = Math.max(1, end - start);
+    return { ratio: Math.max(0, Math.min(1, (window.scrollY - start) / range)), start, range };
   }
 
   function saveProgress() {
@@ -128,14 +132,18 @@
     if (historyMode === 'push') history.pushState({ readerChapter: id }, '', `#${id}`);
     else if (historyMode === 'replace') history.replaceState({ readerChapter: id }, '', `#${id}`);
 
-    requestAnimationFrame(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
       const container = found.chapter.container;
-      const top = container.getBoundingClientRect().top + window.scrollY;
+      const heading = found.chapter.nodes[0];
+      const toolbarBottom = toolbar.getBoundingClientRect().bottom + 12;
+      const start = heading.getBoundingClientRect().top + window.scrollY - toolbarBottom;
       const ratio = Math.max(0, Math.min(1, Number(options.ratio) || 0));
-      const range = Math.max(1, container.offsetHeight - window.innerHeight * .62);
-      window.scrollTo({ top: Math.max(0, top + ratio * range - 8), behavior: options.smooth ? 'smooth' : 'instant' });
+      const end = container.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 24;
+      const range = Math.max(1, end - start);
+      const target = Math.max(0, start + ratio * range);
+      window.scrollTo(0, target);
       saveProgress();
-    });
+    }));
     closeSidebar();
     return true;
   }
@@ -149,7 +157,7 @@
     document.querySelectorAll('.sidebar .chap-link').forEach((link) => link.classList.remove('active'));
     if (options.history !== false) history.pushState({ readerOverview: true }, '', `${location.pathname}${location.search}#story`);
     const hero = document.getElementById('story');
-    if (hero) hero.scrollIntoView({ behavior: options.smooth ? 'smooth' : 'instant', block: 'start' });
+    if (hero) hero.scrollIntoView({ behavior: options.smooth ? 'smooth' : 'auto', block: 'start' });
     closeSidebar();
   }
 

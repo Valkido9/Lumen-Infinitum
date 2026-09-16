@@ -460,7 +460,7 @@ body {
   text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
 }
 .term-link {
-  color: var(--gold); cursor: pointer;
+  color: var(--gold); cursor: pointer; white-space: nowrap;
   border-bottom: 1px dashed rgba(245, 158, 11, 0.45);
   padding-bottom: 1px;
   transition: all 0.2s ease;
@@ -470,6 +470,9 @@ body {
   border-bottom-color: var(--gold);
   text-shadow: 0 0 8px var(--gold-glow);
 }
+.term-entry { display: block; }
+.term-entry > h3 { margin: 0 0 12px; }
+.term-entry > p { margin: 0; text-indent: 0; }
 
 .ability-link {
   color: var(--accent3); cursor: pointer;
@@ -2216,9 +2219,11 @@ function openTerm(key) {
   const t = terms[key];
   if (!t) return;
   const html = `
-    <button class="close-btn" onclick="closeFlap('termModal','termDrawer')">&times;</button>
-    <h3 style="color:var(--gold); margin-bottom:12px;">${t.name}</h3>
-    <p>${t.content}</p>
+    <div class="term-entry" id="term-entry-${key}" data-term-key="${key}">
+      <button class="close-btn" onclick="closeFlap('termModal','termDrawer')">&times;</button>
+      <h3 style="color:var(--gold);">${t.name}</h3>
+      <p>${t.content}</p>
+    </div>
   `;
   if (drawerEnabled()) {
     closeAllDrawers('termDrawer');
@@ -2231,6 +2236,21 @@ function openTerm(key) {
     document.getElementById('termModal').classList.add('show');
   }
 }
+
+// Route every glossary click through the term key carried by the element.
+// This prevents stale inline-edit snapshots from reusing another term drawer.
+document.addEventListener('click', function(event) {
+  const link = event.target.closest && event.target.closest('.term-link');
+  if (!link || (typeof reviewModeActive !== 'undefined' && reviewModeActive)) return;
+  const inline = link.getAttribute('onclick') || '';
+  const match = inline.match(/openTerm\(['"]([^'"]+)['"]\)/);
+  const key = link.dataset.termKey || (match && match[1]);
+  if (!key || !terms[key]) return;
+  link.dataset.termKey = key;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  openTerm(key);
+}, true);
 
 
 // ===== OPEN ABILITY DRAWER / MODAL =====

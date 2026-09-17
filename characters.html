@@ -1190,7 +1190,7 @@ body {
 
 .radar-chart-wrap { flex-shrink: 0; width: 180px; height: 180px; }
 .radar-chart-wrap svg { width: 100%; height: 100%; }
-/* 数据多边形从"各值=0"展开由 SVG <animate> 驱动（见 drawRadarChart），骨架网格/轴线/标签不参与、始终常显 */
+/* 数据多边形从"各值=0"展开由 SVG <animate>驱动（见 drawRadarChart），骨架网格/轴线/标签不参与、始终常显 */
 .radar-bg { fill: none; stroke: var(--border); stroke-width: 0.5; }
 .radar-data { fill: rgba(88,166,255,0.15); stroke: var(--accent); stroke-width: 1.5; }
 .radar-dot { fill: var(--accent); }
@@ -1288,7 +1288,7 @@ body {
 <body>
 
 <!-- Theme Toggle -->
-<button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()">☀️</button>
+<button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()"></button>
 
 <!-- Review Mode Floating Dock -->
 <div class="review-dock" id="reviewDock"></div>
@@ -1297,7 +1297,7 @@ body {
 <!-- Password Dialog -->
 <div class="pw-dialog" id="pwDialog">
   <div class="pw-box">
-    <h3>🔒 审阅模式需要密码</h3>
+    <h3>审阅模式需要密码</h3>
     <input type="password" id="pwInput" placeholder="请输入密码" onkeydown="if(event.key==='Enter')verifyPassword()">
     <div class="pw-error" id="pwError">密码错误，请重试。</div>
     <div class="pw-btns">
@@ -1310,14 +1310,14 @@ body {
 <!-- Export Annotations Modal -->
 <div class="export-modal" id="exportModal">
   <div class="export-box">
-    <h3 style="margin-bottom:12px;">📋 批注导出</h3>
+    <h3 style="margin-bottom:12px;">批注导出</h3>
     <p style="color:var(--text-dim); font-size:0.85em; margin-bottom:12px;">
       以下是所有待处理的批注。请将内容复制给接手项目的 AI，告知其根据批注修改网页。
     </p>
     <pre id="exportContent"></pre>
     <div class="export-btns">
       <button class="cls" onclick="closeExport()">关闭</button>
-      <button class="copy" onclick="copyExport()">📋 复制全部</button>
+      <button class="copy" onclick="copyExport()">复制全部</button>
     </div>
   </div>
 </div>
@@ -1337,7 +1337,7 @@ body {
   </nav>
   <div class="site-tools-menu" id="siteToolsMenu">
     <button class="site-tools-trigger review-toggle" type="button" aria-label="打开工具菜单" aria-expanded="false">•••</button>
-    <div class="site-tools-submenu" id="siteToolsSubmenu"><button class="review-toggle" id="reviewToggle" title="审阅模式：添加批注或直接编辑页面文字">📝 审阅模式</button></div>
+    <div class="site-tools-submenu" id="siteToolsSubmenu"><button class="review-toggle" id="reviewToggle" title="审阅模式：添加批注或直接编辑页面文字">审阅模式</button></div>
   </div>
 </header>
 
@@ -1349,7 +1349,7 @@ body {
       <button class="side-group-head" type="button"><span class="sg-arrow">▾</span>主线剧情 · 永恒流光</button>
       <div class="side-group-body">
         <div class="side-vol" id="vol-pro">
-          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>📖 序幕 · 异世的呼唤</button>
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>序幕 · 异世的呼唤</button>
           <div class="side-vol-body">
             <a href="index.html#pro-ch01" class="chap-link">第一章 礼奈的日常与云略降临</a>
             <a href="index.html#pro-ch02" class="chap-link">第二至四章 基地日常与能力展现</a>
@@ -1362,7 +1362,7 @@ body {
           </div>
         </div>
         <div class="side-vol" id="vol-wok">
-          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>⚓ 第一卷 · 星兆之海</button>
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>第一卷 · 星兆之海</button>
           <div class="side-vol-body">
             <a href="index.html#wok-ch01" class="chap-link">第一章 迷雾商船·海盗登场</a>
             <a href="index.html#wok-ch02" class="chap-link">第二章 灵魂投影·新的身份</a>
@@ -1383,11 +1383,11 @@ body {
           </div>
         </div>
         <div class="side-vol collapsed" id="vol-v2">
-          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>🔱 第二卷 · 敬请期待</button>
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>第二卷 · 敬请期待</button>
           <div class="side-vol-body"><div class="side-empty">本卷尚未发布</div></div>
         </div>
         <div class="side-vol collapsed" id="vol-v3">
-          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>✨ 第三卷 · 敬请期待</button>
+          <button class="side-vol-head" type="button"><span class="sv-arrow">▾</span>第三卷 · 敬请期待</button>
           <div class="side-vol-body"><div class="side-empty">本卷尚未发布</div></div>
         </div>
       </div>
@@ -1395,9 +1395,9 @@ body {
     <div class="side-group collapsed" id="g-side">
       <button class="side-group-head" type="button"><span class="sg-arrow">▾</span>SideStory · 时空遗闻</button>
       <div class="side-group-body">
-        <a href="sidetory.html#char-bg" class="chap-link">👤 人物背景</a>
-        <a href="sidetory.html#bonus" class="chap-link">🎁 番外</a>
-        <a href="sidetory.html#events" class="chap-link">⚡ 特殊事件</a>
+        <a href="sidetory.html#char-bg" class="chap-link">人物背景</a>
+        <a href="sidetory.html#bonus" class="chap-link">番外</a>
+        <a href="sidetory.html#events" class="chap-link">特殊事件</a>
       </div>
     </div>
   </aside>
@@ -1407,7 +1407,7 @@ body {
   <main class="main" id="main-content">
 
     <!-- ===== CHARACTERS SECTION ===== -->
-    <h2 class="section-title" id="characters" style="color:var(--gold);"><span class="icon">👥</span>角色百科</h2>
+    <h2 class="section-title" id="characters" style="color:var(--gold);">角色百科</h2>
     <div class="chapter-card" style="cursor:default; text-align:center; padding:48px 24px;">
       <div class="card-title" style="font-size:1.5rem; margin-bottom:12px;">维护中</div>
       <div class="card-desc">人物简介正在整理与校订，恢复时间另行通知。</div>
@@ -2272,7 +2272,7 @@ function openAbility(id) {
   const meta = [a.h ? '持有者：' + escHtml(a.h) : '', a.c ? 'CRT ' + escHtml(a.c) : '', a.tg ? escHtml(a.tg) : ''].filter(Boolean).join(' · ');
   const desc = escHtml(a.d || '暂无能力说明').replace(/\n/g, '<br>');
   const quote = a.q ? '<div class="story-quote" style="margin:20px 0 0;">' + escHtml(a.q).replace(/\n/g, '<br>') + '</div>' : '';
-  const note = a.nt ? '<div class="ability-note" style="margin-top:14px;">📏 ' + escHtml(a.nt) + '</div>' : '';
+  const note = a.nt ? '<div class="ability-note" style="margin-top:14px;"> ' + escHtml(a.nt) + '</div>' : '';
   const html = '<button class="close-btn" onclick="closeFlap(\'abilityModal\',\'abilityDrawer\')">&times;</button>' +
     '<div class="ability-drawer-card"><h3>「' + escHtml(a.n) + '」</h3><div class="ability-drawer-meta">' + meta + '</div>' +
     '<div class="ability-drawer-desc">' + desc + '</div>' + quote + note +
@@ -2387,7 +2387,7 @@ function renderOrgStructure(content) {
   const orgs = [
     {
       name: '卢纳森特基地',
-      icon: '🛡️',
+      icon: '',
       desc: '卢纳森特时间线保全组织，别名"卢纳森特基地"，总部位于卢纳森特联盟辖区内。',
       groups: [
         { label: '三室', items: [['中控室','莱诺'], ['机要室','本尼艾诺'], ['苛志室','SA']] },
@@ -2412,7 +2412,7 @@ function renderOrgStructure(content) {
     },
     {
       name: '珀利贝尔实业',
-      icon: '🏭',
+      icon: '',
       desc: '霍因佩兹时间线上的跨时空巨企，简称为PBC。围绕其总部"无尽之塔"建立起了公司城。',
       groups: [
         { label: '两队', items: [['特训队','拉伊法'], ['亲卫队','六八']] },
@@ -2458,7 +2458,7 @@ function renderOrgStructure(content) {
 // ===== TIMELINE OVERVIEW =====
 const timelineData = [
   {
-    key: 'lunassent', icon: '🛡️', name: '卢纳森特时间线', tag: '序幕',
+    key: 'lunassent', icon: '', name: '卢纳森特时间线', tag: '序幕',
     short: '主角团所在的时间线。总体地理环境类似于地球，是所有时间线中较为宜居的一条时间线。长期以来，该时间线以超级强国长川国为核心，存在着诸多政体势力。后来统合了众多国家的“卢纳森特联盟”率先完成了第一次技术突破，并试图掀翻长川的霸权，挑起了两极之间的世界大战。这场持续了数年的战争最终以长川的有条件投降而告终。',
     story: '主角团所在的时间线。总体地理环境类似于地球，是所有时间线中较为宜居的一条时间线。长期以来，该时间线以超级强国长川国为核心，存在着诸多政体势力。后来统合了众多国家的“卢纳森特联盟”率先完成了第一次技术突破，并试图掀翻长川的霸权，挑起了两极之间的世界大战。这场持续了数年的战争最终以长川的有条件投降而告终。<br>战争并没有解决两大势力之间的根本矛盾。此后经过几十年，双方的政府混乱不堪，外交方针朝令夕改，第三世界国家们也纷纷抓紧发展机遇试图崛起，动荡和发展成为了这个世界的主题。而在卢纳森特联盟境内广袤的战后废土上，突然出现了一台时光机器的原型机——自此引发了围绕其展开的、席卷整个世界的“大浩劫”和第二次技术突破的浪潮。<br>在波及整个世界的灾难过后，一道通往崭新世界的大门在这条时间线的人面前打开——他们免不了要与来自其他时间线的外来者打打交道，而这些“外来者”，要么带着科技、要么身怀异能……在技术与文化的冲击下，一个夹处在长川与卢纳森特联盟之间的新兴势力——“卢纳森特时间线保全组织”异军突起，在领导人莱诺的引领下，成为了一股不可小觑的力量。<br>卢纳森特时间线保全组织，又名“卢纳森特基地”，其总部位于卢纳森特联盟辖区之内，建立之初由卢纳森特联盟全权控制。借由与主座时间线的合作关系和来自其他时间线的投资与援助，基地得以广泛地招募各个时间线之内的成员，并在主座时间线成员遭遇自然灾害或陷入战争时派出特工，对他们施以援手。然而，基地的行动在莱诺的领导下表现出越来越鲜明的佣兵主义色彩，其武装力量和能力使数量的不断扩张也让卢纳森特联盟心生忌惮。卢联盟正急于解决政体内部的诸多问题，长川的霸权之心从未灭亡……而目前还没有人知道莱诺的下一步棋要如何落子。',
     factions: ['卢纳森特基地', '第二代时之秩序', '圣标联合', '苛志室'],
@@ -2468,7 +2468,7 @@ const timelineData = [
     tg: '初代时之秩序, 卢纳森特, 真理院, 第一卷'
   },
   {
-    key: 'wokgard', icon: '⚓', name: '沃克加德时间线', tag: '第一卷',
+    key: 'wokgard', icon: '', name: '沃克加德时间线', tag: '第一卷',
     short: '陆地面积不到总面积百分之五的汪洋行星。目前并不具备时光机技术，各国尚且处在封建专制制度之下，整体的文明进程看似远远落后于其他特异时间线。然而在几千年之前，这条时间线一度相当发达，位于时间线空间的前沿；转折始于作为原住民的人类和外来的巫师种爆发的惊世大战，这场战争以人类的惨胜告终，但也使得巫师种的大炼金阵彻底失控，释放出了足以将整个世界彻底淹没的海啸。文明的痕迹几乎被彻底抹去，这颗星球几乎在一夜之间倒退回了原始社会。几十年后，海平面略微落下，陆地从此被分割为几百个岛国，残存的人类和巫师种努力求存；又经过几千年文明的演进与王朝的更迭之后，巫师种在沃克加德几乎销声匿迹，而适应力更加强大的人类则建立起了数个统一的国家。捕鱼、航海、掠夺、在深不见底的汪洋中探求前文明留下的，蕴含炼金魔术或白魔法的秘宝……这样的生活方式成为了沃克加德人交给大海的答案。',
     story: '陆地面积不到总面积百分之五的汪洋行星。目前并不具备时光机技术，各国尚且处在封建专制制度之下，整体的文明进程看似远远落后于其他特异时间线。然而在几千年之前，这条时间线一度相当发达，位于时间线空间的前沿；转折始于作为原住民的人类和外来的巫师种爆发的惊世大战，这场战争以人类的惨胜告终，但也使得巫师种的大炼金阵彻底失控，释放出了足以将整个世界彻底淹没的海啸。文明的痕迹几乎被彻底抹去，这颗星球几乎在一夜之间倒退回了原始社会。几十年后，海平面略微落下，陆地从此被分割为几百个岛国，残存的人类和巫师种努力求存；又经过几千年文明的演进与王朝的更迭之后，巫师种在沃克加德几乎销声匿迹，而适应力更加强大的人类则建立起了数个统一的国家。捕鱼、航海、掠夺、在深不见底的汪洋中探求前文明留下的，蕴含炼金魔术或白魔法的秘宝……这样的生活方式成为了沃克加德人交给大海的答案。在海上混战的历史似乎将永远持续下去，直到有一天，最初引发灭世灾难的大炼金阵重见天日，其中一部分落入了卡利班扬教皇国的教皇手中。凭借炼金术的力量，一个无可匹敌的霸权迅速成长起来，成为了这颗星球上最强大的国家——但这也引发了前所未有的，寻宝的热潮与海盗的崛起。教皇国一度纵容海盗私掠和宝藏猎手来限制其他国家的发展，但稳固根基后又扶植赏金猎人，忘恩负义地将他们赶尽杀绝、逼入深海。几代教皇更迭之后，教皇国终于来到了一个变节的中点：<br>现如今，首都所在的中心岛屿上，内城的贵族们巧取豪夺，外城的普通民众苦不堪言，更有不远万里逃到教皇国的难民——他们甚至不曾拥有踏上陆地的权利，只能停靠在岸边，生活在船上，直到无数船只组成面积甚至大于陆地的“船都”……<br>海洋之上，由宝藏猎人势力的演变而成的海盗们日渐盛行，割据一方；内城之中，代表传统王权的教皇一方与蠢蠢欲动的赏金猎人似乎也关系微妙，不复往日；然而，外城的资产阶级革命派和船都的穷苦平民的怒火早已无法压抑。更有在岛屿地下早已秘密发展了几十年的非法地下城邦“深雾城”，静待着好戏的开场。远望四海之外，早已被认定灭绝的巫师种，在教皇国铁腕之下暗无天日的其他国家，甚至潜藏在众人认知之外的神秘存在……所有的势力，都将见证这条时间线即将到来的、自千年前的洪水以来的下一场巨变。',
     factions: ['圆翼党', '教皇国', '褐浪酒吧', '潮涌居士号'],
@@ -2477,7 +2477,7 @@ const timelineData = [
     section: 'wok-ch1'
   },
   {
-    key: 'huoyin', icon: '🏭', name: '霍因佩兹时间线', tag: '第二卷',
+    key: 'huoyin', icon: '', name: '霍因佩兹时间线', tag: '第二卷',
     short: '一条异常荒凉的时间线，荒漠与火山广布，同时它们又与冰川、苔原并存，呈现出百公里之内跨越数个温度带的极端多变气候。造成这种奇观的是一种名为“末原晶矿”的霍因佩兹特色矿物，这种独特的材料能够萃取指令之力，并为包括时光机组在内的大型指令之力工程提供可观的能源。该时间线所在的整个母星只有一小部分绿洲地带宜居，气温的季节变化并不明显。',
     story: '一条异常荒凉的时间线，荒漠与火山广布，同时它们又与冰川、苔原并存，呈现出百公里之内跨越数个温度带的极端多变气候。造成这种奇观的是一种名为“末原晶矿”的霍因佩兹特色矿物，这种独特的材料能够萃取指令之力，并为包括时光机组在内的大型指令之力工程提供可观的能源。该时间线所在的整个母星只有一小部分绿洲地带宜居，气温的季节变化并不明显。<br>卢纳森特时间十一年前，一位来自那条时间线的的拓荒者带着先进至极的技术和半路拉拢的团队踏足了这片生命禁区。在发现了末原晶矿的强大潜力后，这群来自各个时间线的流浪者和逃难者们联合起来，以“珀利贝尔实业”（简称为PBC）的名号正式建立起了霍因佩兹时间线上的第一个聚落。<br>借由末原晶矿的强大商业价值与科研潜力，该聚落在几年时间内迅速发展并成长为一个核心时间线交通枢纽，并以“霍因佩兹”为名正式加入了主座时间线，一时间吸引了大量来自其他时间线的难民和人才的涌入。大量技官和成建制的管理机构的引进使得PBC在极短的时间内经历了巨变，从自给自足的工团转变为势力范围笼罩数十条时间线、技术密度领衔整个时间线空间的跨时空巨企。这里一时间成为了理想与黄金的应许之地——于是，在这片原本荒无人烟的土地上，围绕着PBC的总部、其标志性建筑“无尽之塔”涌现出了一个无比混乱且完全失序的城邦——公司城。这里没有法律的规制，没有政府的管理，秩序由PBC的安保部门和公司城内接受委托的私家事务所共同维持——时至今日，聚集了整个时间线空间最前沿科技、最极端财富的霍因佩兹已经进化成为一个颇具赛博朋克气息的未来都市，引得无数投机者趋之若鹜——但是，他们需要知道，天堂只在公司的臂膀之下；公司鞭长莫及的每一寸土地，都是苦痛与阴暗丛生的地狱。',
     factions: ['珀利贝尔实业', '无尽之塔', '寒城工坊', '长夜事务所'],
@@ -2486,7 +2486,7 @@ const timelineData = [
     section: null
   },
   {
-    key: 'luochengdun', icon: '🏛️', name: '洛琛顿时间线', tag: '第三卷',
+    key: 'luochengdun', icon: '', name: '洛琛顿时间线', tag: '第三卷',
     short: '一段尘封的往事，一个衰落的王朝。作为本我核心的“基座时间线”，洛琛顿在生命诞生之前就接收了大量的指令之力辐射。数千年前，这里曾是第一条不需要时光机，就能自然产出能力使的时间线；这里曾是第一条从荒蛮迈向文明，并突破穿梭技术的时间线；这里曾是第一条从繁荣走向鼎盛，并让侨民遍布四方的时间线……',
     story: '一段尘封的往事，一个衰落的王朝。<br>作为本我核心的“基座时间线”，洛琛顿在生命诞生之前就接收了大量的指令之力辐射。数千年前，这里曾是第一条不需要时光机，就能自然产出能力使的时间线；这里曾是第一条从荒蛮迈向文明，并突破穿梭技术的时间线；这里曾是第一条从繁荣走向鼎盛，并让侨民遍布四方的时间线……<br>指令之力科技的超前发展同样带动了洛琛顿人在其他领域的革命性突破。那些即便放到今日也让人啧啧称奇的宏伟建筑，那些领先数千年的工业体系，还有那些如先知一般引领发展、播撒智慧的顶尖学者，无一不昭示着洛琛顿过去的辉煌。现如今，几乎所有的时间线，历史上都曾出现过来自洛琛顿的行商与移民。他们带来的物品与科技小则惠及一方百姓，大则推动历史变迁，但最终无一例外地指向同一个结果——把时光机和能力使带到那里，让那里与其他时间线交相连接。没有那个曾经引领指令之力技术发展的洛琛顿，就没有如今的时间线空间。<br>然而，处在本我核心的中央既是天启，也是前所未有的浩劫。夸张的科技水平与关键的地理位置，让洛琛顿自古以来就卷入整个时间线空间最为强盛的几大势力的纷争之间。自几千年前的“诸神黄昏”至今，为了掌控本我核心的力量，无数场毁灭性的战争在这颗星球的地表、地心甚至外太空上演。随着人们对本我核心的探索、争夺和破坏，本我核心一度进入辐射的全盛期，两极的冰川被倒转到赤道之上，杀人无声的“寂雾天”、毁灭万物的“光斓散”……这些自然灾害也层出不穷——洛琛顿的地表就此不再宜居。<br>尽管有少数人因此背井离乡，但大多数洛琛顿人依然不愿舍弃过去几千年的家园与这条紧邻本我核心的时间线带给他们的一切荣光。于是，近乎疯狂的地底庇护所得以兴建，纵深几万米的建筑横贯整个星球。无数足以操纵天灾的划时代工程拔地而起，基因技术、电子档案、地热工厂、时光机组……洛琛顿人凭借自己不可一世的高傲，向本我核心作着孤注一掷的抗争。<br>故事的转折点，始于来自洛琛顿的死神信徒——阿芙忒乐尔斯特的诡计。她试图将这场末日工程的成果为己所用，并将一种名为“腐化”的实验性力量注入了本我核心。于是，一场毁灭性的浩劫在她和其他洛琛顿人都始料未及的情况下爆发了——本我核心在一瞬之间失控，洛琛顿因为强大的辐射断开了与时间线空间的联系，再也没有一台时光机能够与这条最强大的时间线取得联系，无数未能逃生的洛琛顿人就此永远消失；汲取了本我核心能量的腐化之力飞速蔓延，不受控制地淹没了整个洛琛顿，并永不停歇地扩散至其他时间线；而身受致死伤害的阿芙忒则不得不与腐化共生，依靠吞噬时间线来维持自己的形体，成为了这种跨时间线级天灾的人间化身。<br>几百年后，阿芙忒正式升格为三大“神之仆从”的一员，而洛琛顿也早已成为废墟。从灭世中幸存下来的洛琛顿人仍然被几百年前的腐化之力影响着，愚钝迟滞，迂腐偏执。末日工程被他们描述成了带来腐化的灾星，洛琛顿最后的荣光被他们贬得一文不值。先祖所留下的遗产在他们手中毫无作用，跨越了几百年的科技断层无法弥补。<br>基础教育完全崩塌，文明的痕迹几乎被抹除，人们用原始人的手段大肆消耗着前代文明的工业产品，所建起的最大的聚落也不过只是一座荒芜的小城。为了躲避比几百年前还要恶劣的自然灾难，洛琛顿人要么一路向北、越过极圈，要么躲入地下，搜刮遗物，在绝望中等待着这个世界的终末……直到遥远而熟悉的一个信号在地下传来——那是外界的时光机，在百年之后第一次与洛琛顿重新沟通。',
     factions: ['牧人', '爱丽丝马戏团'],
@@ -2495,7 +2495,7 @@ const timelineData = [
     section: null
   },
   {
-    key: 'keluowen', icon: '🎪', name: '柯洛雯时间线', tag: '第四卷',
+    key: 'keluowen', icon: '', name: '柯洛雯时间线', tag: '第四卷',
     short: '柯洛雯同卢纳森特一样，是一条刚刚加入主座时间线不久的新兴时间线。几十年前，一场席卷全球的大战曾经降临于这条时间线。参战的国家从如日中天到行将就木，应征的士兵从踌躇满志到失魂落魄，夺走了千万人性命的那段日子就这样草率地结束了。但停战带来了和平吗？……从不。它带来的只是饥荒、疫病、死亡；经济的危机、地区的瓦解、民族的崩溃；一代人的罪责、一代人的消失，一代人的噩梦……政权在改换，疆域在崩解，各国在战后的深渊苦苦挣扎了几十年之久，终于在某个黎明到达了积重难返的时刻。既然停战无法免除痛苦，于是，从未结束的战争就这样继续下去……',
     story: '柯洛雯同卢纳森特一样，是一条刚刚加入主座时间线不久的新兴时间线。几十年前，一场席卷全球的大战曾经降临于这条时间线。参战的国家从如日中天到行将就木，应征的士兵从踌躇满志到失魂落魄，夺走了千万人性命的那段日子就这样草率地结束了。但停战带来了和平吗？……从不。它带来的只是饥荒、疫病、死亡；经济的危机、地区的瓦解、民族的崩溃；一代人的罪责、一代人的消失，一代人的噩梦……政权在改换，疆域在崩解，各国在战后的深渊苦苦挣扎了几十年之久，终于在某个黎明到达了积重难返的时刻。既然停战无法免除痛苦，于是，从未结束的战争就这样继续下去。战斗从装甲的碾压再到天空的角逐，从枪弹的倾泻再到绝命的肉搏……然而，正当所有人都以为这场浩劫会把整个世界都拖入泥潭中时，一阵超出这条时间线诞生以来，所有指令之力的总和的能量——在柯洛雯国，这场世界大战的主要参战国的首都，突然爆发开来。一道甚至能够阻挡千万次核弹轰炸的铁幕在顷刻之间就包裹了柯洛雯的领土和占领区，将这个国家与战争的地狱彻底隔绝开来。<br>一天、三天、五天……柯洛雯所有的敌人联合起来，朝这道防线发起绝望的冲锋。无数战机撞毁于穹顶之上，无数炮弹殁亡于屏障之中。而柯洛雯第三帝国的最高元首谢尔德夫·普利林特只是冷眼看着这一切……直到第六天，他在参谋部轻描淡写地抬起手，这道防下星球上所有武器，也能摧毁地球上一切防御的存在，便开始以比装甲部队更加迅猛的速度向外推进。<br>四十八小时横扫一个国家，两个半星期征服一片大陆。如推土机一般碾平一切的屏障之后，是让柯洛雯的敌人更加胆寒的、钢铁的洪流。六个月……在短短六个月之后，整个星球都不得不向柯洛雯臣服。紧邻国土的领地并入版图，万里之外的国家亦被傀儡。这个世界似乎将永远被埋入独裁和暴政的坟墓之中……直到，屏障之内的人不再忠于元首。<br>胜利并没有为柯洛雯人带来更好的生活。战争机器停止转动的那一刻，这个国家的经济随之走向崩溃。反抗的奴隶、旧国的残党，不满的人民，还有更加激进的极端派与权力中心之间你死我活的争斗……荒唐的战争在屏障之内继续下去，而元首能做的只有一次又一次的镇压。终于，在一次几乎颠覆了四分之三个世界的、前所未有的反叛之后，盛怒的最高领导人把他的能力收回到了柯洛雯国的核心区域，并在之后按下了核弹的发射按钮……<br>不知多久之后，一条自称“柯洛雯”的时间线接入主座，因其高度繁华和极其现代化的城建迅速成为了时间线贸易的新宠。当其他时间线的人们趋之若鹜地来到这里时，他们所能看到的只是一座飞在天空之上、完全自给自足的超级都市。游客和移民们的活动范围被严格限制在“空港特区”内，但这个国家为何会飞在空中？地面上如今又是什么景象？……没有人能够做出回答。',
     factions: ['柯洛雯第三帝国', '没名字的组合'],
@@ -2504,7 +2504,7 @@ const timelineData = [
     section: null
   },
   {
-    key: 'fennaila', icon: '🦊', name: '芬奈法拉时间线', tag: '第五卷',
+    key: 'fennaila', icon: '', name: '芬奈法拉时间线', tag: '第五卷',
     short: '整个时间线空间在循环中煎熬千万亿年，而这条名为“芬奈法拉”的时间线却得以见证无数次灭亡以来变革的开端。在生命存在以前的荒古时代，两位“死神”及各自执掌不同权能的诸多“天使”就存在于时间线空间之内。就连祂们自己也不知道自己是如何降生，但祂们却共同维护这个世界基本的运行准则：生存、死亡，永不终结的命运，永无答案的故事……',
     story: '整个时间线空间在循环中煎熬千万亿年，而这条名为“芬奈法拉”的时间线却得以见证无数次灭亡以来变革的开端。在生命存在以前的荒古时代，两位“死神”及各自执掌不同权能的诸多“天使”就存在于时间线空间之内。就连祂们自己也不知道自己是如何降生，但祂们却共同维护这个世界基本的运行准则：生存、死亡，永不终结的命运，永无答案的故事……<br>而撬动宿命的变动始于死神兄弟之间的分歧。“黢镰冥神”艾威尔，一个忠诚地执行脑中信条的神明，一丝不苟地维护着自己诞生以来的使命；但他的弟弟，“苍镰诡神”艾克森，对于如何使用手中的神力则有着截然不同的想法。高傲的死神厌倦了无穷无尽的毁灭与重生。他打算用执掌生死的力量，统率所有的“劣等生命”打破循环，到那时，他就将是逾越一切死神与天使的无上之神。共享了几十万年的精神领域被就此切断，本该互为辅佐的两大权能针锋相对……直到艾威尔相信了他狡诈的弟弟，落入芬奈法拉时间线的圈套之中，后世传颂的史诗以艾克森实现自己的雄心作为开端。<br>此后又经过了几千年之久，艾威尔在阴差阳错之下被芬奈法拉的原住民修瓦尔扎解放出来。盛怒的黑死神渴望复仇，但他没过多久，就了解到一个可怖的事实：几千年后，他的力量早已无法和自己的弟弟同日而语。为了实现远大的计划，“苍镰诡神”艾克森——这个强大到无可阻挡的存在，不惜向所有天使发动战争。共同的敌人和悬殊的实力让天使和艾威尔前所未有地站在同一边，就连来自各个时间线的人类、异怪、妖灵、巫魔也在修瓦尔扎组建的“芬奈法拉战线”的旗帜下团结起来。<br>……神明、凡人，动员了整个时空的力量以面对艾克森的他们，所取得的结果却只是一场惨胜。在这场被后世称为“诸神黄昏”的浩劫中，所有天使近乎被屠戮殆尽；然而，故事的结局尚有一丝希望。大天使长奈普茜璐的残余力量落入芬奈法拉时间线，与当地原住民妖蝎族的古树交相融合，一片被称为“精神之海”的奇异魔法领域就此蓬勃生长，同样使得妖蝎一族取得了前所未有的繁荣。芬奈法拉战线的残部和黑死神艾威尔在之后一起迁入这里，为这条时间线设下了重重禁制与最严格的防守。在最后的大天使长与黑色死神的庇佑下，芬奈法拉时间线成为了一道直面艾克森的、最后的抵抗之弧，并在此后的岁月里赓续不休。<br>为了防止死神的渗透，芬奈法拉长期以来只与特定的几条时间线相互来往。没有外来因素干扰，依仗天使力量的妖蝎围绕古树兴建起了藏于地下的“伦茨斯特帝国”，迅速壮大为这条时间线内最强盛的势力。但生性平和的他们并没有走上对外扩张的道路，而是选择把知识和技术广播到这条时间线内的每一处角落；此外，由于传奇英雄组织芬奈法拉战线的存在，整个时间线内的所有国家都处在长期的和平、团结的状态之中，以一种近乎宗教信仰一般的纽带共同维持着对战线和大天使长的信任。<br>最杰出的魔法师来此修行、最强大的能力使镇守四方、死神与天使的遗物取之不尽，备战与据守的记忆烙入血脉……独特的历史环境塑造了别样的人文景观。其他时间线随处可见的传统工业在这里内几乎绝迹，如幻想一般的奇景、剑与魔法的冒险和哥特式的建筑遍布四方。千年之后，当时间来到穿梭技术空前繁荣的现代，已经走入第四代的芬奈法拉战线不得不把一个宏大的计划提上日程了：<br>是时候打破过去的禁制、主动迈出芬奈法拉，告知所有刚刚与其他时间线取得联系的星球、国家、政府、人民们，他们将不得不面临怎样的未来了——<br>整条时间线空间只有一种可能逃离艾克森的掌心，只有一种可能避免覆灭的命运：团结起来，以无数时间线的力量，并肩面向所有的明天。',
     factions: ['芬奈法拉战线', '伦茨斯特帝国'],
@@ -2551,7 +2551,7 @@ function openTimeline(key) {
     ${t.factions.length ? `<div class="tl-section"><div class="tl-section-title">势力</div><div class="tl-chips">${factionHtml}</div></div>` : ''}
     ${t.characters.length ? `<div class="tl-section"><div class="tl-section-title">主要角色</div><div class="tl-chips">${charHtml}</div></div>` : ''}
     ${t.settings.length ? `<div class="tl-section"><div class="tl-section-title">相关设定</div><div class="tl-chips">${settingHtml}</div></div>` : ''}
-    ${t.section ? `<button class="tl-jump" onclick="closeFlap('tlModal','tlDrawer');scrollToSection('${t.section}')">📖 阅读本站已收录的这段剧情</button>` : ''}
+    ${t.section ? `<button class="tl-jump" onclick="closeFlap('tlModal','tlDrawer');scrollToSection('${t.section}')">阅读本站已收录的这段剧情</button>` : ''}
   `;
   if (drawerEnabled()) {
     closeAllDrawers('tlDrawer');
@@ -2768,9 +2768,9 @@ function enterReviewMode() {
   const btn = document.getElementById('reviewToggle');
   const hint = document.getElementById('reviewHint');
   btn.classList.add('active');
-  btn.textContent = '✅ 退出审阅';
+  btn.textContent = ' 退出审阅';
 
-  hint.textContent = '💡 审阅模式：点击任意文字添加批注；切换到「✏️ 编辑模式」可直接修改页面文字；「🏷 标签」管理角色分类标签。';
+  hint.textContent = ' 审阅模式：点击任意文字添加批注；切换到「 编辑模式」可直接修改页面文字；「 标签」管理角色分类标签。';
   hint.classList.add('show');
 
   loadCustomCategoryValues();
@@ -2793,12 +2793,12 @@ function exitReviewMode() {
   const btn = document.getElementById('reviewToggle');
   const hint = document.getElementById('reviewHint');
   btn.classList.remove('active');
-  btn.textContent = '📝 审阅模式';
+  btn.textContent = ' 审阅模式';
 
   const total = getTotalAnnotationCount();
   hint.textContent = total > 0
-    ? `✅ 已退出审阅。当前共 ${total} 条未处理批注已保存。`
-    : '✅ 已退出审阅模式。';
+    ? ` 已退出审阅。当前共 ${total} 条未处理批注已保存。`
+    : ' 已退出审阅模式。';
   hint.classList.add('show');
   setTimeout(() => hint.classList.remove('show'), 4000);
 
@@ -2858,7 +2858,7 @@ function addExportButton() {
   const btn = document.createElement('button');
   btn.id = 'exportBtn';
   btn.className = 'review-toggle';
-  btn.textContent = '📋 导出审阅';
+  btn.textContent = ' 导出审阅';
   btn.title = '导出所有批注与编辑模式存档';
   btn.addEventListener('click', showExport);
   getReviewDock().appendChild(btn);
@@ -2875,7 +2875,7 @@ function addClearButton() {
   const btn = document.createElement('button');
   btn.id = 'clearAnnBtn';
   btn.className = 'review-toggle danger';
-  btn.textContent = '🗑 清除审阅';
+  btn.textContent = ' 清除审阅';
   btn.title = '备份当前全部批注与编辑到本地，然后一键清除';
   btn.addEventListener('click', clearAllAnnotations);
   getReviewDock().appendChild(btn);
@@ -2891,7 +2891,7 @@ function addBackupButton() {
   const btn = document.createElement('button');
   btn.id = 'backupAnnBtn';
   btn.className = 'review-toggle';
-  btn.textContent = '💾 备份到本地';
+  btn.textContent = ' 备份到本地';
   btn.title = '把当前全部批注与编辑保存为本地文档（可选择保存位置）';
   btn.addEventListener('click', backupToLocal);
   getReviewDock().appendChild(btn);
@@ -3022,13 +3022,13 @@ function clearAllAnnotations() {
   renderAllBadges();
   const hint = document.getElementById('reviewHint');
   if (backed && savedFile) {
-    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档下载 + 浏览器存储）。`;
+    hint.textContent = ` 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档下载 + 浏览器存储）。`;
   } else if (savedFile) {
-    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档）。⚠️ 浏览器存储备份失败。`;
+    hint.textContent = ` 已清除全部 ${parts.join(' + ')}。备份已保存（本地文档）。 浏览器存储备份失败。`;
   } else if (backed) {
-    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。备份已保存（浏览器存储）。⚠️ 本地文档下载失败。`;
+    hint.textContent = ` 已清除全部 ${parts.join(' + ')}。备份已保存（浏览器存储）。 本地文档下载失败。`;
   } else {
-    hint.textContent = `🗑 已清除全部 ${parts.join(' + ')}。⚠️ 备份失败，无法恢复。`;
+    hint.textContent = ` 已清除全部 ${parts.join(' + ')}。 备份失败，无法恢复。`;
   }
   hint.classList.add('show');
   setTimeout(() => hint.classList.remove('show'), 5000);
@@ -3062,10 +3062,10 @@ function addModeButtons() {
     b.addEventListener('click', function() { setReviewMode(mode); });
     return b;
   };
-  const ab = mk('annotateModeBtn', '💬 批注模式', 'annotate');
-  const eb = mk('editModeBtn', '✏️ 编辑模式', 'edit');
-  const tb = mk('tagModeBtn', '🏷 标签', 'tag');
-  const gb = mk('catMgrBtn', '⚙ 种类', 'catmgr');
+  const ab = mk('annotateModeBtn', ' 批注模式', 'annotate');
+  const eb = mk('editModeBtn', ' 编辑模式', 'edit');
+  const tb = mk('tagModeBtn', ' 标签', 'tag');
+  const gb = mk('catMgrBtn', ' 种类', 'catmgr');
   bar.appendChild(ab); bar.appendChild(eb); bar.appendChild(tb); bar.appendChild(gb);
   getReviewDock().appendChild(bar);
   setReviewMode(reviewMode, true);
@@ -3089,10 +3089,10 @@ function setReviewMode(m, silent) {
   if (silent) return;
   const hint = document.getElementById('reviewHint');
   hint.textContent = m === 'edit'
-    ? '✏️ 编辑模式：点击任意文字可直接修改；点击其它位置保存，按 Esc 取消。'
+    ? ' 编辑模式：点击任意文字可直接修改；点击其它位置保存，按 Esc 取消。'
     : m === 'tag'
-    ? '🏷 标签模式：点击标签上的 × 移除；点击 ＋ 添加新标签；⚙ 种类 管理分类。'
-    : '💬 批注模式：点击任意文字添加批注。';
+    ? ' 标签模式：点击标签上的 × 移除；点击 ＋ 添加新标签； 种类 管理分类。'
+    : ' 批注模式：点击任意文字添加批注。';
   hint.classList.add('show');
 }
 
@@ -3249,7 +3249,7 @@ function showCategoryManager() {
   const dlg = document.createElement('div');
   dlg.className = 'cat-mgr-dlg';
   dlg.id = 'catMgrDlg';
-  let html = '<div class="cat-mgr-header">⚙ 管理标签种类<button class="cat-mgr-close" onclick="removeCategoryManager()">✕</button></div>';
+  let html = '<div class="cat-mgr-header">管理标签种类<button class="cat-mgr-close" onclick="removeCategoryManager()">✕</button></div>';
   html += '<div class="cat-mgr-body">';
   ['camps','tl','ward','vol'].forEach(cat => {
     html += '<div class="cat-mgr-cat"><strong>' + abilityTags[cat].label + '</strong>';
@@ -3468,8 +3468,8 @@ function addHistoryButtons() {
   };
   mk('undoBtn', '↩ 撤回', function() { undoEdit(); }, '撤回上一步编辑（Ctrl+Z）');
   mk('redoBtn', '↪ 重做', function() { redoEdit(); }, '重做被撤回的编辑（Ctrl+Y / Ctrl+Shift+Z）');
-  mk('saveHisBtn', '💾 存档', function() { commitEditHistory(); }, '手动保存当前编辑为一份存档');
-  mk('loadHisBtn', '📂 读档', showLoadDialog, '读取历史存档');
+  mk('saveHisBtn', ' 存档', function() { commitEditHistory(); }, '手动保存当前编辑为一份存档');
+  mk('loadHisBtn', ' 读档', showLoadDialog, '读取历史存档');
   const st = document.createElement('span');
   st.id = 'histStatus';
   st.className = 'review-toggle hist-status';
@@ -3497,7 +3497,7 @@ function refreshUndoButtons() {
 // ── 读档弹窗 ──
 function showLoadDialog() {
   removeLoadDialog();
-  if (!editHistory.states.length) { alert('暂无存档。编辑任意文字或点击「💾 存档」即可产生存档。'); return; }
+  if (!editHistory.states.length) { alert('暂无存档。编辑任意文字或点击「 存档」即可产生存档。'); return; }
   const dlg = document.createElement('div');
   dlg.id = 'loadHistDialog';
   dlg.className = 'load-dialog';
@@ -3567,7 +3567,7 @@ function showAnnotationPopup(el, path) {
     <textarea placeholder="输入批注内容（告知 AI 需要如何修改此段落）..." id="annInput-${path}"></textarea>
     <div class="ann-actions">
       <button class="cancel-btn" onclick="removeAllPopups()">取消</button>
-      <button class="save-btn" data-path="${path}">💬 添加批注</button>
+      <button class="save-btn" data-path="${path}">添加批注</button>
     </div>
   `;
 
@@ -3650,7 +3650,7 @@ function showExport() {
   output += `// 导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
   output += `// 未处理批注: ${unresolved.length} 条 | 已处理: ${resolved.length} 条\n`;
   output += '//\n';
-  output += '// ⚠️  以下批注与编辑需要 AI 根据内容进行修改。\n';
+  output += '//   以下批注与编辑需要 AI 根据内容进行修改。\n';
   output += '// 每条批注包含：位置（段落开头文字）、批注内容、创建时间。\n';
   output += '// =========================================\n\n';
 
@@ -3718,8 +3718,8 @@ function copyExport() {
   const text = document.getElementById('exportContent').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector('#exportModal .copy');
-    btn.textContent = '✅ 已复制!';
-    setTimeout(() => btn.textContent = '📋 复制全部', 2000);
+    btn.textContent = ' 已复制!';
+    setTimeout(() => btn.textContent = ' 复制全部', 2000);
   }).catch(() => {
     alert('复制失败，请手动选择并复制文本。');
   });
@@ -4561,7 +4561,7 @@ function drawRadarChart(stats, isZpn) {
     svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r * Math.sin(a)).toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
   }
   // Data polygon: A(4) -> edge (r), EX(5) -> 1.25r (bursts out past the rim)
-  // 数据多边形 + 顶点圆点用 SVG <animate> 从"各值=0"（所有顶点收敛于中心）展开到真实数值；骨架网格/轴线/标签常显
+  // 数据多边形 + 顶点圆点用 SVG <animate>从"各值=0"（所有顶点收敛于中心）展开到真实数值；骨架网格/轴线/标签常显
   const dataCls = isZpn ? 'radar-data-zpn' : 'radar-data';
   const dotCls  = isZpn ? 'radar-dot-zpn' : 'radar-dot';
   let dpts = [];
@@ -4702,7 +4702,7 @@ function renderAbilityDesc(d) {
 
 function buildAbilityCard(a) {
   const isZpn = !!a.zn;                       // 镇压院区 (suppression-zone) ability
-  const siege = maxCrt(a.c) >= 14;            // 攻城级 (siege-tier, |CRT| ≥ 14) -> 攻城级徽章（镇压院区能力同样适用）
+  const siege = maxCrt(a.c) >= 14;            // 攻城级 (siege-tier, |CRT| ≥ 14) ->攻城级徽章（镇压院区能力同样适用）
   const shenqi = !!a.sz;                      // 神器能力 (artifact-weapon ability) -> gold frame
   const labels = isZpn ? ZPN_LABELS : statLabels;
   const statStr = a.s.map((v, i) => labels[i] + '-' + (grades[v] || '?')).join('  ');
@@ -4724,8 +4724,8 @@ function buildAbilityCard(a) {
   const tg = parseTg(a);
   if (tg.camps.length) html += '<span class="ability-faction-tag">' + tg.camps.map(escHtml).join('、') + '</span>';
   if (tg.ward) html += '<span class="ability-faction-tag">' + escHtml(tg.ward) + '</span>';
-  html += '<span>👤 ' + escHtml(a.h) + '</span>';
-  if (a.c) html += '<span>⚡ CRT ' + escHtml(a.c) + '</span>';
+  html += '<span> ' + escHtml(a.h) + '</span>';
+  if (a.c) html += '<span> CRT ' + escHtml(a.c) + '</span>';
   html += '<span class="ability-stats">' + statStr + '</span>';
   html += '</div></div>';
   // 镇压院区 note at the start of the card body
@@ -4757,9 +4757,9 @@ function buildAbilityCard(a) {
   }
   if (a.qb) {
     const qbLines = a.qb.split('\n').filter(p => p.trim());
-    html += '<div class="ability-admin"><span class="ability-admin-tag">⚠ 管理员</span>' + qbLines.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
+    html += '<div class="ability-admin"><span class="ability-admin-tag">管理员</span>' + qbLines.map(p => '<p>' + escHtml(p.trim()) + '</p>').join('') + '</div>';
   }
-  if (a.nt) html += '<div class="ability-note">📏 ' + escHtml(a.nt) + '</div>';
+  if (a.nt) html += '<div class="ability-note"> ' + escHtml(a.nt) + '</div>';
   html += '</div></div></div>';
   return html;
 }

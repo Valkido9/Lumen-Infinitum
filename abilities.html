@@ -160,6 +160,12 @@ body {
   background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
   box-shadow: 0 2px 12px var(--accent-soft);
 }
+.site-tools-menu { position: relative; flex: 0 0 auto; }
+.site-tools-trigger { width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); cursor: pointer; font: 700 1.1em/1 var(--font-sans); }
+.site-tools-trigger:hover, .site-tools-trigger[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+.site-tools-submenu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 1400; min-width: 184px; padding: 7px; border: 1px solid var(--border-light); border-radius: 12px; background: var(--bg-card); box-shadow: var(--shadow-lg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: none; }
+.site-tools-submenu.show { display: block; }
+.site-tools-menu .review-toggle { position: static; width: 100%; padding: 9px 12px; border-radius: 8px; box-shadow: none; text-align: left; white-space: nowrap; }
 
 /* ===== Layout ===== */
 .layout {
@@ -757,6 +763,7 @@ body {
   box-shadow: var(--shadow-lg);
   max-width: calc(100vw - 48px);
 }
+.review-dock:empty { display: none; }
 .review-dock .review-toggle,
 .review-dock #reviewModeBar {
   position: static !important;
@@ -1253,9 +1260,7 @@ body {
 <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式" onclick="toggleTheme()">☀️</button>
 
 <!-- Review Mode Floating Dock -->
-<div class="review-dock" id="reviewDock">
-  <button class="review-toggle" id="reviewToggle" title="审阅模式：添加批注或直接编辑页面文字" onclick="requestReviewMode()">📝 审阅模式</button>
-</div>
+<div class="review-dock" id="reviewDock"></div>
 <div class="review-hint" id="reviewHint"></div>
 
 <!-- Password Dialog -->
@@ -1299,6 +1304,10 @@ body {
     <a href="abilities.html" class="active">能力档案</a>
     <a href="characters.html">角色百科</a>
   </nav>
+  <div class="site-tools-menu" id="siteToolsMenu">
+    <button class="site-tools-trigger review-toggle" type="button" aria-label="打开工具菜单" aria-expanded="false">•••</button>
+    <div class="site-tools-submenu" id="siteToolsSubmenu"><button class="review-toggle" id="reviewToggle" title="审阅模式：添加批注或直接编辑页面文字">📝 审阅模式</button></div>
+  </div>
 </header>
 
 <!-- Layout -->
@@ -2477,6 +2486,11 @@ function initTheme() {
 function toggleTheme() {
   if (window.LumenTheme) window.LumenTheme.toggle();
 }
+function toggleSiteToolsMenu(e) { if (e) e.stopPropagation(); const menu=document.getElementById('siteToolsSubmenu'); const trigger=document.querySelector('#siteToolsMenu .site-tools-trigger'); const open=!menu.classList.contains('show'); menu.classList.toggle('show',open); trigger.setAttribute('aria-expanded',String(open)); }
+function closeSiteToolsMenu() { const menu=document.getElementById('siteToolsSubmenu'); const trigger=document.querySelector('#siteToolsMenu .site-tools-trigger'); if(menu)menu.classList.remove('show'); if(trigger)trigger.setAttribute('aria-expanded','false'); }
+document.addEventListener('click',function(e){ if(!e.target.closest('#siteToolsMenu')) closeSiteToolsMenu(); });
+document.querySelector('#siteToolsMenu .site-tools-trigger').addEventListener('click',toggleSiteToolsMenu);
+document.getElementById('reviewToggle').addEventListener('click',function(){ requestReviewMode(); closeSiteToolsMenu(); });
 
 // ===== SIDEBAR: MULTI-LEVEL COLLAPSE =====
 document.querySelectorAll('.side-group-head').forEach(function(h) {
